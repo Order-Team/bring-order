@@ -1,7 +1,6 @@
 from ipywidgets import widgets
 from IPython.display import display
 
-
 class Hypotheses:
     def __init__(self):
         self.hypotheses = widgets.Text(value='', description='Hypotheses:')
@@ -11,11 +10,11 @@ class Hypotheses:
             [self.hypotheses,
              self.null_hypotheses,
              widgets.HBox([save_button, clear_button])])
-        
+
     def _clear_button_clicked(self, _):
         self.hypotheses.value = ''
         self.null_hypotheses.value = ''
-    
+
     def _save_button_clicked(self, _):
         self.hypotheses = f'Hypotheses: {self.hypotheses.value}'
         self.null_hypotheses = f'Null hypotheses: {self.null_hypotheses.value}'
