@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["zmejka <evgeniia.minaeva@tutanota.com>"]
 readme = "README.md"
-packages = [{include = "bring_order"}]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
