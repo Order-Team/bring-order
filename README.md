@@ -1,4 +1,5 @@
 # bring-order
+![GitHub Actions](https://github.com/Order-Team/bring-order/workflows/CI/badge.svg)
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
 ## Documentation
