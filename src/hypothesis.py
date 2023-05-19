@@ -28,14 +28,8 @@ class Hypothesis:
         clear_button = widgets.Button(description='Clear')
         save_button.on_click(self._save_button_clicked)
         clear_button.on_click(self._clear_button_clicked)
-        print(save_button)
-        print(type(save_button))
-        print(clear_button)
-        print(type(clear_button))
-
         return save_button, clear_button
 
-    # User should call this method to set the hypotheses
     def set_hypothesis(self):
         display(self.view1)
         return True
