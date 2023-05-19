@@ -58,3 +58,11 @@ jupyter notebook
 ```bash
 pytest src
 ```
+
+## Run style check
+
+1. Run from main folder
+
+```bash
+pylint src
+```
