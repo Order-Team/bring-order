@@ -1,7 +1,7 @@
 from ipywidgets import widgets
 from IPython.display import display
 
-class Hypotheses:
+class Hypothesis:
     def __init__(self):
         style = {'description_width':'initial'}
         self.hypothesis = widgets.Text(value='', description='Hypothesis:', style=style)
@@ -32,5 +32,8 @@ class Hypotheses:
         return save_button, clear_button
 
     # User should call this method to set the hypotheses
-    def set_hypotheses(self):
+    def set_hypothesis(self):
         display(self.view1)
+
+instance = Hypothesis()
+instance.set_hypothesis()
