@@ -3,8 +3,9 @@ from IPython.display import display
 
 class Hypotheses:
     def __init__(self):
-        self.hypotheses = widgets.Text(value='', description='Hypotheses:')
-        self.null_hypotheses = widgets.Text(value='', description='Null hypotheses:')
+        style = {'description_width':'initial'}
+        self.hypotheses = widgets.Text(value='', description='Hypotheses:', style=style)
+        self.null_hypotheses = widgets.Text(value='', description='Null hypotheses:', style=style)
         save_button, clear_button = self._initialize_buttons()
         self.view1 = widgets.VBox(
             [self.hypotheses,
