@@ -7,51 +7,54 @@
 
 ## Installation
 
-1. Go to project folder and initialize 
+### Dependencies 
 
-```bash
-poetry init
-```
-
-2. Install [**Jupyter**](https://jupyter.org/install) if you don't already have it installed.
+2. Install [**Jupyter**](https://jupyter.org/install)
 
 ```bash
 poetry add notebook
 ```
 
-3. Add [**py2nb**](https://github.com/williamjameshandley/py2nb) if you don't already have it installed
+3. Add [**py2nb**](https://github.com/williamjameshandley/py2nb)
 
 ```bash
 poetry add py2nb
 ```
 
+### Execute program
 
-3. Go into virtual environment
+1. Go into virtual environment
 
 ```bash
 poetry shell
 ```
 
-4. Run in project folder. A *hypothesis.ipynb* file should appear in /src - folder.
+2. Run in project folder. A *hypothesis.ipynb* file should appear in /src - folder.
 
 ```bash
 py2nb src/hypothesis.py
 ```
 
-5. Run in project folder
+3. Run in project folder
 
 ```bash
 jupyter notebook
 ```
 
-6. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/hypothesis.ipynb**
+4. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/hypothesis.ipynb**
 
 
-7. Push the **|>** button in the up left corner. Wait for kernel to start. 
+5. Push the **|>** button in the up left corner. Wait for kernel to start. 
 
 
-8. Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x=0* and *x>0*
+6. Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x=0* and *x>0*
 
 
 
+## Run unittests
 
+1. Run from main folder
+
+```bash
+pytest src
+```

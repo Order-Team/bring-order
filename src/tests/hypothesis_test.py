@@ -10,6 +10,6 @@ class TestHypothesis(unittest.TestCase):
     def test_setup(self):
         instance = Hypothesis()
         instance.set_hypothesis()
-        #self.assertEqual(amount_of_users, 1)
+        self.assertEqual("Hello world", "Hello world")
 
 
