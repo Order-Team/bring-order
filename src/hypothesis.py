@@ -12,11 +12,11 @@ class Hypothesis:
              self.null_hypothesis,
              widgets.HBox([save_button, clear_button])])
 
-    def _clear_button_clicked(self, _):
+    def _clear_button_clicked(self, _=None):
         self.hypothesis.value = ''
         self.null_hypothesis.value = ''
 
-    def _save_button_clicked(self, _):
+    def _save_button_clicked(self, _=None):
         self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
         self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
         self.view1.close()
@@ -28,12 +28,17 @@ class Hypothesis:
         clear_button = widgets.Button(description='Clear')
         save_button.on_click(self._save_button_clicked)
         clear_button.on_click(self._clear_button_clicked)
+        print(save_button)
+        print(type(save_button))
+        print(clear_button)
+        print(type(clear_button))
 
         return save_button, clear_button
 
     # User should call this method to set the hypotheses
     def set_hypothesis(self):
         display(self.view1)
+        return True
 
 instance = Hypothesis()
 instance.set_hypothesis()
