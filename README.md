@@ -1,5 +1,6 @@
 # bring-order
 ![GitHub Actions](https://github.com/Order-Team/bring-order/workflows/CI/badge.svg)
+[![codecov](https://app.codecov.io/gh/Order-team/bring-order/branch/main/graph/badge.svg?token=e8bdd46f-46b0-410c-820b-84ffca9ca53c)](https://codecov.io/gh/Order-team/bring-order)
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
 ## Documentation
