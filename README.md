@@ -3,6 +3,13 @@
 [![codecov](https://codecov.io/gh/Order-team/bring-order/branch/main/graph/badge.svg?token=e8bdd46f-46b0-410c-820b-84ffca9ca53c)](https://codecov.io/gh/Order-team/bring-order)
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
+The tool is aimed at helping data scientists formulate their hypotheses better. When a hypothesis has been formulated clearly, the following is expected after analysis:
+
+- the data analysis environment can state whether the hypothesis was supported or not
+
+- any analysis that was not directly related to hypothesis testing can be identified
+
+
 ## Documentation
 * [Product backlog](https://docs.google.com/spreadsheets/d/1xqybqVAUIn4vhW-fBfhInQun7nY-uYH79M6l8oCiAzg/edit#gid=0)
 
