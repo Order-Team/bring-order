@@ -13,6 +13,8 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 ## Documentation
 * [Product backlog](https://docs.google.com/spreadsheets/d/1xqybqVAUIn4vhW-fBfhInQun7nY-uYH79M6l8oCiAzg/edit#gid=0)
 
+* [Definition of Done](https://github.com/Order-Team/bring-order/documentation/DoD.md)
+
 ## Installation
 
 ### Dependencies 
