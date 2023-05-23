@@ -10,6 +10,7 @@ ${OUTPUT}  /html/body/div[4]/div/div/div[1]/div[1]/div[1]/div[2]/div[2]/div[2]/d
 
 *** Test Cases ***
 Notebook Should Be Open
+    Wait Until Page Contains Element  id:kernel_indicator  timeout=5
     Title Should Be  test_hypothesis - Jupyter Notebook
 
 Running Notebook Should Show Text Boxes

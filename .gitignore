@@ -1,6 +1,7 @@
 __pycache__
 .env
 src/.ipynb_checkpoints/
+src/tests/.ipynb_checkpoints/
 log.html
 output.xml
 report.html

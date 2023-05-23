@@ -25,7 +25,8 @@ Open Notebook
     Wait Until Page Does Not Contain  Clusters  timeout=5
     
 Run Notebook
-    Click Button  Run
+    Click Link  Cell
+    Click Link  Run All
 
 Input Hypothesis
     Input Text  xpath:${HYPO}  x < 0
