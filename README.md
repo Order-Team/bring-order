@@ -13,20 +13,16 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 ## Documentation
 * [Product backlog](https://docs.google.com/spreadsheets/d/1xqybqVAUIn4vhW-fBfhInQun7nY-uYH79M6l8oCiAzg/edit#gid=0)
 
+* [Definition of Done](https://github.com/Order-Team/bring-order/blob/main/documentation/DoD.md)
+
 ## Installation
 
 ### Dependencies 
 
-2. Install [**Jupyter**](https://jupyter.org/install)
+1. Install dependencies
 
 ```bash
-poetry add notebook
-```
-
-3. Add [**py2nb**](https://github.com/williamjameshandley/py2nb)
-
-```bash
-poetry add py2nb
+poetry install
 ```
 
 ### Execute program
@@ -73,4 +69,39 @@ pytest src
 
 ```bash
 pylint src
+```
+
+## Run robot tests
+1. Navigate to main folder and go to virtual environment
+
+```bash
+poetry shell
+```
+
+2. Launch Jupyter Notebook
+
+```bash
+jupyter notebook
+```
+
+3. Copy one of the URLs that you find in the terminal, paste it to ${URL} variable in /src/tests/robot/resource.robot, and save changes.
+
+4. Open another terminal tab, and activate the virtual environment again
+
+```bash
+poetry shell
+```
+
+5. Run the robot tests
+
+```bash
+robot src
+```
+
+If the first run fails, try once again. Sometimes there are some connection issues.
+When you are done, you can shut down the notebook server by pressing Ctrl+C twice in the same terminal tab where you launched it.
+You can exit the virtual environment with command
+
+```bash
+exit
 ```
