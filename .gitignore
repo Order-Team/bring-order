@@ -1,8 +1,9 @@
 __pycache__
 .env
 src/.ipynb_checkpoints/
+src/.hypothesis.ipynb.swp
 log.html
 output.xml
 report.html
 selenium-screenshot*
-
+src/hypothesis.ipynb

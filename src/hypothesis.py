@@ -2,9 +2,11 @@ from ipywidgets import widgets
 from IPython.display import display
 
 class Hypothesis:
-    """_summary_
+    """ Class responsible for hypothesis construction.
     """
     def __init__(self):
+        """ Class constructor. Creates a new hypothesis construction view.
+        """
         self.hypothesis_label = widgets.Label(value='Hypothesis:',
                                               layout=widgets.Layout(justify_content='flex-end'))
         self.null_hypothesis_label = widgets.Label(value='Null hypothesis:',
@@ -23,19 +25,21 @@ class Hypothesis:
 
 
     def clear_button_clicked(self, _=None):
-        """_summary_
+        """ This method empties the values in variables bound to the current instance.
 
         Args:
-            _ (_type_, optional): _description_. Defaults to None.
+            _ (Button): Clear button.
         """
         self.hypothesis.value = ''
         self.null_hypothesis.value = ''
 
     def save_button_clicked(self, _=None):
-        """_summary_
+        """ This method does input validation on the fields, 
+            saves the values to variables bound to the current instance and 
+            displays them to the user.
 
         Args:
-            _ (_type_, optional): _description_. Defaults to None.
+            _ (Button): Save button.
         """
         try:
             if not self.hypothesis.value and not self.null_hypothesis.value:
@@ -58,10 +62,11 @@ class Hypothesis:
             print(error)
 
     def initialize_buttons(self):
-        """_summary_
+        """ This method initializes the save- and clear buttons.
 
         Returns:
-            _type_: _description_
+            save_button: Button which saves the user input.
+            clear_button: Button which clears the user input.
         """
         save_button = widgets.Button(description='Save', button_style='success')
         clear_button = widgets.Button(description='Clear', button_style='info')
@@ -70,10 +75,7 @@ class Hypothesis:
         return save_button, clear_button
 
     def set_hypothesis(self):
-        """_summary_
-
-        Returns:
-            _type_: _description_
+        """ This method displays the view for constructing the hypothesis.
         """
         display(self.view1)
 
