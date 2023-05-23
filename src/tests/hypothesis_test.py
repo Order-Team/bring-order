@@ -40,3 +40,23 @@ class TestHypothesis(unittest.TestCase):
         save_button,clear_button = self.instance.initialize_buttons()
         self.assertNotEqual (save_button,None)
         self.assertNotEqual(clear_button, None)
+    
+    def test_empty_input_hypothesis_and_nullhypothesis(self):
+        self.instance.hypothesis.value = ''
+        self.instance.null_hypothesis.value = ''
+        self.instance.save_button_clicked()
+        self.assertEqual(self.instance.error_message, 'Hypothesis and Null hypothesis missing')
+   
+
+    def test_empty_input_hypothesis(self):
+        self.instance.hypothesis.value = ''
+        self.instance.null_hypothesis.value = 'x > 0'
+        self.instance.save_button_clicked()
+        self.assertEqual(self.instance.error_message, 'Hypothesis missing')
+
+
+    def test_empty_input_nullhypothesis(self):
+        self.instance.hypothesis.value = 'x = 0'
+        self.instance.null_hypothesis.value = ''
+        self.instance.save_button_clicked()
+        self.assertEqual(self.instance.error_message, 'Null hypothesis missing')

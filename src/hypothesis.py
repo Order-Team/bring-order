@@ -19,6 +19,7 @@ class Hypothesis:
         grid[1, 1] = self.null_hypothesis
         grid[2, 1] = widgets.HBox([save_button, clear_button])
         self.view1 = grid
+        self.error_message = ''
 
 
     def clear_button_clicked(self, _=None):
@@ -36,11 +37,25 @@ class Hypothesis:
         Args:
             _ (_type_, optional): _description_. Defaults to None.
         """
-        self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
-        self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
-        self.view1.close()
-        print(self.hypothesis)
-        print(self.null_hypothesis)
+        try:
+            if not self.hypothesis.value and not self.null_hypothesis.value:
+                self.error_message = 'Hypothesis and Null hypothesis missing'
+                raise ValueError(self.error_message)
+            if not self.null_hypothesis.value:
+                self.error_message = 'Null hypothesis missing'
+                raise ValueError(self.error_message)
+            if not self.hypothesis.value:
+                self.error_message = 'Hypothesis missing'
+                raise ValueError(self.error_message)
+
+            self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
+            self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
+            self.view1.close()
+            print(self.hypothesis)
+            print(self.null_hypothesis)
+
+        except ValueError as error:
+            print(error)
 
     def initialize_buttons(self):
         """_summary_
