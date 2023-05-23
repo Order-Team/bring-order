@@ -17,16 +17,10 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 
 ### Dependencies 
 
-2. Install [**Jupyter**](https://jupyter.org/install)
+1. Install dependencies
 
 ```bash
-poetry add notebook
-```
-
-3. Add [**py2nb**](https://github.com/williamjameshandley/py2nb)
-
-```bash
-poetry add py2nb
+poetry install
 ```
 
 ### Execute program
