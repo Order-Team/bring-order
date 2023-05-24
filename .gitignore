@@ -1,11 +1,9 @@
 __pycache__
 .env
+src/hypothesis.ipynb
 src/.ipynb_checkpoints/
-<<<<<<< HEAD
 src/.hypothesis.ipynb.swp
-=======
 src/tests/.ipynb_checkpoints/
->>>>>>> d93411170e39664fc6a30b215eb38b2448e23672
 log.html
 output.xml
 report.html

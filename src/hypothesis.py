@@ -14,14 +14,19 @@ class Hypothesis:
         self.hypothesis = widgets.Text(value='')
         self.null_hypothesis = widgets.Text(value='')
         save_button, clear_button = self.initialize_buttons()
-        grid = widgets.GridspecLayout(3, 3, height='auto')
+        self.field1_error_message = widgets.HTML(value='',
+                                                style = {'text_color': 'red', 'font_size': '12px'})
+        self.field2_error_message = widgets.HTML(value= '',
+                                                style = {'text_color': 'red', 'font_size':'12px'})
+        grid = widgets.GridspecLayout(5, 3, height='auto', grid_gap="0px")
         grid[0, 0] = self.hypothesis_label
         grid[0, 1] = self.hypothesis
-        grid[1, 0] = self.null_hypothesis_label
-        grid[1, 1] = self.null_hypothesis
-        grid[2, 1] = widgets.HBox([save_button, clear_button])
+        grid[1, 1] = self.field1_error_message
+        grid[2, 0] = self.null_hypothesis_label
+        grid[2, 1] = self.null_hypothesis
+        grid[3, 1] = self.field2_error_message
+        grid[4, 1] = widgets.HBox([save_button, clear_button])
         self.view1 = grid
-        self.error_message = ''
 
 
     def clear_button_clicked(self, _=None):
@@ -43,14 +48,16 @@ class Hypothesis:
         """
         try:
             if not self.hypothesis.value and not self.null_hypothesis.value:
-                self.error_message = 'Hypothesis and Null hypothesis missing'
-                raise ValueError(self.error_message)
+                self.field1_error_message.value = 'Hypothesis missing'
+                self.field2_error_message.value = 'Null hypothesis missing'
+                raise ValueError(f"{self.field1_error_message.value}" \
+                                 "and {self.field2_error_message.value}")
             if not self.null_hypothesis.value:
-                self.error_message = 'Null hypothesis missing'
-                raise ValueError(self.error_message)
+                self.field2_error_message.value = 'Null hypothesis missing'
+                raise ValueError(self.field2_error_message.value)
             if not self.hypothesis.value:
-                self.error_message = 'Hypothesis missing'
-                raise ValueError(self.error_message)
+                self.field1_error_message.value = 'Hypothesis missing'
+                raise ValueError(self.field1_error_message.value)
 
             self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
             self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
@@ -58,8 +65,8 @@ class Hypothesis:
             print(self.hypothesis)
             print(self.null_hypothesis)
 
-        except ValueError as error:
-            print(error)
+        except ValueError:
+            pass
 
     def initialize_buttons(self):
         """ This method initializes the save- and clear buttons.

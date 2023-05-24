@@ -45,18 +45,22 @@ class TestHypothesis(unittest.TestCase):
         self.instance.hypothesis.value = ''
         self.instance.null_hypothesis.value = ''
         self.instance.save_button_clicked()
-        self.assertEqual(self.instance.error_message, 'Hypothesis and Null hypothesis missing')
-   
+        self.assertEqual(self.instance.field1_error_message.value , 'Hypothesis missing')
+        self.assertEqual(self.instance.field2_error_message.value, 'Null hypothesis missing')
 
     def test_empty_input_hypothesis(self):
         self.instance.hypothesis.value = ''
         self.instance.null_hypothesis.value = 'x > 0'
         self.instance.save_button_clicked()
-        self.assertEqual(self.instance.error_message, 'Hypothesis missing')
+        self.assertEqual(self.instance.field1_error_message.value , 'Hypothesis missing')
+        self.assertEqual(self.instance.field2_error_message.value , '')
 
 
     def test_empty_input_nullhypothesis(self):
         self.instance.hypothesis.value = 'x = 0'
         self.instance.null_hypothesis.value = ''
         self.instance.save_button_clicked()
-        self.assertEqual(self.instance.error_message, 'Null hypothesis missing')
+        self.assertEqual(self.instance.field1_error_message.value , '')
+        self.assertEqual(self.instance.field2_error_message.value, 'Null hypothesis missing'  )
+
+
