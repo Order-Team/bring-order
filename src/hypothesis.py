@@ -92,5 +92,5 @@ class Hypothesis:
         """
         display(self.view1)
 
-instance = Hypothesis()
-instance.set_hypothesis()
+# instance = Hypothesis()
+# instance.set_hypothesis()
