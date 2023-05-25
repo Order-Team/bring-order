@@ -37,10 +37,12 @@ class Hypothesis:
         """
         self.hypothesis.value = ''
         self.null_hypothesis.value = ''
+        self.field1_error_message.value = ''
+        self.field2_error_message.value = ''
 
     def save_button_clicked(self, _=None):
-        """ This method does input validation on the fields, 
-            saves the values to variables bound to the current instance and 
+        """ This method does input validation on the fields,
+            saves the values to variables bound to the current instance and
             displays them to the user.
 
         Args:
@@ -53,11 +55,15 @@ class Hypothesis:
                 raise ValueError(f"{self.field1_error_message.value}" \
                                  "and {self.field2_error_message.value}")
             if not self.null_hypothesis.value:
+                self.field1_error_message.value = ''
                 self.field2_error_message.value = 'Null hypothesis missing'
                 raise ValueError(self.field2_error_message.value)
+
             if not self.hypothesis.value:
                 self.field1_error_message.value = 'Hypothesis missing'
+                self.field2_error_message.value = ''
                 raise ValueError(self.field1_error_message.value)
+
 
             self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
             self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
