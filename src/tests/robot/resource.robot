@@ -5,7 +5,7 @@ Library  OperatingSystem
 
 *** Variables ***
 ${BROWSER}  chrome
-${DELAY}  0 seconds
+${DELAY}  0.2 seconds
 # Paste the correct URL here:
 ${URL}  http://localhost:8888/?token=...
 ${HYPO}  /html/body/div[4]/div/div/div[1]/div[1]/div[1]/div[2]/div[2]/div/div[3]/div/div[2]/input
