@@ -15,6 +15,8 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 
 * [Definition of Done](https://github.com/Order-Team/bring-order/blob/main/documentation/DoD.md)
 
+* [Minutes of meetings](https://drive.google.com/drive/folders/1kwXCKbx7egHf8qYDIb4fRffNnad6Qd1t)
+
 ## Installation
 
 ### Dependencies 
