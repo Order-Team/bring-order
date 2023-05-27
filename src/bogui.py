@@ -1,5 +1,8 @@
+import base64
 from ipywidgets import widgets
 from IPython.display import display
+from IPython.display import Javascript
+from IPython.core.getipython import get_ipython
 from hypothesis import Hypothesis
 
 class BOGui:
@@ -43,6 +46,9 @@ class BOGui:
         print("Here will be a call for inductive class...")
         self.new_analysis_button.disabled=False
         self.new_analysis()
+        self.create_code_cell()
+        self.create_markdown_cell()
+
         
     def new_analysis(self, _=None):
         #self.new_analysis = self.create_button("New Analysis", self.bring_order, "success")
@@ -57,5 +63,15 @@ class BOGui:
         self.induct.disabled=False
         buttons = widgets.HBox(children=[self.deduct, self.induct], layout=self.cntr)
         display(buttons)
+
+    def create_code_cell(self):
+        display(Javascript("""
+        IPython.notebook.insert_cell_below('code')
+        """))
+    
+    def create_markdown_cell(self):
+        display(Javascript("""
+        IPython.notebook.insert_cell_below('markdown')
+        """))
 
 BOGui()
