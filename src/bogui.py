@@ -65,11 +65,13 @@ class BOGui:
         display(buttons)
 
     def create_code_cell(self):
+        '''Create new empty code cell'''
         display(Javascript("""
         IPython.notebook.insert_cell_below('code')
         """))
     
     def create_markdown_cell(self):
+        '''Create new empty markdown cell'''
         display(Javascript("""
         IPython.notebook.insert_cell_below('markdown')
         """))
