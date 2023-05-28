@@ -1,9 +1,9 @@
-import base64
 from ipywidgets import widgets
 from IPython.display import display
 from IPython.display import Javascript
 from IPython.core.getipython import get_ipython
 from hypothesis import Hypothesis
+from inductive import Inductive
 
 class BOGui:
     """Bring order GUI"""
@@ -43,11 +43,10 @@ class BOGui:
         self.new_analysis()
 
     def inductive(self, _):
-        print("Here will be a call for inductive class...")
-        self.new_analysis_button.disabled=False
-        self.new_analysis()
-        self.create_code_cell()
-        self.create_markdown_cell()
+        new_inductive = Inductive(bogui)
+        new_inductive.start_inductive()
+        #self.new_analysis_button.disabled=False
+        #self.new_analysis()
 
         
     def new_analysis(self, _=None):
@@ -76,4 +75,4 @@ class BOGui:
         IPython.notebook.insert_cell_below('markdown')
         """))
 
-BOGui()
+bogui = BOGui()
