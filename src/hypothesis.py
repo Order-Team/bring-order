@@ -1,5 +1,6 @@
 from ipywidgets import widgets
 from IPython.display import display
+from IPython.display import Javascript
 
 class Hypothesis:
     """ Class responsible for hypothesis construction.
@@ -13,7 +14,7 @@ class Hypothesis:
                                                 layout=widgets.Layout(justify_content='flex-end'))
         self.hypothesis = widgets.Text(value='')
         self.null_hypothesis = widgets.Text(value='')
-        save_button, clear_button = self.initialize_buttons()
+        save_button, clear_button, ready_button, clean_code_button = self.initialize_buttons()
         self.field1_error_message = widgets.HTML(value='',
                                                 style = {'text_color': 'red', 'font_size': '12px'})
         self.field2_error_message = widgets.HTML(value= '',
@@ -27,6 +28,26 @@ class Hypothesis:
         grid[3, 1] = self.field2_error_message
         grid[4, 1] = widgets.HBox([save_button, clear_button])
         self.view1 = grid
+
+        self.evaluation_action = widgets.HTML(
+            value= 'Ready to run your code to check your hypothesis?',
+            style = {'font_size': '15px'})
+        grid2 = widgets.GridspecLayout(3, 3, height='auto', wifth="500px", grid_gap="0px")
+        grid2[0, 0] = self.evaluation_action
+        grid2[1, 0] = widgets.HBox([ready_button, clean_code_button])
+        self.view2 = grid2
+
+
+
+        self.radiobuttons = widgets.RadioButtons(
+         options=[],
+         description='What happended?',
+         disabled=False,
+         font_size ="20px"
+
+        )
+
+        self.view3 = self.radiobuttons
 
 
     def clear_button_clicked(self, _=None):
@@ -65,14 +86,50 @@ class Hypothesis:
                 raise ValueError(self.field1_error_message.value)
 
 
-            self.hypothesis = f'Hypothesis: {self.hypothesis.value}'
-            self.null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
+            self.radiobuttons.options = [self.hypothesis.value, self.null_hypothesis.value]
+            display_hypothesis = f'Hypothesis: {self.hypothesis.value}'
+            display_null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
             self.view1.close()
-            print(self.hypothesis)
-            print(self.null_hypothesis)
+            print(display_hypothesis)
+            print(display_null_hypothesis)
+            self.create_five_code_cells()
 
         except ValueError:
             pass
+
+    def ready_button_clicked(self, _=None):
+        """_summary_
+
+        Args:
+            _ (_type_, optional): _description_. Defaults to None.
+        """
+
+        #3 add code her to run code in cells?
+        display(self.view3)
+
+
+    def clean_code_button_clicked(self, _=None):
+        """_summary_
+
+        Args:
+            _ (_type_, optional): _description_. Defaults to None.
+        """
+        ## add code here to clean code cells
+
+    def create_five_code_cells(self):
+        '''Create new empty code cell'''
+        for _ in range(0,5):
+            display(Javascript("""
+            IPython.notebook.insert_cell_below('code')
+
+            """))
+        self.evaluation()
+
+    def evaluation(self):
+        """_summary_
+        """
+        display(self.view2)
+
 
     def initialize_buttons(self):
         """ This method initializes the save- and clear buttons.
@@ -83,14 +140,24 @@ class Hypothesis:
         """
         save_button = widgets.Button(description='Save', button_style='success')
         clear_button = widgets.Button(description='Clear', button_style='info')
+        ready_button = widgets.Button(description='Ready', button_style='primary')
+        clean_code_button = widgets.Button(description='Clean code blocks above',
+                                            button_style='danger')
+
+
         save_button.on_click(self.save_button_clicked)
         clear_button.on_click(self.clear_button_clicked)
-        return save_button, clear_button
+        ready_button.on_click(self.ready_button_clicked)
+        clean_code_button.on_click(self.clean_code_button_clicked)
+
+
+
+        return save_button, clear_button, ready_button, clean_code_button
 
     def set_hypothesis(self):
         """ This method displays the view for constructing the hypothesis.
         """
         display(self.view1)
 
-# instance = Hypothesis()
-# instance.set_hypothesis()
+#instance = Hypothesis()
+#instance.set_hypothesis()

@@ -38,7 +38,7 @@ poetry shell
 2. Run in project folder. A *hypothesis.ipynb* file should appear in /src - folder.
 
 ```bash
-py2nb src/hypothesis.py
+py2nb src/bogui.py
 ```
 
 3. Run in project folder
@@ -47,7 +47,7 @@ py2nb src/hypothesis.py
 jupyter notebook
 ```
 
-4. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/hypothesis.ipynb**
+4. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/bogui.ipynb**
 
 
 5. Push the **|>** button in the up left corner. Wait for kernel to start. 

@@ -1,6 +1,7 @@
 __pycache__
 .env
 src/hypothesis.ipynb
+src/bogui.ipynb
 src/.ipynb_checkpoints/
 src/.hypothesis.ipynb.swp
 src/tests/.ipynb_checkpoints/

@@ -31,15 +31,17 @@ class TestHypothesis(unittest.TestCase):
         """ checking that save button saves the hypothesis and null hypothesis - strings
         """
         self.instance.save_button_clicked()
-        self.assertEqual(self.instance.hypothesis, 'Hypothesis: x = 0')
-        self.assertEqual(self.instance.null_hypothesis, 'Null hypothesis: x > 0')
+        self.assertEqual(self.instance.hypothesis.value, 'x = 0')
+        self.assertEqual(self.instance.null_hypothesis.value, 'x > 0')
 
     def test_initialize_buttons(self):
         """ checking that initialize button does not return None
         """
-        save_button,clear_button = self.instance.initialize_buttons()
+        save_button,clear_button, ready_button, clean_code_button = self.instance.initialize_buttons()
         self.assertNotEqual (save_button,None)
         self.assertNotEqual(clear_button, None)
+        self.assertNotEqual(ready_button, None)
+        self.assertNotEqual(clean_code_button, None)
     
     def test_empty_input_hypothesis_and_nullhypothesis(self):
         self.instance.hypothesis.value = ''
