@@ -35,7 +35,7 @@ poetry install
 poetry shell
 ```
 
-2. Run in project folder. A *hypothesis.ipynb* file should appear in /src - folder.
+2. Run in project folder. A *bogui.ipynb* file should appear in /src - folder.
 
 ```bash
 py2nb src/bogui.py
@@ -50,10 +50,12 @@ jupyter notebook
 4. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/bogui.ipynb**
 
 
-5. Push the **|>** button in the up left corner. Wait for kernel to start. 
+5. Add a new code line and write depending on where you are in the project folder ``` from src.bogui import BOGui ```
 
+6. Choose deductive or inductive option
 
-6. Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x=0* and *x>0*
+- **Decuctive**:  Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x=0* and *x>0*
+- **Inductive**: 
 
 
 
