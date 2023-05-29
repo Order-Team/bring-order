@@ -1,6 +1,6 @@
 from ipywidgets import widgets
-from IPython.display import display
-from IPython.display import Javascript
+from IPython.display import display, Javascript, HTML
+from IPython import get_ipython
 
 class Hypothesis:
     """ Class responsible for hypothesis construction.
@@ -8,6 +8,7 @@ class Hypothesis:
     def __init__(self):
         """ Class constructor. Creates a new hypothesis construction view.
         """
+        self.current_shell=0
         self.hypothesis_label = widgets.Label(value='Hypothesis:',
                                               layout=widgets.Layout(justify_content='flex-end'))
         self.null_hypothesis_label = widgets.Label(value='Null hypothesis:',
@@ -37,8 +38,6 @@ class Hypothesis:
         grid2[1, 0] = widgets.HBox([ready_button, clean_code_button])
         self.view2 = grid2
 
-
-
         self.radiobuttons = widgets.RadioButtons(
          options=[],
          description='What happended?',
@@ -46,8 +45,8 @@ class Hypothesis:
          font_size ="20px"
 
         )
-
         self.view3 = self.radiobuttons
+        self.current_shell = ''
 
 
     def clear_button_clicked(self, _=None):
@@ -106,21 +105,35 @@ class Hypothesis:
 
         #3 add code her to run code in cells?
         display(self.view3)
-
-
+     
     def clean_code_button_clicked(self, _=None):
         """_summary_
 
         Args:
             _ (_type_, optional): _description_. Defaults to None.
         """
-        ## add code here to clean code cells
+        n = self.current_shell
+        js_code = """
+        var cells = IPython.notebook.get_cells();
+        cells.forEach(function(cell) {{
+                var index = IPython.notebook.find_cell_index(cell);
+                if(index >= {0}){{
+                    IPython.notebook.delete_cell(index);
+                }}
+        }})
+        ;
+        """.format(n)
+    
+        display(Javascript(js_code)) 
+       
 
+        
+        
     def create_five_code_cells(self):
         '''Create new empty code cell'''
         for _ in range(0,5):
             display(Javascript("""
-            IPython.notebook.insert_cell_below('code')
+            IPython.notebook.insert_cell_above('code')
 
             """))
         self.evaluation()
@@ -128,7 +141,9 @@ class Hypothesis:
     def evaluation(self):
         """_summary_
         """
+        self.current_shell = get_ipython().execution_count
         display(self.view2)
+        print(self.current_shell)
 
 
     def initialize_buttons(self):
@@ -144,13 +159,10 @@ class Hypothesis:
         clean_code_button = widgets.Button(description='Clean code blocks above',
                                             button_style='danger')
 
-
         save_button.on_click(self.save_button_clicked)
         clear_button.on_click(self.clear_button_clicked)
         ready_button.on_click(self.ready_button_clicked)
         clean_code_button.on_click(self.clean_code_button_clicked)
-
-
 
         return save_button, clear_button, ready_button, clean_code_button
 
