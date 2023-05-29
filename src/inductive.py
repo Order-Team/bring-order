@@ -19,8 +19,8 @@ class Inductive:
 
     def __init_buttons(self):
         """intializes buttons used by Inductive Analysis"""
-        self.add_code = self.bogui.create_button("Add code line", self.add_code_line, "success")
-        self.ready = self.bogui.create_button("Ready", self.ready_button, "success")
+        self.add_code = self.bogui.create_button("Add code cell", self.add_code_line, 'warning')
+        self.ready = self.bogui.create_button("Ready", self.ready_button, 'primary')
 
     def start_inductive(self, _=None):
         """_summary_
@@ -33,10 +33,13 @@ class Inductive:
         display(buttons)
 
     def ready_button(self, _=None):
-        """ This method open comment field for explanations.
-        """
-        self.bogui.create_markdown_cell()
+        """ Summary """
+        self.ready.disabled=True
+        self.add_code.disabled=True
+        label = widgets.Label(value="Explain what you observed:")
+        evaluation = widgets.Textarea(value='',layout={'width': '80%'})
+        display(widgets.HBox([label,evaluation]))
 
     def add_code_line(self, _=None):
-        ''' This method open new code line'''
+        ''' This method opens new code cell in Jupyter Notebook'''
         self.bogui.create_code_cell()
