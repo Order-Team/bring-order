@@ -1,5 +1,5 @@
 from ipywidgets import widgets
-from IPython.display import display
+from IPython.display import display, Javascript
 
 class Inductive:
     """_summary_
@@ -21,6 +21,7 @@ class Inductive:
         """intializes buttons used by Inductive Analysis"""
         self.add_code = self.bogui.create_button("Add code cell", self.add_code_line, 'warning')
         self.ready = self.bogui.create_button("Ready", self.ready_button, 'primary')
+        self.clean_code = self.bogui.create_button("Clean code blocks", self.clean_code_button, 'danger')
 
     def start_inductive(self, _=None):
         """_summary_
@@ -28,7 +29,7 @@ class Inductive:
         Args:
             _ (_type_, optional): _description_. Defaults to None.
         """
-        buttons = widgets.HBox(children=[self.add_code, self.ready],
+        buttons = widgets.HBox(children=[self.add_code, self.ready, self.clean_code],
                                layout=self.cntr)
         display(buttons)
 
@@ -39,7 +40,28 @@ class Inductive:
         label = widgets.Label(value="Explain what you observed:")
         evaluation = widgets.Textarea(value='',layout={'width': '80%'})
         display(widgets.HBox([label,evaluation]))
+        
+    def clean_code_button(self, _=None):
+        """ Summary """
+        display(Javascript(
+            """
+            var cells = IPython.notebook.get_cells().map(function(cell) {
+                if (cell.cell_type == "code") {
+                    var index = IPython.notebook.find_cell_index(cell);
+                    if (index != 0) {
+                        IPython.notebook.delete_cell(index);
+                    }
+                }
+            });
+            """
+        ))
+        self.bogui.create_code_cell()
+        self.clean_code.disabled=False
+        self.ready.disabled=False
 
     def add_code_line(self, _=None):
+        """ Summary """
+        self.clean_code.disabled=False
+        self.ready.disabled=False
         ''' This method opens new code cell in Jupyter Notebook'''
         self.bogui.create_code_cell()
