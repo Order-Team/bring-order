@@ -1,3 +1,4 @@
+''' Bring order GUI'''
 from ipywidgets import widgets
 from IPython.display import display
 from IPython.display import Javascript
@@ -29,7 +30,6 @@ class BOGui:
         newbutton = widgets.Button(description=desc,
                                    button_style=style,
                                    tooltip=tooltip)
-        newbutton
         newbutton.on_click(command)
         return newbutton
 
