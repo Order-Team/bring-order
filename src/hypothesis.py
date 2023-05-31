@@ -46,8 +46,6 @@ class Hypothesis:
 
         )
         self.view3 = self.radiobuttons
-        self.current_shell = ''
-
 
     def clear_button_clicked(self, _=None):
         """ This method empties the values in variables bound to the current instance.
@@ -84,7 +82,6 @@ class Hypothesis:
                 self.field2_error_message.value = ''
                 raise ValueError(self.field1_error_message.value)
 
-
             self.radiobuttons.options = [self.hypothesis.value, self.null_hypothesis.value]
             display_hypothesis = f'Hypothesis: {self.hypothesis.value}'
             display_null_hypothesis = f'Null hypothesis: {self.null_hypothesis.value}'
@@ -92,6 +89,7 @@ class Hypothesis:
             print(display_hypothesis)
             print(display_null_hypothesis)
             self.create_five_code_cells()
+            self.evaluation()
 
         except ValueError:
             pass
@@ -105,7 +103,7 @@ class Hypothesis:
 
         #3 add code her to run code in cells?
         display(self.view3)
-     
+
     def clean_code_button_clicked(self, _=None):
         """_summary_
 
@@ -123,28 +121,24 @@ class Hypothesis:
         }})
         ;
         """.format(n)
-    
-        display(Javascript(js_code)) 
-       
+        display(Javascript(js_code))
+        self.create_five_code_cells()
 
-        
-        
+
     def create_five_code_cells(self):
         '''Create new empty code cell'''
         for _ in range(0,5):
             display(Javascript("""
-            IPython.notebook.insert_cell_above('code')
-
+            IPython.notebook.insert_cell_below('code')
             """))
-        self.evaluation()
+
 
     def evaluation(self):
         """_summary_
         """
         self.current_shell = get_ipython().execution_count
         display(self.view2)
-        print(self.current_shell)
-
+        #print(self.current_shell)
 
     def initialize_buttons(self):
         """ This method initializes the save- and clear buttons.
@@ -158,7 +152,6 @@ class Hypothesis:
         ready_button = widgets.Button(description='Ready', button_style='primary')
         clean_code_button = widgets.Button(description='Clean code blocks above',
                                             button_style='danger')
-
         save_button.on_click(self.save_button_clicked)
         clear_button.on_click(self.clear_button_clicked)
         ready_button.on_click(self.ready_button_clicked)
