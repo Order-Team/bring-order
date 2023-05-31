@@ -136,8 +136,12 @@ class Hypothesis:
     def evaluation(self):
         """_summary_
         """
-        self.current_shell = get_ipython().execution_count
+        try:
+            self.current_shell = get_ipython().execution_count
+        except AttributeError:
+            self.current_shell = 1
         display(self.view2)
+
         #print(self.current_shell)
 
     def initialize_buttons(self):

@@ -11,6 +11,7 @@ class TestHypothesis(unittest.TestCase):
         self.instance = Hypothesis()
         self.instance.hypothesis.value = 'x = 0'
         self.instance.null_hypothesis.value = 'x > 0'
+        self.instance.current_shell = 0
 
     def test_populating_fields(self):
         """ generating new values and checking if they are the same.
