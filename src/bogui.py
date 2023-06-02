@@ -1,19 +1,12 @@
-''' Bring order GUI'''
 from ipywidgets import widgets
 from IPython.display import display
 from IPython.display import Javascript
-from hypothesis import Hypothesis
-from inductive import Inductive
+
 
 class BOGui:
     """Bring order GUI"""
     def __init__(self):
-        self.cntr = widgets.Layout(display='flex',
-                                   align_items='center',
-                                   flex_flow='row',
-                                   width='100%')
-        self.__init_buttons()
-        self.bring_order()
+        pass
 
     def create_button(self, desc: str, command, style="success", tooltip=''):
         """ Method for creating buttons.
@@ -33,65 +26,7 @@ class BOGui:
         newbutton.on_click(command)
         return newbutton
 
-    def __init_buttons(self):
-        """intializes buttons used by BOGui"""
-        self.new_analysis_button = self.create_button("New Analysis", self.bring_order, "success")
-        self.deduct = self.create_button("Deductive analysis", self.deductive, "success")
-        self.induct = self.create_button("Inductive analysis", self.inductive, "success")
 
-
-    def deductive(self, _):
-        """_summary_
-
-        Args:
-            _ (_type_): _description_
-        """
-        new_hypo = Hypothesis()
-        new_hypo.set_hypothesis()
-        self.new_analysis_button.disabled=False
-        self.new_analysis()
-        
-        #code = "insert code for making a new analysis button"
-        #self.create_and_execute_code_cell(code)
-        
-
-    def inductive(self, _):
-        """_summary_
-
-        Args:
-            _ (_type_): _description_
-        """
-        new_inductive = Inductive(bogui)
-        new_inductive.start_inductive()
-        #self.new_analysis_button.disabled=False
-        #self.new_analysis()
-
-
-    def new_analysis(self, _=None):
-        """_summary_
-
-        Args:
-            _ (_type_, optional): _description_. Defaults to None.
-        """
-        #self.new_analysis = self.create_button("New Analysis", self.bring_order, "success")
-        button = widgets.HBox(children=[self.new_analysis_button],
-                              layout=self.cntr)
-        self.deduct.disabled=True
-        self.induct.disabled=True
-        display(button)
-
-    def bring_order(self, _=None):
-        """_summary_
-
-        Args:
-            _ (_type_, optional): _description_. Defaults to None.
-        """
-        self.new_analysis_button.disabled=True
-        self.deduct.disabled=False
-        self.induct.disabled=False
-        buttons = widgets.HBox(children=[self.deduct, self.induct],
-                               layout=self.cntr)
-        display(buttons)
 
     def create_code_cell(self):
         """Create new empty code cell
@@ -106,12 +41,78 @@ class BOGui:
         IPython.notebook.insert_cell_below('markdown')
         """))
 
-    def create_and_execute_code_cell(self, code=''):
-        display(Javascript("""
-        var code = IPython.notebook.insert_cell_at_bottom('code')
-        code.set_text("{0}")
-        Jupyter.notebook.execute_cells([-1])
-        """.format(code)))
+    def create_message(self, value, style={'font-family': 'Arial, Helvetica, sans-serif',
+                                           'font_size': '15px'}):
+        """Creates HTML"""
+        message = widgets.HTML(value=value, style=style)
+        return message
+
+    def create_error_message(self, value=''):
+        """Creates HTML, color: red"""
+        error = self.create_message(value=value,
+                                    style={'font-family': 'Arial, Helvetica, sans-serif',
+                                           'font_size': '12px',
+                                           'text_color': 'red'})
+        return error
+
+    def create_input_field(self, default_value=''):
+        """Creates input field"""
+        input_field = widgets.Text(value=default_value)
+        return input_field
+
+    def create_text_area(self, default_value=''):
+        """Creates text box"""
+        text_area = widgets.Textarea(value=default_value,layout={'width': '80%'})
+        return text_area
+
+    def create_label(self, value):
+        """Creates label"""
+        label = widgets.Label(value=value,
+                              layout=widgets.Layout(justify_content='flex-end'))
+        return label
+
+    def create_placeholder(self):
+        """Creates empty label"""
+        placeholder = self.create_label('')
+        return placeholder
+
+    def create_grid(self, rows, cols, items, width='50%'):
+        """Creates grid of widgets"""
+        grid = widgets.GridspecLayout(rows,
+                                      cols,
+                                      height='auto',
+                                      width=width,
+                                      grid_gap="0px")
+        item_index = 0
+        for i in range(rows):
+            for j in range(cols):
+                grid[i, j] = items[item_index]
+                item_index += 1
+
+        return grid
+
+    def create_int_text(self, default_value=1, desc=''):
+        """Creates integer input"""
+        int_text = widgets.IntText(value=default_value, description=desc, layout={'width':'80px'})
+        return int_text
+
+    def create_radiobuttons(self, options, desc=''):
+        """Creates radiobuttons"""
+        radiobuttons = widgets.RadioButtons(
+            options=options,
+            description=desc,
+            disabled=False,
+            font_size ="15px")
+
+        return radiobuttons
 
 
-bogui = BOGui()
+    def create_code_cells(self, how_many):
+        """Creates given number code cells below the current cell"""
+        for _ in range(how_many):
+            command = 'IPython.notebook.insert_cell_below("code")'
+            display(Javascript(command))
+
+
+
+

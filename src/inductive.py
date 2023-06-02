@@ -1,27 +1,29 @@
 from ipywidgets import widgets
 from IPython.display import display, Javascript
+from boutils import BOUtils
 
 class Inductive:
     """_summary_
     """
-    def __init__(self, bogui):
+    def __init__(self, start_cell, bogui):
         """_summary_
 
         Args:
             bogui (_type_): _description_
         """
-        self.cntr = widgets.Layout(display='flex',
-                                   align_items='center',
-                                   flex_flow='row',
-                                   width='100%')
+        self.first_cell_index = start_cell
+        self.cell_count = 1
+        self.utils = BOUtils()
         self.bogui = bogui
-        self.__init_buttons()
-
-    def __init_buttons(self):
-        """intializes buttons used by Inductive Analysis"""
         self.add_code = self.bogui.create_button("Add code cell", self.add_code_line, 'warning')
-        self.ready = self.bogui.create_button("Ready", self.ready_button, 'primary')
+        self.delete = self.bogui.create_button("Delete last cell", self.delete_last_cell, "danger")
+        self.run = self.bogui.create_button("Run code", self.ready_button, 'primary')
         self.clean_code = self.bogui.create_button("Clean code blocks", self.clean_code_button, 'danger')
+        self.new_analysis_button = self.bogui.create_button('New analysis', self.start_new_analysis)
+        self.conclusion = None
+        self.notes = self.bogui.create_text_area()
+
+
 
     def start_inductive(self, _=None):
         """_summary_
@@ -29,17 +31,28 @@ class Inductive:
         Args:
             _ (_type_, optional): _description_. Defaults to None.
         """
-        buttons = widgets.HBox(children=[self.add_code, self.ready, self.clean_code],
-                               layout=self.cntr)
+        buttons = widgets.HBox(children=[self.add_code, self.delete, self.run, self.clean_code])
         display(buttons)
 
     def ready_button(self, _=None):
         """ Summary """
-        self.ready.disabled=True
+
+        self.run.disabled=True
         self.add_code.disabled=True
-        label = widgets.Label(value="Explain what you observed:")
-        evaluation = widgets.Textarea(value='',layout={'width': '80%'})
-        display(widgets.HBox([label,evaluation]))
+        self.utils.run_cells(self.first_cell_index+1, self.first_cell_index+self.cell_count)
+        if self.conclusion:
+            self.conclusion.close()
+
+        label = self.bogui.create_label(value="Explain what you observed:")
+
+        self.conclusion = widgets.VBox([widgets.HBox([label, self.notes]),
+                    self.new_analysis_button])
+        display(self.conclusion)
+
+
+    def start_new_analysis(self, _=None):
+            """Button function"""
+            self.save_results()
         
     def clean_code_button(self, _=None):
         """ Summary """
@@ -57,11 +70,25 @@ class Inductive:
         ))
         self.bogui.create_code_cell()
         self.clean_code.disabled=False
-        self.ready.disabled=False
+        self.run.disabled=False
 
     def add_code_line(self, _=None):
         """ Summary """
         self.clean_code.disabled=False
-        self.ready.disabled=False
-        ''' This method opens new code cell in Jupyter Notebook'''
+        self.run.disabled=False
         self.bogui.create_code_cell()
+
+    def delete_last_cell(self, _=None):
+            """Button function"""
+            self.utils.delete_cell(
+                self.first_cell_index+self.cell_count-1)
+            self.cell_count -= 1
+
+    def save_results(self):
+            """Prints notes"""
+            text = f'''
+            Inductive Analysis\n
+            Notes:\n
+            {self.notes.value}
+            '''
+            print(text)
