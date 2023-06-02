@@ -1,7 +1,7 @@
+''' Summary '''
 from ipywidgets import widgets
 from IPython.display import display
 from boutils import BOUtils
-from bogui import BOGui
 
 
 class Deductive:
@@ -239,4 +239,3 @@ class Deductive:
             bottom_right=clear_cells_button)
 
         return grid
-

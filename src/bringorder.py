@@ -1,15 +1,17 @@
+''' Summary '''
 import os
 import sys
 class_dir = os.path.dirname(os.path.realpath(__file__)) # directory of the class
 sys.path.insert(1, class_dir)   #insert directory of the class into path.
 
+from ipywidgets import widgets
+from IPython.display import display
 from bogui import BOGui
 from inductive import Inductive
 from deductive import Deductive
-from ipywidgets import widgets
-from IPython.display import display
 
 class BringOrder():
+    ''' Summary '''
     def __init__(self):
         self.bogui = BOGui()
         self.new_analysis_button = self.bogui.create_button("New Analysis", self.bring_order)
@@ -63,4 +65,3 @@ class BringOrder():
         self.deduct.disabled=True
         self.induct.disabled=True
         display(button)
-

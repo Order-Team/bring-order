@@ -1,3 +1,4 @@
+''' Summary '''
 from ipywidgets import widgets
 from IPython.display import display, Javascript
 from boutils import BOUtils
@@ -18,7 +19,8 @@ class Inductive:
         self.add_code = self.bogui.create_button("Add code cell", self.add_code_line, 'warning')
         self.delete = self.bogui.create_button("Delete last cell", self.delete_last_cell, "danger")
         self.run = self.bogui.create_button("Run code", self.ready_button, 'primary')
-        self.clean_code = self.bogui.create_button("Clean code blocks", self.clean_code_button, 'danger')
+        self.clean_code = self.bogui.create_button("Clean code blocks",
+                                                   self.clean_code_button, 'danger')
         self.new_analysis_button = self.bogui.create_button('New analysis', self.start_new_analysis)
         self.conclusion = None
         self.notes = self.bogui.create_text_area()
@@ -51,9 +53,9 @@ class Inductive:
 
 
     def start_new_analysis(self, _=None):
-            """Button function"""
-            self.save_results()
-        
+        """Button function"""
+        self.save_results()
+
     def clean_code_button(self, _=None):
         """ Summary """
         display(Javascript(
@@ -79,16 +81,16 @@ class Inductive:
         self.bogui.create_code_cell()
 
     def delete_last_cell(self, _=None):
-            """Button function"""
-            self.utils.delete_cell(
-                self.first_cell_index+self.cell_count-1)
-            self.cell_count -= 1
+        """Button function"""
+        self.utils.delete_cell(
+            self.first_cell_index+self.cell_count-1)
+        self.cell_count -= 1
 
     def save_results(self):
-            """Prints notes"""
-            text = f'''
+        """Prints notes"""
+        text = f'''
             Inductive Analysis\n
             Notes:\n
             {self.notes.value}
             '''
-            print(text)
+        print(text)

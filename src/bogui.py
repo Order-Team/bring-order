@@ -1,3 +1,4 @@
+''' UI components for Bring Order '''
 from ipywidgets import widgets
 from IPython.display import display
 from IPython.display import Javascript
@@ -112,7 +113,3 @@ class BOGui:
         for _ in range(how_many):
             command = 'IPython.notebook.insert_cell_below("code")'
             display(Javascript(command))
-
-
-
-

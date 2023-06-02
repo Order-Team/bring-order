@@ -1,3 +1,4 @@
+''' Summary '''
 from ipywidgets import widgets
 from IPython.display import display, Javascript, HTML
 from IPython import get_ipython

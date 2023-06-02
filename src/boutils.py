@@ -1,3 +1,4 @@
+''' Helper functions for Bring Order '''
 from ipywidgets import widgets
 from IPython.display import display, Javascript
 
@@ -35,4 +36,3 @@ class BOUtils:
         }});
         '''
         display(Javascript(command))
-
