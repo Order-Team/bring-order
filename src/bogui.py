@@ -50,6 +50,10 @@ class BOGui:
         new_hypo.set_hypothesis()
         self.new_analysis_button.disabled=False
         self.new_analysis()
+        
+        #code = "insert code for making a new analysis button"
+        #self.create_and_execute_code_cell(code)
+        
 
     def inductive(self, _):
         """_summary_
@@ -101,5 +105,13 @@ class BOGui:
         display(Javascript("""
         IPython.notebook.insert_cell_below('markdown')
         """))
+
+    def create_and_execute_code_cell(self, code=''):
+        display(Javascript("""
+        var code = IPython.notebook.insert_cell_at_bottom('code')
+        code.set_text("{0}")
+        Jupyter.notebook.execute_cells([-1])
+        """.format(code)))
+
 
 bogui = BOGui()
