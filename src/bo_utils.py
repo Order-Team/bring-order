@@ -1,0 +1,117 @@
+from ipywidgets import widgets
+from IPython.display import display, Javascript
+
+
+class BOUtils:
+    """General methods for creating widgets"""
+    def __init__(self):
+        """Class constructor"""
+        pass
+
+    def create_button(self, desc: str, command, style='success', tooltip=''):
+        """Creates button"""
+        button = widgets.Button(description=desc,
+                                button_style=style,
+                                tooltip=tooltip)
+        button.on_click(command)
+        return button
+
+    def create_message(self, value, style={'font-family': 'Arial, Helvetica, sans-serif',
+                                           'font_size': '15px'}):
+        """Creates HTML"""
+        message = widgets.HTML(value=value, style=style)
+        return message
+
+    def create_error_message(self, value=''):
+        """Creates HTML, color: red"""
+        error = self.create_message(value=value,
+                                    style={'font-family': 'Arial, Helvetica, sans-serif',
+                                           'font_size': '12px',
+                                           'text_color': 'red'})
+        return error
+
+    def create_input_field(self, default_value=''):
+        """Creates input field"""
+        input_field = widgets.Text(value=default_value)
+        return input_field
+
+    def create_text_area(self, default_value=''):
+        """Creates text box"""
+        text_area = widgets.Textarea(value=default_value,layout={'width': '80%'})
+        return text_area
+
+    def create_label(self, value):
+        """Creates label"""
+        label = widgets.Label(value=value,
+                              layout=widgets.Layout(justify_content='flex-end'))
+        return label
+
+    def create_placeholder(self):
+        """Creates empty label"""
+        placeholder = self.create_label('')
+        return placeholder
+
+    def create_grid(self, rows, cols, items, width='50%'):
+        """Creates grid of widgets"""
+        grid = widgets.GridspecLayout(rows,
+                                      cols,
+                                      height='auto',
+                                      width=width,
+                                      grid_gap="0px")
+        item_index = 0
+        for i in range(rows):
+            for j in range(cols):
+                grid[i, j] = items[item_index]
+                item_index += 1
+
+        return grid
+
+    def create_int_text(self, default_value=1, desc=''):
+        """Creates integer input"""
+        int_text = widgets.IntText(value=default_value, description=desc, layout={'width':'80px'})
+        return int_text
+
+    def create_radiobuttons(self, options, desc=''):
+        """Creates radiobuttons"""
+        radiobuttons = widgets.RadioButtons(
+            options=options,
+            description=desc,
+            disabled=False,
+            font_size ="15px")
+
+        return radiobuttons
+
+    def create_code_cells(self, how_many):
+        """Creates given number code cells below the current cell"""
+        for _ in range(how_many):
+            command = 'IPython.notebook.insert_cell_below("code")'
+            display(Javascript(command))
+
+    def clear_code_cells_below(self, first_cell, how_many):
+        """Clears the given number of code cells starting from given index"""
+        command = f'''
+        var cells = IPython.notebook.get_cells().reverse();
+        cells.forEach(function(cell) {{
+                var index = IPython.notebook.find_cell_index(cell);
+                if(index >= {first_cell} && index < {first_cell+how_many}) {{
+                    IPython.notebook.delete_cell(index);
+                }}
+        }});
+        '''
+        display(Javascript(command))
+        self.create_code_cells(how_many)
+
+    def delete_cell(self, index):
+        """Deletes code cell with given index"""
+        command = f'''
+        const cells = IPython.notebook.get_cells();
+        IPython.notebook.delete_cell({index});
+        '''
+        display(Javascript(command))
+
+    def run_cells(self, first_index, last_index):
+        """Rund cells from first to last index"""
+        command = f'''
+        IPython.notebook.execute_cell_range({first_index}, {last_index});
+        '''
+        display(Javascript(command))
