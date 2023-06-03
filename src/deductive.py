@@ -1,12 +1,12 @@
-''' Summary '''
 from ipywidgets import widgets
 from IPython.display import display
+from bogui import BOGui
 from boutils import BOUtils
 
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, start_cell, ui):
+    def __init__(self, start_cell):
         """Class constructor.
 
         Args:
@@ -14,8 +14,8 @@ class Deductive:
         """
         self.first_cell_index = start_cell
         self.cell_count = 1
+        self.bogui = BOGui()
         self.utils = BOUtils()
-        self.bogui=ui
         self.hypothesis_input = self.bogui.create_input_field()
         self.empty_hypo_error = self.bogui.create_error_message()
         self.null_input = self.bogui.create_input_field()
@@ -69,7 +69,7 @@ class Deductive:
         """
         if len(self.hypothesis_input.value) > 0 and len(self.null_input.value) > 0:
             return True
-
+        
         if self.hypothesis_input.value == '':
             self.empty_hypo_error.value = 'Hypothesis missing'
         else:
@@ -112,7 +112,7 @@ class Deductive:
         def open_cells(_=None):
             """Button function"""
             self.cell_count += self.add_cells_int.value
-            self.bogui.create_code_cells(self.add_cells_int.value)
+            self.utils.create_code_cells(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -204,7 +204,8 @@ class Deductive:
         def start_new_analysis(_=None):
             """Button function"""
             self.save_results(hypo, null, radio)
-            # Todo: start new analysis
+            command = f'BringOrder({self.first_cell_index+self.cell_count})'
+            self.utils.create_and_execute_code_cell(command)
 
         button = self.bogui.create_button(
             desc='New analysis',

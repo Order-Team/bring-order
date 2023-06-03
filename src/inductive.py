@@ -1,96 +1,145 @@
-''' Summary '''
 from ipywidgets import widgets
-from IPython.display import display, Javascript
+from IPython.display import display
+from bogui import BOGui
 from boutils import BOUtils
 
+
 class Inductive:
-    """_summary_
-    """
-    def __init__(self, start_cell, bogui):
-        """_summary_
+    """Class that guides inductive analysis"""
+    def __init__(self, start_cell):
+        """Class constructor.
 
         Args:
-            bogui (_type_): _description_
+            start_cell (int): the index of the notebook cell where the method is called
         """
         self.first_cell_index = start_cell
         self.cell_count = 1
+        self.bogui = BOGui()
         self.utils = BOUtils()
-        self.bogui = bogui
-        self.add_code = self.bogui.create_button("Add code cell", self.add_code_line, 'warning')
-        self.delete = self.bogui.create_button("Delete last cell", self.delete_last_cell, "danger")
-        self.run = self.bogui.create_button("Run code", self.ready_button, 'primary')
-        self.clean_code = self.bogui.create_button("Clean code blocks",
-                                                   self.clean_code_button, 'danger')
-        self.new_analysis_button = self.bogui.create_button('New analysis', self.start_new_analysis)
-        self.conclusion = None
+        self.add_cells_int = self.bogui.create_int_text()
+        self.cell_operations = self.create_cell_operations()
         self.notes = self.bogui.create_text_area()
+        self.conclusion = None
 
+    def create_open_cells_button(self):
+        """Creates button"""
+        def open_cells(_=None):
+            """Button function"""
+            self.cell_count += self.add_cells_int.value
+            self.utils.create_code_cells(self.add_cells_int.value)
 
+        button = self.bogui.create_button(
+            desc='Open cells',
+            command=open_cells,
+            style='warning')
+        
+        return button
 
-    def start_inductive(self, _=None):
-        """_summary_
+    def create_delete_button(self):
+        """Creates button"""
+        def delete_last_cell(_=None):
+            """Button function"""
+            self.utils.delete_cell(
+                self.first_cell_index+self.cell_count-1)
+            self.cell_count -= 1
 
-        Args:
-            _ (_type_, optional): _description_. Defaults to None.
-        """
-        buttons = widgets.HBox(children=[self.add_code, self.delete, self.run, self.clean_code])
-        display(buttons)
+        button = self.bogui.create_button(
+            desc='Delete last cell',
+            command=delete_last_cell,
+            style='danger')
+        
+        return button
 
-    def ready_button(self, _=None):
-        """ Summary """
+    def create_run_button(self):
+        """Creates button"""
+        def run_cells(_=None):
+            """Button function"""
+            self.utils.run_cells(
+                self.first_cell_index+1,
+                self.first_cell_index+self.cell_count)
 
-        self.run.disabled=True
-        self.add_code.disabled=True
-        self.utils.run_cells(self.first_cell_index+1, self.first_cell_index+self.cell_count)
-        if self.conclusion:
-            self.conclusion.close()
+            if self.conclusion:
+                self.conclusion.close()
 
-        label = self.bogui.create_label(value="Explain what you observed:")
+            notes_label = self.bogui.create_label(
+                value='Write notes about your analysis:')
+            new_button = self.create_new_analysis_button()
+            self.conclusion = widgets.VBox(
+                [widgets.HBox(
+                    [notes_label, self.notes]),
+                    new_button])
 
-        self.conclusion = widgets.VBox([widgets.HBox([label, self.notes]),
-                    self.new_analysis_button])
-        display(self.conclusion)
+            display(self.conclusion)
 
+        button = self.bogui.create_button(
+            desc='Run cells',
+            command=run_cells,
+            style='primary')
 
-    def start_new_analysis(self, _=None):
-        """Button function"""
-        self.save_results()
+        return button
 
-    def clean_code_button(self, _=None):
-        """ Summary """
-        display(Javascript(
-            """
-            var cells = IPython.notebook.get_cells().map(function(cell) {
-                if (cell.cell_type == "code") {
-                    var index = IPython.notebook.find_cell_index(cell);
-                    if (index != 0) {
-                        IPython.notebook.delete_cell(index);
-                    }
-                }
-            });
-            """
-        ))
-        self.bogui.create_code_cell()
-        self.clean_code.disabled=False
-        self.run.disabled=False
+    def create_clear_button(self):
+        """Creates button"""
+        def clear_cells(_=None):
+            """Button function"""
+            self.utils.clear_code_cells_below(
+                self.first_cell_index+1,
+                self.cell_count-1)
 
-    def add_code_line(self, _=None):
-        """ Summary """
-        self.clean_code.disabled=False
-        self.run.disabled=False
-        self.bogui.create_code_cell()
-
-    def delete_last_cell(self, _=None):
-        """Button function"""
-        self.utils.delete_cell(
-            self.first_cell_index+self.cell_count-1)
-        self.cell_count -= 1
+        button = self.bogui.create_button(
+            desc='Clear cells',
+            command=clear_cells,
+            style='danger')
+        return button
 
     def save_results(self):
         """Prints notes"""
         text = f'''
-            Inductive Analysis\n
-            Notes:\n
-            {self.notes.value}
-            '''
+        Inductive Analysis\n
+        Notes:\n
+        {self.notes.value}
+        '''
         print(text)
+        self.cell_operations.close()
+        self.conclusion.close()
+
+    def create_new_analysis_button(self):
+        """Creates button"""
+        def start_new_analysis(_=None):
+            """Button function"""
+            self.save_results()
+            command = f'BringOrder({self.first_cell_index+self.cell_count})'''
+            self.utils.create_and_execute_code_cell(command)
+
+        button = self.bogui.create_button(
+            desc='New analysis',
+            command=start_new_analysis)
+        
+        return button
+
+    def create_cell_operations(self):
+        """Starts inductive analysis"""
+        cell_number_label = self.bogui.create_label(
+            'Add code cells for your analysis:')
+
+        open_cells_button = self.create_open_cells_button()
+        delete_cell_button = self.create_delete_button()
+        clear_cells_button = self.create_clear_button()
+        run_cells_button = self.create_run_button()
+
+        grid = widgets.AppLayout(
+            left_sidebar=widgets.HBox(
+                [cell_number_label, self.add_cells_int]),
+            right_sidebar=widgets.TwoByTwoLayout(
+                top_left=open_cells_button,
+                bottom_left=run_cells_button,
+                top_right=delete_cell_button,
+                bottom_right=clear_cells_button
+            ),
+            height='auto',
+            width='70%')
+
+        return grid
+
+    def start_inductive_analysis(self):
+        display(self.cell_operations)

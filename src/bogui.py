@@ -1,46 +1,19 @@
-''' UI components for Bring Order '''
 from ipywidgets import widgets
-from IPython.display import display
-from IPython.display import Javascript
 
 
 class BOGui:
-    """Bring order GUI"""
+    """General methods for creating widgets"""
     def __init__(self):
+        """Class constructor"""
         pass
 
-    def create_button(self, desc: str, command, style="success", tooltip=''):
-        """ Method for creating buttons.
-
-        Args:
-            desc: Name/description of the button.
-            command: Method executed by the button on click
-            style: Style of the button : success', 'info', 'warning', 'danger' or ''
-            tooltip: String, that is shown when cursor hovering over button.
-
-        Returns:
-            button initialized by given arguments.
-    """
-        newbutton = widgets.Button(description=desc,
-                                   button_style=style,
-                                   tooltip=tooltip)
-        newbutton.on_click(command)
-        return newbutton
-
-
-
-    def create_code_cell(self):
-        """Create new empty code cell
-        """
-        display(Javascript("""
-        IPython.notebook.insert_cell_below('code')
-        """))
-
-    def create_markdown_cell(self):
-        '''Create new empty markdown cell'''
-        display(Javascript("""
-        IPython.notebook.insert_cell_below('markdown')
-        """))
+    def create_button(self, desc: str, command, style='success', tooltip=''):
+        """Creates button"""
+        button = widgets.Button(description=desc,
+                                button_style=style,
+                                tooltip=tooltip)
+        button.on_click(command)
+        return button
 
     def create_message(self, value, style={'font-family': 'Arial, Helvetica, sans-serif',
                                            'font_size': '15px'}):
@@ -106,10 +79,3 @@ class BOGui:
             font_size ="15px")
 
         return radiobuttons
-
-
-    def create_code_cells(self, how_many):
-        """Creates given number code cells below the current cell"""
-        for _ in range(how_many):
-            command = 'IPython.notebook.insert_cell_below("code")'
-            display(Javascript(command))
