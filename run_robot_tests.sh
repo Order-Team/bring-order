@@ -23,7 +23,7 @@ httptoken=$(cat noteout |grep -Eo -m 1 "http://127.0.0.1:[0-9]{4}/[?]token[=]{1}
 
 #run robot tests
 echo "Executing robot tests..."
-poetry run robot --variable URL:$httptoken src 
+poetry run robot --variable URL:$httptoken tests
 
 #terminate test notebook process
 kill -15 $R2D2

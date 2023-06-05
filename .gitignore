@@ -1,9 +1,7 @@
 __pycache__
 .env
-src/bogui.ipynb
-src/bringorder.ipynb
-src/.ipynb_checkpoints/
-tests/.ipynb_checkpoints/
+*.ipynb
+*.ipynb_checkpoints/
 log.html
 output.xml
 report.html
