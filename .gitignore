@@ -1,12 +1,11 @@
 __pycache__
 .env
-src/hypothesis.ipynb
 src/bogui.ipynb
+src/bringorder.ipynb
 src/.ipynb_checkpoints/
-src/.hypothesis.ipynb.swp
-src/tests/.ipynb_checkpoints/
+tests/.ipynb_checkpoints/
 log.html
 output.xml
 report.html
 selenium-screenshot*
-src/hypothesis.ipynb
+
