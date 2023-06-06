@@ -1,6 +1,5 @@
 *** Settings ***
 Library  SeleniumLibrary
-Library  OperatingSystem
 
 
 *** Variables ***
@@ -34,8 +33,3 @@ Clear Notebook And Close Browser
         Click Button  title:cut selected cells
     END
     Close Browser
-
-Import And Call BringOrder
-    Wait Until Element Is Enabled  class:CodeMirror-line
-    Input Text  class:CodeMirror-line  from src.bringorder import BringOrder; BringOrder(0)
-    Run Notebook
