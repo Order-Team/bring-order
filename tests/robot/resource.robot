@@ -7,6 +7,7 @@ ${BROWSER}  chrome
 ${DELAY}  0.2 seconds
 # Paste the correct URL here:
 ${URL}  http://localhost:8888/?token=...
+${CUT_BUTTON}  //*[@id="cut_copy_paste"]/button[1]
 ${CLEAR_OUTPUT}  //*[@id="clear_all_output"]/a
 
 
@@ -30,6 +31,6 @@ Clear Notebook And Close Browser
     Click Link  All Output
     Click Link  xpath:${CLEAR_OUTPUT}
     FOR  ${index}  IN RANGE  1  ${cell_count}
-        Click Button  title:cut selected cells
+        Click Button  xpath:${CUT_BUTTON}
     END
     Close Browser
