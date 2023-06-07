@@ -7,7 +7,7 @@ from src.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
-        self.instance = Inductive(0)     
+        self.instance = Inductive()     
         self.instance.utils = Mock(wraps=BOUtils)   
         self.instance.bogui = Mock()
 

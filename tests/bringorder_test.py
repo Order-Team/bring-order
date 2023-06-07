@@ -6,7 +6,7 @@ from src.bogui import BOGui
 
 class TestBringOrder(unittest.TestCase):
     def setUp(self):
-        self.instance = BringOrder(0)
+        self.instance = BringOrder()
         self.instance.bogui = Mock()
 
     def test_buttons_are_created(self):

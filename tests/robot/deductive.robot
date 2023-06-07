@@ -78,7 +78,7 @@ Clicking New Analysis Button Should Print Conclusion And Start New Analysis
     Page Should Not Contain  Add code cells for your analysis
     Page Should Contain  Accepted: Hypothesis: x < 0
     Page Should Contain Element  xpath:${NEW_CELL}
-    Element Should Contain  xpath:${NEW_INPUT}  BringOrder(1)
+    Element Should Contain  xpath:${NEW_INPUT}  BringOrder()
     Element Should Contain  xpath:${NEW_OUTPUT2}  New Analysis
 
 Saving New Hypotheses Should Succeed

@@ -11,7 +11,7 @@ class TestDeductive(unittest.TestCase):
     def setUp(self):
         """ test instance of Deductive - class
         """
-        self.instance = Deductive(0)
+        self.instance = Deductive()
 
     def test_empty_hypothesis(self):
         self.assertFalse(self.instance.check_hypotheses())
