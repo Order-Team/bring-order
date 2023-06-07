@@ -37,15 +37,32 @@ class BOUtils:
         display(Javascript(command))
 
     def run_cells(self, first_index, last_index):
-        """Rund cells from first to last index"""
+        """Runs cells from first to last index"""
         command = f'''
         IPython.notebook.execute_cell_range({first_index}, {last_index});
         '''
         display(Javascript(command))
 
     def create_and_execute_code_cell(self, code=''):
-        display(Javascript("""
-        var code = IPython.notebook.insert_cell_at_bottom('code')
-        code.set_text("{0}")
-        Jupyter.notebook.execute_cells([-1])
-        """.format(code)))
+        """Creates a new cell at the bottom with given code and runs it"""
+        command = f'''
+        var code = IPython.notebook.insert_cell_at_bottom('code');
+        code.set_text("{code}");
+        Jupyter.notebook.execute_cells([-1]);
+        '''
+        display(Javascript(command))
+
+    # Todo: Figure out how to access the updated cell_idx value in the same code block.
+    # As it is, Notebook seems to execute the full Python code before Javascript has a
+    # chance to set cell_idx via kernel.execute().
+    def set_cell_idx(self):
+        """Sets cell_idx to the index of the code cell in which this function is called"""
+        command = """
+        var cell_idx = IPython.notebook.get_selected_index();
+        IPython.notebook.kernel.execute(`
+            cell_idx = ${cell_idx}
+            `);            
+            console.log('Current cell index: ' + cell_idx)
+        """
+        display(Javascript(command))
+

@@ -10,12 +10,18 @@ from bogui import BOGui
 from deductive import Deductive
 from inductive import Inductive
 
+from boutils import BOUtils
 
 class BringOrder:
     """Main class"""
     def __init__(self, start_cell):
         """Class constructor"""
         self.start_cell = start_cell
+        
+        #Testing set_cell_idx, only logs current cell index for now
+        self.boutils = BOUtils()
+        self.boutils.set_cell_idx()
+
         self.bogui = BOGui()
         self.deductive = Deductive(start_cell)
         self.inductive = Inductive(start_cell)
