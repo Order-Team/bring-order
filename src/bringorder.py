@@ -1,30 +1,26 @@
+"""Main class"""
 import os
 import sys
+from ipywidgets import widgets
+from IPython.display import display
+
 wd = os.getcwd()
 class_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, class_dir)
-
-from ipywidgets import widgets
-from IPython.display import display
 from bogui import BOGui
 from deductive import Deductive
 from inductive import Inductive
-
 from boutils import BOUtils
+
 
 class BringOrder:
     """Main class"""
-    def __init__(self, start_cell):
+    def __init__(self):
         """Class constructor"""
-        self.start_cell = start_cell
-        
-        #Testing set_cell_idx, only logs current cell index for now
         self.boutils = BOUtils()
-        self.boutils.set_cell_idx()
-
         self.bogui = BOGui()
-        self.deductive = Deductive(start_cell)
-        self.inductive = Inductive(start_cell)
+        self.deductive = Deductive()
+        self.inductive = Inductive()
         self.deductive_button = self.bogui.create_button(
             desc='Deductive',
             command=self.start_deductive_analysis)
@@ -51,6 +47,7 @@ class BringOrder:
         self.inductive.start_inductive_analysis()
 
     def bring_order(self):
+        """Shows buttons Deductive and Inductive"""
         display(widgets.HBox([self.deductive_button, self.inductive_button]))
 
     def __repr__(self):

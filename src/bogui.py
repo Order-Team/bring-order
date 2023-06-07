@@ -1,3 +1,4 @@
+"""Methods for creating widgets"""
 from ipywidgets import widgets
 
 

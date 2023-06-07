@@ -1,3 +1,4 @@
+"""Inductive class"""
 from ipywidgets import widgets
 from IPython.display import display
 from bogui import BOGui
@@ -6,13 +7,12 @@ from boutils import BOUtils
 
 class Inductive:
     """Class that guides inductive analysis"""
-    def __init__(self, start_cell):
+    def __init__(self):
         """Class constructor.
 
         Args:
             start_cell (int): the index of the notebook cell where the method is called
         """
-        self.first_cell_index = start_cell
         self.cell_count = 1
         self.bogui = BOGui()
         self.utils = BOUtils()
@@ -32,22 +32,23 @@ class Inductive:
             desc='Open cells',
             command=open_cells,
             style='warning')
-        
+
         return button
 
     def create_delete_button(self):
         """Creates button"""
         def delete_last_cell(_=None):
             """Button function"""
-            self.utils.delete_cell(
-                self.first_cell_index+self.cell_count-1)
-            self.cell_count -= 1
+            if self.cell_count > 1:
+                self.utils.delete_cell(
+                    self.cell_count-1)
+                self.cell_count -= 1
 
         button = self.bogui.create_button(
             desc='Delete last cell',
             command=delete_last_cell,
             style='danger')
-        
+
         return button
 
     def create_run_button(self):
@@ -55,8 +56,7 @@ class Inductive:
         def run_cells(_=None):
             """Button function"""
             self.utils.run_cells(
-                self.first_cell_index+1,
-                self.first_cell_index+self.cell_count)
+                self.cell_count-1)
 
             if self.conclusion:
                 self.conclusion.close()
@@ -83,7 +83,6 @@ class Inductive:
         def clear_cells(_=None):
             """Button function"""
             self.utils.clear_code_cells_below(
-                self.first_cell_index+1,
                 self.cell_count-1)
 
         button = self.bogui.create_button(
@@ -108,13 +107,13 @@ class Inductive:
         def start_new_analysis(_=None):
             """Button function"""
             self.save_results()
-            command = f'BringOrder({self.first_cell_index+self.cell_count})'''
+            command = 'BringOrder()'
             self.utils.create_and_execute_code_cell(command)
 
         button = self.bogui.create_button(
             desc='New analysis',
             command=start_new_analysis)
-        
+
         return button
 
     def create_cell_operations(self):
@@ -142,4 +141,5 @@ class Inductive:
         return grid
 
     def start_inductive_analysis(self):
+        """Starts inductive analysis"""
         display(self.cell_operations)
