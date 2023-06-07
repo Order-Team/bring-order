@@ -54,7 +54,7 @@ jupyter notebook
 
 6. Choose deductive or inductive option
 
-- **Decuctive**:  Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x=0* and *x>0*
+- **Decuctive**:  Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x>0* and *x=0*
 - **Inductive**: 
 
 
@@ -76,35 +76,25 @@ pylint src
 ```
 
 ## Run robot tests
-1. Navigate to main folder and go to virtual environment
+1. Navigate to the main folder and go to virtual environment
 
 ```bash
 poetry shell
 ```
 
-2. Launch Jupyter Notebook
+2. Run robot test script
 
 ```bash
-jupyter notebook
+./run_robot_tests.sh
 ```
 
-3. Copy one of the URLs that you find in the terminal, paste it to ${URL} variable in /src/tests/robot/resource.robot, and save changes.
-
-4. Open another terminal tab, and activate the virtual environment again
-
+If the script won't run, give it execution rights first and try again
 ```bash
-poetry shell
-```
-
-5. Run the robot tests
-
-```bash
-robot src
+chmod +x run_robot_tests.sh
 ```
 
 If the first run fails, try once again. Sometimes there are some connection issues.
-When you are done, you can shut down the notebook server by pressing Ctrl+C twice in the same terminal tab where you launched it.
-You can exit the virtual environment with command
+When you are done, you can exit the virtual environment with command
 
 ```bash
 exit
