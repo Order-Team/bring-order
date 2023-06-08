@@ -34,7 +34,7 @@ jobs:
         run: poetry run coverage run --branch -m pytest
        
       - name: Analysing the code with pylint
-        run: poetry run pylint --fail-under=8 src/
+        run: poetry run pylint --fail-under=8 bring_order/
         
       - name: Coverage report
         run: poetry run coverage xml
