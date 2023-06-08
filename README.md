@@ -76,6 +76,7 @@ pylint src
 ```
 
 ## Run robot tests
+
 1. Navigate to the main folder and go to virtual environment
 
 ```bash
@@ -99,3 +100,32 @@ When you are done, you can exit the virtual environment with command
 ```bash
 exit
 ```
+
+## Run tests with Invoke
+
+The previous tests can also be run by using Invoke:
+
+1. Go to the main folder
+
+2. If Invoke has not been locally installed, go to Poetry shell:
+```bash
+poetry shell
+```
+
+3. Run Invoke with any of the following:
+```bash
+invoke tests
+```
+to run pytests
+```bash
+invoke lint
+```
+to run pylint
+```bash
+invoke robottests
+```
+to run robottests
+```bash
+invoke alltests
+```
+to run all of the above
