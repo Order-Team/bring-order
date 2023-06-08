@@ -1,8 +1,8 @@
 import unittest
-import src
+import bring_order
 from unittest.mock import Mock, ANY
-from src.bringorder import BringOrder
-from src.bogui import BOGui
+from bring_order.bringorder import BringOrder
+from bring_order.bogui import BOGui
 
 class TestBringOrder(unittest.TestCase):
     def setUp(self):

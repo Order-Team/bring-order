@@ -1,9 +1,9 @@
 import unittest
-import src
-from src.inductive import Inductive
+import bring_order
+from bring_order.inductive import Inductive
 from unittest.mock import Mock, MagicMock
-from src.boutils import BOUtils
-from src.bogui import BOGui
+from bring_order.boutils import BOUtils
+from bring_order.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):

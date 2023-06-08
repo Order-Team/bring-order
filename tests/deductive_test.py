@@ -1,9 +1,9 @@
 import unittest
-import src
-from src.deductive import Deductive
+import bring_order
+from bring_order.deductive import Deductive
 from unittest.mock import Mock, MagicMock
-from src.boutils import BOUtils
-from src.bogui import BOGui
+from bring_order.boutils import BOUtils
+from bring_order.bogui import BOGui
 
 class TestDeductive(unittest.TestCase):
     """ Test class for testing the Deductive class

@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+bring_order/__init__.py
+bring_order/bogui.py
+bring_order/boutils.py
+bring_order/bringorder.py
+bring_order/deductive.py
+bring_order/inductive.py
+testbringorder.egg-info/PKG-INFO
+testbringorder.egg-info/SOURCES.txt
+testbringorder.egg-info/dependency_links.txt
+testbringorder.egg-info/requires.txt
+testbringorder.egg-info/top_level.txt

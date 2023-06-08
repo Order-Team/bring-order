@@ -1,7 +1,7 @@
 import unittest
-import src
+import bring_order
 from unittest.mock import Mock, patch, MagicMock
-from src.boutils import BOUtils
+from bring_order.boutils import BOUtils
 
 class TestBOUtils(unittest.TestCase):
     def setUp(self):
