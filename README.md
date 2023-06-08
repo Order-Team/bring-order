@@ -3,11 +3,10 @@
 [![codecov](https://codecov.io/gh/Order-team/bring-order/branch/main/graph/badge.svg?token=e8bdd46f-46b0-410c-820b-84ffca9ca53c)](https://codecov.io/gh/Order-team/bring-order)
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
-The tool is aimed at helping data scientists formulate their hypotheses better. When a hypothesis has been formulated clearly, the following is expected after analysis:
-
-- the data analysis environment can state whether the hypothesis was supported or not
-
-- any analysis that was not directly related to hypothesis testing can be identified
+The tool is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
+User can choose deductive or inductive analysis.
+Deductive analysis asks the user to set the hypothesis and null hypothesis, run their analysis, and confirm one of the hypotheses.
+Inductive analysis is an option to perform explorative analysis and write notes about it.
 
 
 ## Documentation
@@ -20,102 +19,109 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 ## Installation
 
 ### Installation from TestPypi
+- If you don't have Jupyter Notebook installed, install it with
+```bash
+    pip install notebook
+```
 
-- Install ipywidget extension:
+- If you don't have ipywidgets installed, install it with
 
 ```bash
     pip install ipywidgets
 ```
+
+- If you have an old version of ipywidgets installed, upgrade it with
+
+```bash
+    pip install --upgrade ipywidgets
+```
+
 - Install testbringorder extention:
 ```bash
     pip install -i https://test.pypi.org/simple/ testbringorder
 ```
 
 ### Usage
+- Open Jupyter Notebook with
+```bash
+    jupyter notebook
+```
 
-In Jupyter Notebook execute:
+- In Jupyter Notebook execute
 
 ``` 
     from bring_order import BringOrder
-    bo = BringOrder()
+    BringOrder()
 ```
+
+- Make sure that your notebook is in Trusted state. Otherwise the widgets might not work correctly.
 
 ## Development
 
-### Dependencies 
-
-- Install dependencies
+### Dependencies
+- Clone the project and install dependencies in the main folder
 
 ```bash
     poetry install
 ```
 
-## Run unittests
-
-1. Run from main folder
-
-```bash
-    pytest
-```
-
-## Run style check
-
-- Run from main folder
-
-```bash
-    pylint bring_order
-```
-
-## Run robot tests
-
-- Navigate to the main folder and go to virtual environment
+### Testing
+- Navigate to main folder and go to the virtual environment
 
 ```bash
     poetry shell
 ```
 
-- Run robot test script
+#### Run unit tests
+
+```bash
+    pytest tests
+```
+
+#### Run style check
+
+```bash
+    pylint bring_order
+```
+
+#### Run robot tests
+- Make sure you have chromedriver installed and matching your Chrome version before running
 
 ```bash
     ./run_robot_tests.sh
 ```
 
-If the script won't run, give it execution rights first and try again
+- If the script won't run, give it execution rights first and try again
 ```bash
 chmod +x run_robot_tests.sh
 ```
 
-If the first run fails, try once again. Sometimes there are some connection issues.
+- If the first run fails, try once again. Sometimes there are some connection issues.
 When you are done, you can exit the virtual environment with command
 
 ```bash
 exit
 ```
 
-## Run tests with Invoke
+#### Run tests with Invoke
 
-The previous tests can also be run by using Invoke:
+- The previous tests can also be run using Invoke in poetry shell:
 
-1. Go to the main folder
-
-2. If Invoke has not been locally installed, go to Poetry shell:
-```bash
-poetry shell
-```
-
-3. Run Invoke with any of the following:
 ```bash
 invoke tests
 ```
-to run pytests
+to run unit tests
+
 ```bash
 invoke lint
 ```
 to run pylint
+
 ```bash
 invoke robottests
 ```
 to run robottests
+
 ```bash
 invoke alltests
 ```
