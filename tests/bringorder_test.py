@@ -21,4 +21,6 @@ class TestBringOrder(unittest.TestCase):
         self.instance.start_inductive_analysis()
         self.assertFalse(self.instance.deductive)                 
 
-        
+    def test_representation(self):
+        printed = self.instance.__repr__()
+        self.assertEqual(printed, "New Analysis")

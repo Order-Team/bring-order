@@ -1,7 +1,7 @@
 import unittest
 import src
 from src.inductive import Inductive
-from unittest.mock import Mock, ANY
+from unittest.mock import Mock, MagicMock
 from src.boutils import BOUtils
 from src.bogui import BOGui
 
@@ -17,9 +17,23 @@ class TestInductive(unittest.TestCase):
     def test_new_analysis_has_no_conclusion(self):
         self.assertIsNone(self.instance.conclusion)
 
-    def test_open_cells_creates_button(self):
+    def test_open_cells_button_creates_button(self):
         self.instance.create_open_cells_button()
         self.instance.bogui.create_button.assert_called()
+
+    def test_create_delete_button_creates_button(self):
+        self.instance.create_delete_button()
+        self.instance.bogui.create_button.assert_called()
+
+    def test_create_run_button_creates_button(self):
+        self.instance.create_run_button()
+        self.instance.bogui.create_button.assert_called()
+
+    def test_create_clear_button_creates_button(self):
+        self.instance.create_clear_button()
+        self.instance.bogui.create_button.assert_called()
+
+        
 
 
 
