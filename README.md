@@ -19,6 +19,20 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 
 ## Installation
 
+### Installation from TestPypi
+
+```bash
+pip install -i https://test.pypi.org/simple/ testbringorder
+```
+
+In Jupyter Notebook execute:
+
+``` 
+    from bring_order import BringOrder
+    bo = BringOrder()
+```
+
+
 ### Dependencies 
 
 1. Install dependencies
@@ -29,19 +43,19 @@ poetry install
 
 ### Execute program
 
-1. Go into virtual environment
+Go into virtual environment
 
 ```bash
-poetry shell
+    poetry shell
 ```
 
-2. Run in project folder. A *bogui.ipynb* file should appear in /src - folder.
+Run in project folder. A *bogui.ipynb* file should appear in /src - folder.
 
 ```bash
-py2nb src/bogui.py
+    py2nb src/bogui.py
 ```
 
-3. Run in project folder
+Run in project folder
 
 ```bash
 jupyter notebook
