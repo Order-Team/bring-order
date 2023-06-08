@@ -11,10 +11,8 @@ class TestDeductive(unittest.TestCase):
     def setUp(self):
         """ test instance of Deductive - class
         """
-<<<<<<< HEAD
-        self.instance = Deductive()=======
+        self.instance = Deductive()
         self.instance.bogui = Mock()
->>>>>>> e915850 (more unit tests)
 
     def test_empty_hypothesis(self):
         self.instance.hypothesis_input.value = "" 
