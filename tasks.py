@@ -14,4 +14,4 @@ def robottests(c):
 
 @task
 def alltests(c):
-    c.run("pytest bring_order; pylint bring_order; poetry shell && ./run_robot_tests.sh")
+    c.run("pytest; pylint bring_order; poetry shell && ./run_robot_tests.sh")
