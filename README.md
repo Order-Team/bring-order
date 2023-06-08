@@ -21,9 +21,17 @@ The tool is aimed at helping data scientists formulate their hypotheses better. 
 
 ### Installation from TestPypi
 
+- Install ipywidget extension:
+
 ```bash
-pip install -i https://test.pypi.org/simple/ testbringorder
+    pip install ipywidgets
 ```
+- Install testbringorder extention:
+```bash
+    pip install -i https://test.pypi.org/simple/ testbringorder
+```
+
+### Usage
 
 In Jupyter Notebook execute:
 
@@ -32,75 +40,44 @@ In Jupyter Notebook execute:
     bo = BringOrder()
 ```
 
+## Development
 
 ### Dependencies 
 
-1. Install dependencies
+- Install dependencies
 
 ```bash
-poetry install
+    poetry install
 ```
-
-### Execute program
-
-Go into virtual environment
-
-```bash
-    poetry shell
-```
-
-Run in project folder. A *bogui.ipynb* file should appear in /src - folder.
-
-```bash
-    py2nb src/bogui.py
-```
-
-Run in project folder
-
-```bash
-jupyter notebook
-```
-
-4. Go to the address where the Jupyter Notebook- server is running on localhost. Navigate to **src/bogui.ipynb**
-
-
-5. Add a new code line and write depending on where you are in the project folder ``` from src.bogui import BOGui ```
-
-6. Choose deductive or inductive option
-
-- **Decuctive**:  Insert your *hypothesis* and *null hypothesis* to the fields. E.g. *x>0* and *x=0*
-- **Inductive**: 
-
-
 
 ## Run unittests
 
 1. Run from main folder
 
 ```bash
-pytest src
+    pytest
 ```
 
 ## Run style check
 
-1. Run from main folder
+- Run from main folder
 
 ```bash
-pylint src
+    pylint bring_order
 ```
 
 ## Run robot tests
 
-1. Navigate to the main folder and go to virtual environment
+- Navigate to the main folder and go to virtual environment
 
 ```bash
-poetry shell
+    poetry shell
 ```
 
-2. Run robot test script
+- Run robot test script
 
 ```bash
-./run_robot_tests.sh
+    ./run_robot_tests.sh
 ```
 
 If the script won't run, give it execution rights first and try again
