@@ -56,3 +56,9 @@ class BOUtils:
         Jupyter.notebook.execute_cells([-1]);
         '''
         display(Javascript(command))
+
+    def create_markdown_cell(self):
+        '''Create new empty markdown cell'''
+        display(Javascript("""
+        IPython.notebook.insert_cell_below('markdown')
+        """))
