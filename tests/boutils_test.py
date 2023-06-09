@@ -8,7 +8,7 @@ class TestBOUtils(unittest.TestCase):
         self.instance = BOUtils()
 
     def test_clear_cells_creates_new_cells(self):
-        BOUtils.create_code_cells = MagicMock()
+        BOUtils.create_code_cells_at_bottom = MagicMock()
         self.instance.clear_code_cells_below(5)
-        self.instance.create_code_cells.assert_called()
+        self.instance.create_code_cells_at_bottom.assert_called()
 

@@ -11,8 +11,8 @@ class TestInductive(unittest.TestCase):
         self.instance.utils = Mock(wraps=BOUtils)   
         self.instance.bogui = Mock()
 
-    def test_cell_count_starts_at_1(self):
-        self.assertEqual(self.instance.cell_count, 1)
+    def test_cell_count_starts_at_0(self):
+        self.assertEqual(self.instance.cell_count, 0)
 
     def test_new_analysis_has_no_conclusion(self):
         self.assertIsNone(self.instance.conclusion)
