@@ -13,7 +13,7 @@ class Deductive:
         Args:
             start_cell (int): the index of the notebook cell where the method is called
         """
-        self.cell_count = 1
+        self.cell_count = 0
         self.bogui = BOGui()
         self.utils = BOUtils()
         self.hypothesis_input = self.bogui.create_input_field()
@@ -112,7 +112,7 @@ class Deductive:
         def open_cells(_=None):
             """Button function"""
             self.cell_count += self.add_cells_int.value
-            self.utils.create_code_cells(self.add_cells_int.value)
+            self.utils.create_code_cells_at_bottom(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -129,9 +129,9 @@ class Deductive:
         """
         def delete_last_cell(_=None):
             """Button function"""
-            if self.cell_count > 1:
+            if self.cell_count > 0:
                 self.utils.delete_cell(
-                    self.cell_count-1)
+                    self.cell_count)
                 self.cell_count -= 1
 
         button = self.bogui.create_button(
@@ -146,7 +146,7 @@ class Deductive:
         def run_cells(_=None):
             """Button function"""
             self.utils.run_cells(
-                self.cell_count-1)
+                self.cell_count)
 
             if self.conclusion:
                 self.conclusion.close()
@@ -178,7 +178,7 @@ class Deductive:
         def clear_cells(_=None):
             """Button function"""
             self.utils.clear_code_cells_below(
-                self.cell_count-1)
+                self.cell_count)
 
         button = self.bogui.create_button(
             desc='Clear cells',

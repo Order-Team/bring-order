@@ -13,7 +13,7 @@ class Inductive:
         Args:
             start_cell (int): the index of the notebook cell where the method is called
         """
-        self.cell_count = 1
+        self.cell_count = 0
         self.bogui = BOGui()
         self.utils = BOUtils()
         self.add_cells_int = self.bogui.create_int_text()
@@ -25,8 +25,8 @@ class Inductive:
         """Creates button"""
         def open_cells(_=None):
             """Button function"""
-            self.cell_count += self.add_cells_int.value
-            self.utils.create_code_cells(self.add_cells_int.value)
+            self.cell_count += self.add_cells_int.value * 2
+            self.utils.create_code_and_observation_cells(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -39,13 +39,15 @@ class Inductive:
         """Creates button"""
         def delete_last_cell(_=None):
             """Button function"""
-            if self.cell_count > 1:
+            if self.cell_count > 0:
+                self.utils.delete_cell(
+                    self.cell_count)
                 self.utils.delete_cell(
                     self.cell_count-1)
-                self.cell_count -= 1
+                self.cell_count -= 2
 
         button = self.bogui.create_button(
-            desc='Delete last cell',
+            desc='Delete last cells',
             command=delete_last_cell,
             style='danger')
 
@@ -56,7 +58,7 @@ class Inductive:
         def run_cells(_=None):
             """Button function"""
             self.utils.run_cells(
-                self.cell_count-1)
+                self.cell_count)
 
             if self.conclusion:
                 self.conclusion.close()
@@ -82,8 +84,8 @@ class Inductive:
         """Creates button"""
         def clear_cells(_=None):
             """Button function"""
-            self.utils.clear_code_cells_below(
-                self.cell_count-1)
+            self.utils.clear_code_and_observation_cells(
+                self.cell_count)
 
         button = self.bogui.create_button(
             desc='Clear cells',
