@@ -8,6 +8,7 @@ wd = os.getcwd()
 class_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, class_dir)
 from bogui import BOGui
+from bodi import Bodi
 from deductive import Deductive
 from inductive import Inductive
 from boutils import BOUtils
@@ -19,6 +20,7 @@ class BringOrder:
         """Class constructor"""
         self.boutils = BOUtils()
         self.bogui = BOGui()
+        self.bodi = Bodi()
         self.deductive = Deductive()
         self.inductive = Inductive()
         self.deductive_button = self.bogui.create_button(
@@ -48,6 +50,8 @@ class BringOrder:
 
     def bring_order(self):
         """Shows buttons Deductive and Inductive"""
+        data_limits = self.bodi.bodi() #string variable for the data limits
+        print(data_limits) #Testing purposes only
         display(widgets.HBox([self.deductive_button, self.inductive_button]))
 
     def __repr__(self):
