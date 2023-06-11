@@ -1,5 +1,6 @@
 [MAIN]
 
+init-hook="import imp, os; from pylint.config import find_pylintrc; imp.load_source('import_hook', os.path.join(os.path.dirname(find_pylintrc()), 'bring_order/bringorder.py'))"
 # Analyse import fallback blocks. This can be used to support both Python 2 and
 # 3 compatible code, which means that the block might have code that exists
 # only in one or another interpreter, leading to false positives when analysed.
