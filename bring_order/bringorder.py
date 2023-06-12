@@ -24,7 +24,10 @@ class BringOrder:
         self.inductive_button = self.bogui.create_button(
             desc='Inductive',
             command=self.start_inductive_analysis)
-        self.bodi = Bodi(self.start_analysis)
+        self.bodi = Bodi(
+            self.boutils,
+            self.bogui,
+            self.start_analysis)
         if data_import:
             self.bring_order()
         else:

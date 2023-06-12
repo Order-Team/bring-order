@@ -4,18 +4,16 @@ and requirements of data. After code cells displays "ready to analyse" button. A
 pressed displays text field and "ready" button. Empty text field is not accepted.'''
 from ipywidgets import widgets
 from IPython.display import display
-from boutils import BOUtils
-from bogui import BOGui
 
 
 class Bodi:
     '''Creates code cells for importing data and markdown cell(s) to describe data limitations'''
-    def __init__(self, start_analysis):
+    def __init__(self, boutils, bogui, start_analysis):
         """Class constructor
         """
         self.start_analysis = start_analysis
-        self.boutils = BOUtils()
-        self.bogui = BOGui()
+        self.boutils = boutils
+        self.bogui = bogui
         self.cell_count = 1
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()

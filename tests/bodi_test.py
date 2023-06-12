@@ -2,6 +2,7 @@ import unittest
 import bring_order
 from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
+from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
 from IPython import display
 
@@ -11,8 +12,9 @@ class TestBodi(unittest.TestCase):
         def start_analysis():
             pass
 
-        self.instance = Bodi(start_analysis=start_analysis)
+        self.instance = Bodi(BOUtils(), BOGui(), start_analysis=start_analysis)
         self.instance.boutils = Mock()
+        self.instance.bogui = Mock()
 
     def test_bodi_creates_markdown_cell(self):
         self.instance.bodi()
