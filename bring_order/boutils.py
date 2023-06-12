@@ -13,7 +13,7 @@ class BOUtils:
             command = 'IPython.notebook.insert_cell_below("code")'
             display(Javascript(command))
 
-    def create_markdow_cells_below(self, how_many):
+    def create_markdown_cells_below(self, how_many):
         """Creates the given number of code cells below the current cell"""
         for _ in range(how_many):
             command = 'IPython.notebook.insert_cell_below("markdown")'

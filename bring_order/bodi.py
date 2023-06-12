@@ -11,14 +11,14 @@ class Bodi:
 
     def add_code_cell(self):
         '''display code cells for importing and cleaning data'''
-        self.boutils.create_code_cells(2)
+        self.boutils.create_code_cells_below(2)
 
     def data_limits(self):
         '''method to display text field and ready button 
 
         returns:
             string typed into text field'''
-        self.boutils.create_markdown_cell()
+        self.boutils.create_markdown_cells_below()
         return "Hello World!"
 
     def bodi(self):
