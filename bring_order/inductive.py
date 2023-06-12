@@ -1,6 +1,7 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
 from IPython.display import display
+import uuid
 
 class Inductive:
     """Class that guides inductive analysis"""
@@ -18,6 +19,7 @@ class Inductive:
         self.cell_operations = self.create_cell_operations()
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
+         
 
     def create_open_cells_button(self):
         """Creates button"""
@@ -85,6 +87,11 @@ class Inductive:
     def save_results(self):
         """Prints notes"""
         text = f'''Inductive Analysis\n Notes:\n {self.notes.value}'''
+
+        """ tallentaminen
+        
+        new = InductiveSummary()
+        new.add(uuid.uuid4(), 15, 'data') """
         print(text)
         self.cell_operations.close()
         self.conclusion.close()
