@@ -8,13 +8,21 @@ from IPython import display
 class TestBodi(unittest.TestCase):
 
     def setUp(self):
-        self.instance = Bodi()
+        def start_analysis():
+            pass
+
+        self.instance = Bodi(start_analysis=start_analysis)
         self.instance.boutils = Mock()
 
-    def test_add_code_cell_adds_two_cells(self):
-        self.instance.add_code_cell()
-        self.instance.boutils.create_code_cells_below.assert_called_with(2)
+    def test_bodi_creates_markdown_cell(self):
+        self.instance.bodi()
+        self.instance.boutils.create_markdown_cells_at_bottom.assert_called_with(
+            1, text="## Data description"
+        )
 
-    def test_data_limits_creates_markdown_cell(self):
-        self.instance.data_limits()    
-        self.instance.boutils.create_markdown_cells_below.assert_called()
+    def test_check_limitations_returns_false_when_empty(self):
+        self.assertFalse(self.instance.check_limitations())
+
+    def test_check_limitations_returns_true_when_not_empty(self):
+        self.instance.data_limitations.value = "Some limitations"
+        self.assertTrue(self.instance.check_limitations())

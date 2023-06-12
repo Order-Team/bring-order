@@ -9,7 +9,7 @@ class TestInductive(unittest.TestCase):
     def setUp(self):
         self.test_bogui = BOGui()
         self.test_utils = BOUtils()
-        self.instance = Inductive(self.test_utils, self.test_bogui)
+        self.instance = Inductive()
         self.instance.utils = Mock(wraps=BOUtils)
         self.instance.bogui = Mock()
 
