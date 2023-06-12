@@ -1,24 +1,22 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
 from IPython.display import display
+from boutils import BOUtils
+from bogui import BOGui
 import uuid
 
 class Inductive:
     """Class that guides inductive analysis"""
-    def __init__(self, boutils, bogui):
-        """Class constructor.
-
-        Args:
-            boutils: BOUtils object
-            bogui: BOGui object
-        """
+    def __init__(self):
+        """Class constructor."""
         self.cell_count = 0
-        self.bogui = bogui
-        self.utils = boutils
+        self.bogui = BOGui()
+        self.utils = BOUtils()
         self.add_cells_int = self.bogui.create_int_text()
         self.cell_operations = self.create_cell_operations()
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
+        self.start_inductive_analysis()
          
 
     def create_open_cells_button(self):
@@ -61,7 +59,7 @@ class Inductive:
                 self.conclusion.close()
 
             notes_label = self.bogui.create_label(
-                value='Write a summary of your analysis:')
+                value='Summarize your analysis:')
             ready_button = self.create_ready_button()
             self.conclusion = widgets.VBox([widgets.HBox(
                     [notes_label, self.notes]),ready_button])
@@ -113,7 +111,7 @@ class Inductive:
         """Creates New Analysis button"""
         def start_new_analysis(_=None):
             """Button function"""
-            command = 'BringOrder()'
+            command = 'BringOrder(data_import=False)'
             self.utils.create_and_execute_code_cell(command)
 
         button = self.bogui.create_button(
@@ -153,3 +151,6 @@ class Inductive:
         '''Created button to start a new analysis'''
         new_button = self.create_new_analysis_button()
         display(new_button)
+
+    def __repr__(self):
+        return ''

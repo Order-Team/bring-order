@@ -8,11 +8,7 @@ from boutils import BOUtils
 class Deductive:
     """Class that guides deductive analysis"""
     def __init__(self):
-        """Class constructor.
-
-        Args:
-            start_cell (int): the index of the notebook cell where the method is called
-        """
+        """Class constructor."""
         self.cell_count = 0
         self.bogui = BOGui()
         self.utils = BOUtils()
@@ -25,6 +21,7 @@ class Deductive:
         self.confirmed_grid = None
         self.conclusion = None
         self.limitation_prompt = None
+        self.start_deductive_analysis()
 
     def create_hypotheses_grid(self):
         """Creates widgets"""
@@ -240,7 +237,7 @@ class Deductive:
         def start_new_analysis(_=None):
             """Button function"""
             self.save_results(hypo, null, radio)
-            command = 'BringOrder()'
+            command = 'BringOrder(data_import=False)'
             self.utils.create_and_execute_code_cell(command)
 
         button = self.bogui.create_button(
@@ -276,3 +273,7 @@ class Deductive:
             bottom_right=clear_cells_button)
 
         return grid
+
+    def __repr__(self):
+        return ''
+    

@@ -49,7 +49,7 @@ class BOUtils:
             command = '''
             IPython.notebook.insert_cell_at_bottom("code");
             var markdown = IPython.notebook.insert_cell_at_bottom("markdown");
-            markdown.set_text("## Observations");
+            markdown.set_text("### Observations");
             '''
             display(Javascript(command))
 
