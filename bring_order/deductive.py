@@ -24,6 +24,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
+        self.limitation_prompt = None
 
     def create_hypotheses_grid(self):
         """Creates widgets"""
@@ -31,7 +32,7 @@ class Deductive:
         null_label = self.bogui.create_label('Null hypothesis:')
         save_button = self.bogui.create_button(
             desc='Save',
-            command=self.save_hypotheses)
+            command=self.check_data_limitations)
         clear_button = self.bogui.create_button(
             desc='Clear',
             command=self.clear_hypotheses,
@@ -60,6 +61,42 @@ class Deductive:
         """Button function for deductive analysis"""
         display(self.hypotheses_grid)
         self.hypothesis_input.focus()
+
+    def check_data_limitations(self, _=None):
+        """Displays the prompt for the check against data limitations"""
+        self.limitation_prompt_text = widgets.HTML(
+            'Do the hypotheses fit within the limitations of the data set?' 
+            + '<br>TODO: get data limitations from bodi class and print them here')
+        valid_hypotheses_button = self.bogui.create_button(
+            desc='Yes',
+            command=self.valid_hypotheses
+        )
+        bad_hypotheses_button = self.bogui.create_button(
+            desc='No',
+            command=self.bad_hypotheses,
+            style='warning'
+        )
+        self.limitation_prompt = widgets.VBox(
+            [
+            self.limitation_prompt_text, 
+            widgets.HBox([
+                valid_hypotheses_button, bad_hypotheses_button
+                ])
+            ]
+        )
+        display(self.limitation_prompt)
+    
+    def valid_hypotheses(self, _=None):
+        """Closes the data limitation check prompt and calls save_hypotheses()"""
+        self.limitation_prompt.close()
+        self.save_hypotheses()
+
+    def bad_hypotheses(self, _=None):
+        """Closes the data limitation check prompt and calls clear_hypotheses()"""
+        # TODO: set some error message for a hypothesis that doesn't fit 
+        # data limitations and ask the user for a better one
+        self.limitation_prompt.close()
+        self.clear_hypotheses()
 
     def check_hypotheses(self):
         """Checks that hypothesis and null hypothesis are not empty.
