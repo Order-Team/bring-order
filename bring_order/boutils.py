@@ -107,11 +107,21 @@ class BOUtils:
         '''
         display(Javascript(command))
 
-    def create_and_execute_code_cell(self, code=''):
-        """Creates a new cell at the bottom with given code and runs it"""
+    def create_and_execute_code_cell(self, code='', hide_input=True):
+        """Creates a new cell at the bottom with given code and runs it.
+        
+        Args:
+            code (str): Python code to be executed
+            hide_input (boolean): hides input of the executed cell, defaults to True 
+        """
+        if hide_input:
+            hide_input_string = 'true'
+        else:
+            hide_input_string = 'false'
         command = f'''
         var code = IPython.notebook.insert_cell_at_bottom("code");
         code.set_text("{code}");
         Jupyter.notebook.execute_cells([-1]);
+        if ({hide_input_string}) (code.input.hide());
         '''
         display(Javascript(command))
