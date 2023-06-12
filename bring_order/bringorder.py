@@ -22,7 +22,7 @@ class BringOrder:
         self.bogui = BOGui()
         self.bodi = Bodi()
         self.deductive = Deductive()
-        self.inductive = Inductive()
+        self.inductive = Inductive(self.boutils, self.bogui)
         self.deductive_button = self.bogui.create_button(
             desc='Deductive',
             command=self.start_deductive_analysis)

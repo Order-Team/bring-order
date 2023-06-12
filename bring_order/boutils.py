@@ -6,7 +6,6 @@ class BOUtils:
     """Helpful Javascript methods"""
     def __init__(self):
         """Class constructor"""
-        pass
 
     def create_code_cells_below(self, how_many):
         """Creates the given number of code cells below the current cell"""
@@ -50,7 +49,7 @@ class BOUtils:
             command = '''
             IPython.notebook.insert_cell_at_bottom("code");
             var markdown = IPython.notebook.insert_cell_at_bottom("markdown");
-            markdown.set_text("# Observations");
+            markdown.set_text("## Observations");
             '''
             display(Javascript(command))
 

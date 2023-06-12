@@ -7,8 +7,10 @@ from bring_order.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
-        self.instance = Inductive()     
-        self.instance.utils = Mock(wraps=BOUtils)   
+        self.test_bogui = BOGui()
+        self.test_utils = BOUtils()
+        self.instance = Inductive(self.test_utils, self.test_bogui)
+        self.instance.utils = Mock(wraps=BOUtils)
         self.instance.bogui = Mock()
 
     def test_cell_count_starts_at_0(self):
@@ -32,10 +34,3 @@ class TestInductive(unittest.TestCase):
     def test_create_clear_button_creates_button(self):
         self.instance.create_clear_button()
         self.instance.bogui.create_button.assert_called()
-
-        
-
-
-
-
-    
