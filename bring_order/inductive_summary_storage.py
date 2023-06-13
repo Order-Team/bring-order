@@ -1,5 +1,5 @@
 import uuid
-  
+
 class InductiveSummary:
     """ Class that stores data from the inductive analysis
     """

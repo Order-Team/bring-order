@@ -39,12 +39,13 @@ class BringOrder:
         self.inductive_button.close()
 
     def start_deductive_analysis(self, _=None):
+        """Starts deductive analysis"""
         display(
             Javascript('IPython.notebook.kernel.execute("from bring_order.deductive import Deductive")')
         )
         self.close_buttons()
         self.boutils.create_markdown_cells_at_bottom(1, "## Deductive analysis")
-        if not (hasattr(self, 'data_limitations')):
+        if not hasattr(self, 'data_limitations'):
             self.data_limitations = self.bodi.data_limitations.value
         self.boutils.create_and_execute_code_cell(f'Deductive(data_limitations="{self.data_limitations}")')
 

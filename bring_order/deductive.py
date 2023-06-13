@@ -78,14 +78,14 @@ class Deductive:
         )
         self.limitation_prompt = widgets.VBox(
             [
-            self.limitation_prompt_text, 
+            self.limitation_prompt_text,
             widgets.HBox([
                 valid_hypotheses_button, bad_hypotheses_button
                 ])
             ]
         )
         display(self.limitation_prompt)
-    
+
     def valid_hypotheses(self, _=None):
         """Closes the data limitation check prompt and calls save_hypotheses()"""
         self.limitation_prompt.close()
@@ -93,7 +93,7 @@ class Deductive:
 
     def bad_hypotheses(self, _=None):
         """Closes the data limitation check prompt and calls clear_hypotheses()"""
-        # TODO: set some error message for a hypothesis that doesn't fit 
+        # TODO: set some error message for a hypothesis that doesn't fit
         # data limitations and ask the user for a better one
         self.limitation_prompt.close()
         self.clear_hypotheses()
