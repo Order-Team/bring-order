@@ -15,6 +15,7 @@ class Bodi:
         self.boutils = boutils
         self.bogui = bogui
         self.cell_count = 0
+        self.prepare_data_button = self.create_prepare_data_button()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
         self.data_limitations = self.bogui.create_text_area()
@@ -131,10 +132,26 @@ class Bodi:
         )
 
         return button
+    
+    def create_prepare_data_button(self):
+        """Creates button"""
+        button = self.bogui.create_button(
+            desc='Prepare your data',
+            command=self.start_data_import,
+            style='success'
+        )
 
-    def bodi(self):
-        '''Main function'''
+        return button
+    
+    def start_data_import(self, _=None):
+        """Creates markdown for data description and shows buttons for data import"""
+        self.boutils.hide_current_input()
         text = '# Data preparation\\n## Data description\\nDescribe your data here\\n## Data import and cleaning'
         self.boutils.create_markdown_cells_above(1, text=text)
         self.cell_count += 1
+        self.prepare_data_button.close()
         display(self.import_grid)
+
+    def bodi(self):
+        '''Main function'''
+        display(self.prepare_data_button)

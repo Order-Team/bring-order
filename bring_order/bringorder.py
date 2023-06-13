@@ -68,7 +68,6 @@ class BringOrder:
 
     def bring_order(self):
         """Starts data import phase"""
-        self.boutils.hide_current_input()
         self.bodi.bodi()
     
     def start_analysis(self):
