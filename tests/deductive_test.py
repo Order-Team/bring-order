@@ -12,12 +12,12 @@ class TestDeductive(unittest.TestCase):
         """ test instance of Deductive - class
         """
         self.instance = Deductive()
-        self.instance.bogui = Mock()
 
     def test_empty_hypothesis(self):
         self.instance.hypothesis_input.value = "" 
         self.instance.null_input.value = ""
-        self.assertFalse(self.instance.check_hypotheses())
+        testValue = self.instance.check_hypotheses()
+        self.assertFalse(testValue)
 
     def test_empty_hypotheses_display_warning(self):
         self.instance.hypothesis_input.value = "" 
@@ -29,9 +29,10 @@ class TestDeductive(unittest.TestCase):
     def test_valid_inputs_are_accepted(self):
         self.instance.hypothesis_input.value = "The Earth is flat"    
         self.instance.null_input.value = "The Earth is round"
+        testValue = self.instance.check_hypotheses()
         self.assertEqual(self.instance.empty_hypo_error.value, '')
         self.assertEqual(self.instance.empty_null_error.value, '')
-        self.assertTrue(self.instance.check_hypotheses())
+        self.assertTrue(testValue)
     
     def test_hypothesis_fields_can_be_cleared(self):
         self.instance.hypothesis_input.value = "Roses are red"
@@ -49,6 +50,9 @@ class TestDeductive(unittest.TestCase):
         Deductive.create_confirmed_grid.return_value = "Hello"
         self.instance.save_hypotheses(self)
         self.assertIsNotNone(self.instance.confirmed_grid)
+
+
+        
 
 
 
