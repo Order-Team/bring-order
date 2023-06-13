@@ -43,7 +43,7 @@ class BringOrder:
             Javascript('IPython.notebook.kernel.execute("from bring_order.deductive import Deductive")')
         )
         self.close_buttons()
-        self.boutils.create_markdown_cells_at_bottom(1, "## Deductive analysis")
+        self.boutils.create_markdown_cells_above(1, "## Deductive analysis")
         if not (hasattr(self, 'data_limitations')):
             self.data_limitations = self.bodi.data_limitations.value
         self.boutils.create_and_execute_code_cell(f'Deductive(data_limitations="{self.data_limitations}")')
@@ -54,12 +54,12 @@ class BringOrder:
             Javascript('IPython.notebook.kernel.execute("from bring_order.inductive import Inductive")')
         )
         self.close_buttons()
-        self.boutils.create_markdown_cells_at_bottom(1, "## Inductive analysis")
+        self.boutils.create_markdown_cells_above(1, '## Inductive analysis')
         self.boutils.create_and_execute_code_cell('Inductive()')
 
     def bring_order(self):
         """Starts data import phase"""
-        self.boutils.create_markdown_cells_at_bottom(1, "# New analysis")
+        self.boutils.hide_current_input()
         self.bodi.bodi()
     
     def start_analysis(self):
