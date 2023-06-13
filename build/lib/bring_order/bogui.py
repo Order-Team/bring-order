@@ -6,7 +6,6 @@ class BOGui:
     """General methods for creating widgets"""
     def __init__(self):
         """Class constructor"""
-        pass
 
     def create_button(self, desc: str, command, style='success', tooltip=''):
         """Creates button"""

@@ -7,13 +7,9 @@ from boutils import BOUtils
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self):
-        """Class constructor.
-
-        Args:
-            start_cell (int): the index of the notebook cell where the method is called
-        """
-        self.cell_count = 1
+    def __init__(self, data_limitations='(Data limitations missing)'):
+        """Class constructor."""
+        self.cell_count = 0
         self.bogui = BOGui()
         self.utils = BOUtils()
         self.hypothesis_input = self.bogui.create_input_field()
@@ -24,6 +20,9 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
+        self.data_limitations = data_limitations
+        self.limitation_prompt = None
+        self.start_deductive_analysis()
 
     def create_hypotheses_grid(self):
         """Creates widgets"""
@@ -31,7 +30,7 @@ class Deductive:
         null_label = self.bogui.create_label('Null hypothesis:')
         save_button = self.bogui.create_button(
             desc='Save',
-            command=self.save_hypotheses)
+            command=self.check_data_limitations)
         clear_button = self.bogui.create_button(
             desc='Clear',
             command=self.clear_hypotheses,
@@ -61,7 +60,46 @@ class Deductive:
         display(self.hypotheses_grid)
         self.hypothesis_input.focus()
 
+    def check_data_limitations(self, _=None):
+        """Displays the prompt for the check against data limitations"""
+        #print('checking limits: ' + self.data_limitations) #This is for debugging
+        self.limitation_prompt_text = widgets.HTML(
+            'Do the hypotheses fit within the limitations of the data set?' 
+            + '<br>'
+            + self.data_limitations)
+        valid_hypotheses_button = self.bogui.create_button(
+            desc='Yes',
+            command=self.valid_hypotheses
+        )
+        bad_hypotheses_button = self.bogui.create_button(
+            desc='No',
+            command=self.bad_hypotheses,
+            style='warning'
+        )
+        self.limitation_prompt = widgets.VBox(
+            [
+            self.limitation_prompt_text,
+            widgets.HBox([
+                valid_hypotheses_button, bad_hypotheses_button
+                ])
+            ]
+        )
+        display(self.limitation_prompt)
+
+    def valid_hypotheses(self, _=None):
+        """Closes the data limitation check prompt and calls save_hypotheses()"""
+        self.limitation_prompt.close()
+        self.save_hypotheses()
+
+    def bad_hypotheses(self, _=None):
+        """Closes the data limitation check prompt and calls clear_hypotheses()"""
+        # TODO: set some error message for a hypothesis that doesn't fit
+        # data limitations and ask the user for a better one
+        self.limitation_prompt.close()
+        self.clear_hypotheses()
+
     def check_hypotheses(self):
+        print("checking")
         """Checks that hypothesis and null hypothesis are not empty.
 
         Returns:
@@ -112,7 +150,7 @@ class Deductive:
         def open_cells(_=None):
             """Button function"""
             self.cell_count += self.add_cells_int.value
-            self.utils.create_code_cells(self.add_cells_int.value)
+            self.utils.create_code_cells_at_bottom(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -129,9 +167,9 @@ class Deductive:
         """
         def delete_last_cell(_=None):
             """Button function"""
-            if self.cell_count > 1:
+            if self.cell_count > 0:
                 self.utils.delete_cell(
-                    self.cell_count-1)
+                    self.cell_count)
                 self.cell_count -= 1
 
         button = self.bogui.create_button(
@@ -146,7 +184,7 @@ class Deductive:
         def run_cells(_=None):
             """Button function"""
             self.utils.run_cells(
-                self.cell_count-1)
+                self.cell_count)
 
             if self.conclusion:
                 self.conclusion.close()
@@ -178,7 +216,7 @@ class Deductive:
         def clear_cells(_=None):
             """Button function"""
             self.utils.clear_code_cells_below(
-                self.cell_count-1)
+                self.cell_count)
 
         button = self.bogui.create_button(
             desc='Clear cells',
@@ -203,7 +241,7 @@ class Deductive:
         def start_new_analysis(_=None):
             """Button function"""
             self.save_results(hypo, null, radio)
-            command = 'BringOrder()'
+            command = 'BringOrder(data_import=False)'
             self.utils.create_and_execute_code_cell(command)
 
         button = self.bogui.create_button(
@@ -239,3 +277,7 @@ class Deductive:
             bottom_right=clear_cells_button)
 
         return grid
+
+    def __repr__(self):
+        return ''
+    
