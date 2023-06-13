@@ -99,6 +99,7 @@ class Deductive:
         self.clear_hypotheses()
 
     def check_hypotheses(self):
+        print("checking")
         """Checks that hypothesis and null hypothesis are not empty.
 
         Returns:

@@ -105,12 +105,12 @@ class Bodi:
             style='primary')
 
         return button
-    
+
     def check_limitations(self):
         if self.data_limitations.value == '':
             return False
         return True
-    
+
     def create_analysis_button(self):
         """Creates button"""
         def start_analysis(_=None):

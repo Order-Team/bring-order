@@ -1,9 +1,9 @@
 """Class for Inductive analysis"""
+import uuid
 from ipywidgets import widgets
 from IPython.display import display
 from boutils import BOUtils
 from bogui import BOGui
-import uuid
 
 class Inductive:
     """Class that guides inductive analysis"""
@@ -17,7 +17,6 @@ class Inductive:
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
         self.start_inductive_analysis()
-         
 
     def create_open_cells_button(self):
         """Creates button"""
