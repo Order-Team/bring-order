@@ -41,6 +41,15 @@ class BOUtils:
             '''
             display(Javascript(command))
 
+    def clear_code_cells_above(self, how_many):
+        """Clears code cells above the active cell
+        
+        Args:
+            how_many (int): the number of cells to be cleared
+        """
+        for _ in range(how_many):
+            self.delete_cell_above()
+        self.create_code_cells_above(how_many)
 
     def create_code_cells_below(self, how_many):
         """Creates the given number of code cells below the current cell"""
