@@ -16,7 +16,7 @@ class TestBringOrder(unittest.TestCase):
 
     def test_deductive_analysis_starts(self):
         self.instance.start_deductive_analysis()
-        self.instance.boutils.create_and_execute_code_cell.assert_called_with('Deductive()')
+        self.instance.boutils.create_and_execute_code_cell.assert_called_with('Deductive(data_limitations="")')
 
     def test_inductive_analysis_starts(self):
         self.instance.start_inductive_analysis()
