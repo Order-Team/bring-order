@@ -7,7 +7,7 @@ from boutils import BOUtils
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self):
+    def __init__(self, data_limitations='(Data limitations missing)'):
         """Class constructor."""
         self.cell_count = 0
         self.bogui = BOGui()
@@ -20,6 +20,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
+        self.data_limitations = data_limitations
         self.limitation_prompt = None
         self.start_deductive_analysis()
 
@@ -61,9 +62,11 @@ class Deductive:
 
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
+        #print('checking limits: ' + self.data_limitations) #This is for debugging
         self.limitation_prompt_text = widgets.HTML(
             'Do the hypotheses fit within the limitations of the data set?' 
-            + '<br>TODO: get data limitations from bodi class and print them here')
+            + '<br>'
+            + self.data_limitations)
         valid_hypotheses_button = self.bogui.create_button(
             desc='Yes',
             command=self.valid_hypotheses

@@ -120,7 +120,7 @@ class BOUtils:
             hide_input_string = 'false'
         command = f'''
         var code = IPython.notebook.insert_cell_at_bottom("code");
-        code.set_text("{code}");
+        code.set_text('{code}');
         Jupyter.notebook.execute_cells([-1]);
         if ({hide_input_string}) (code.input.hide());
         '''

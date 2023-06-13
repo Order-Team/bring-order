@@ -44,7 +44,9 @@ class BringOrder:
         )
         self.close_buttons()
         self.boutils.create_markdown_cells_at_bottom(1, "## Deductive analysis")
-        self.boutils.create_and_execute_code_cell('Deductive()')
+        if not (hasattr(self, 'data_limitations')):
+            self.data_limitations = self.bodi.data_limitations.value
+        self.boutils.create_and_execute_code_cell(f'Deductive(data_limitations="{self.data_limitations}")')
 
     def start_inductive_analysis(self, _=None):
         """Starts inductive analysis"""
