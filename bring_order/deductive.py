@@ -5,7 +5,7 @@ from IPython.display import display
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, bogui, boutils, start_new, data_limitations='(Data limitations missing)'):
+    def __init__(self, bogui, boutils, start_new):
         """Class constructor
         
         Args:
@@ -26,7 +26,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
-        self.data_limitations = data_limitations
+        self.data_limitations = 'Data limitations missing'
         self.limitation_prompt = None
 
     def create_hypotheses_grid(self):

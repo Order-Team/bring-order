@@ -16,11 +16,9 @@ class TestBodi(unittest.TestCase):
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
 
-    def test_bodi_creates_markdown_cell(self):
-        self.instance.bodi()
-        self.instance.boutils.create_markdown_cells_at_bottom.assert_called_with(
-            1, text="## Data description"
-        )
+    def test_start_data_hides_current_input(self):
+        self.instance.start_data_import()
+        self.instance.boutils.hide_current_input.assert_called()
 
     def test_check_limitations_returns_false_when_empty(self):
         self.assertFalse(self.instance.check_limitations())
