@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "bringorder"
+name = "bring-order"
 version = "0.1.1"
 description = ""
 authors = ["BringOrder team"]
