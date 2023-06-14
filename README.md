@@ -50,7 +50,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 - In Jupyter Notebook execute
 
 ``` 
-    from bring_order import BringOrder
+    from bringorder import BringOrder
     BringOrder()
 ```
 
@@ -81,7 +81,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 #### Run style check
 
 ```bash
-    pylint bring_order
+    pylint bringorder
 ```
 
 #### Run robot tests
