@@ -38,15 +38,15 @@ class BringOrder:
         button = self.bogui.create_button(
             desc='Deductive',
             command=self.start_deductive_analysis)
-        
+
         return button
-    
+
     def create_inductive_button(self):
         """Creates inductive button"""
         button = self.bogui.create_button(
             desc='Inductive',
             command=self.start_inductive_analysis)
-        
+
         return button
 
     def close_buttons(self):
@@ -71,7 +71,7 @@ class BringOrder:
     def bring_order(self):
         """Starts data import phase"""
         self.bodi.bodi()
-    
+
     def start_analysis(self):
         self.deductive = Deductive(
             self.bogui,

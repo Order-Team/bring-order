@@ -10,8 +10,8 @@ bring_order/bringorder.py
 bring_order/deductive.py
 bring_order/inductive.py
 bring_order/inductive_summary_storage.py
-bringorder.egg-info/PKG-INFO
-bringorder.egg-info/SOURCES.txt
-bringorder.egg-info/dependency_links.txt
-bringorder.egg-info/requires.txt
-bringorder.egg-info/top_level.txt
+bring_order.egg-info/PKG-INFO
+bring_order.egg-info/SOURCES.txt
+bring_order.egg-info/dependency_links.txt
+bring_order.egg-info/requires.txt
+bring_order.egg-info/top_level.txt

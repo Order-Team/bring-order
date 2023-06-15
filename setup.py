@@ -12,8 +12,8 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="bringorder",
-    version="0.1.1",
+    name="bring-order",
+    version="0.1.0",
     description="The tool library is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.",
     long_description=long_description,
     long_description_content_type="text/markdown",

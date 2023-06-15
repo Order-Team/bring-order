@@ -17,11 +17,14 @@ class Inductive:
         self.empty_notes_error = self.bogui.create_error_message()
 
     def create_open_cells_button(self):
-        """Creates button"""
+        """Create an Open Cells button that opens the selected
+        number of code cells and one markdown cell"""
+
         def open_cells(_=None):
-            """Button function"""
-            self.cell_count += self.add_cells_int.value * 2
-            self.utils.create_code_and_observation_cells(self.add_cells_int.value)
+            """Open cells button function"""
+            self.cell_count += self.add_cells_int.value + 1
+            self.utils.create_code_cells_above(self.add_cells_int.value)
+            self.utils.create_markdown_cells_above(1,'## Explain what you have observed')
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -31,13 +34,12 @@ class Inductive:
         return button
 
     def create_delete_button(self):
-        """Creates button"""
+        """Creates button that deletes last created cell"""
         def delete_last_cell(_=None):
-            """Button function"""
+            """Delete last cell-button function"""
             if self.cell_count > 0:
-                self.utils.delete_cell(self.cell_count)
-                self.utils.delete_cell(self.cell_count-1)
-                self.cell_count -= 2
+                self.utils.delete_cell_above()
+                self.cell_count -= 1
 
         button = self.bogui.create_button(
             desc='Delete last cells',
@@ -46,11 +48,22 @@ class Inductive:
 
         return button
 
+    def create_clear_button(self):
+        """Create a button that clears the last created cells"""
+        def clear_cells(_=None):
+            """Button function"""
+            self.utils.clear_code_cells_above(
+                self.cell_count)
+
+        button = self.bogui.create_button(
+            desc='Clear cells', command=clear_cells, style='danger')
+        return button
+
     def create_run_button(self):
         """Creates button"""
         def run_cells(_=None):
             """Button function"""
-            self.utils.run_cells(self.cell_count)
+            self.utils.run_cells_above(self.cell_count)
 
             if self.conclusion:
                 self.conclusion.close()
@@ -66,17 +79,6 @@ class Inductive:
         button = self.bogui.create_button(
             desc='Run cells', command=run_cells, style='primary')
 
-        return button
-
-    def create_clear_button(self):
-        """Creates button"""
-        def clear_cells(_=None):
-            """Button function"""
-            self.utils.clear_code_and_observation_cells(
-                self.cell_count)
-
-        button = self.bogui.create_button(
-            desc='Clear cells', command=clear_cells, style='danger')
         return button
 
     def save_results(self):
