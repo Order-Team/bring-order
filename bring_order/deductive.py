@@ -1,17 +1,23 @@
 """Deductive class"""
 from ipywidgets import widgets
 from IPython.display import display
-from bogui import BOGui
-from boutils import BOUtils
 
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, data_limitations='(Data limitations missing)'):
-        """Class constructor."""
+    def __init__(self, bogui, boutils, start_new):
+        """Class constructor
+        
+        Args:
+            bogui (BOGui)
+            boutils (BOUtils)
+            start_new (function): Function to start new analysis with same data
+            data_limitations (str)
+        """
         self.cell_count = 0
-        self.bogui = BOGui()
-        self.utils = BOUtils()
+        self.start_new = start_new
+        self.bogui = bogui
+        self.boutils = boutils
         self.hypothesis_input = self.bogui.create_input_field()
         self.empty_hypo_error = self.bogui.create_error_message()
         self.null_input = self.bogui.create_input_field()
@@ -20,9 +26,8 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
-        self.data_limitations = data_limitations
+        self.data_limitations = 'Data limitations missing'
         self.limitation_prompt = None
-        self.start_deductive_analysis()
 
     def create_hypotheses_grid(self):
         """Creates widgets"""
@@ -99,7 +104,6 @@ class Deductive:
         self.clear_hypotheses()
 
     def check_hypotheses(self):
-        print("checking")
         """Checks that hypothesis and null hypothesis are not empty.
 
         Returns:
@@ -122,7 +126,10 @@ class Deductive:
 
     def save_hypotheses(self, _=None):
         """Saves hypotheses and displays buttons for running code"""
+        hypotheses = f'Hypothesis: {self.hypothesis_input.value}\\nNull hypothesis: {self.null_input.value}'
+        text = f'# Deductive analysis\\n## Hypotheses\\n{hypotheses}\\n## Data analysis'
         if self.check_hypotheses():
+            self.boutils.create_markdown_cells_above(1, text=text)
             confirmed_hypothesis = self.bogui.create_message(
                 value=f'Hypothesis: {self.hypothesis_input.value}')
             confirmed_null = self.bogui.create_message(
@@ -150,7 +157,7 @@ class Deductive:
         def open_cells(_=None):
             """Button function"""
             self.cell_count += self.add_cells_int.value
-            self.utils.create_code_cells_at_bottom(self.add_cells_int.value)
+            self.boutils.create_code_cells_above(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -168,8 +175,7 @@ class Deductive:
         def delete_last_cell(_=None):
             """Button function"""
             if self.cell_count > 0:
-                self.utils.delete_cell(
-                    self.cell_count)
+                self.boutils.delete_cell_above()
                 self.cell_count -= 1
 
         button = self.bogui.create_button(
@@ -183,7 +189,7 @@ class Deductive:
         """Creates button"""
         def run_cells(_=None):
             """Button function"""
-            self.utils.run_cells(
+            self.boutils.run_cells_above(
                 self.cell_count)
 
             if self.conclusion:
@@ -194,8 +200,6 @@ class Deductive:
             conclusion = self.bogui.create_radiobuttons(
                 options=[hypothesis.value, null_hypothesis.value])
             new_button = self.create_new_analysis_button(
-                hypothesis,
-                null_hypothesis,
                 conclusion)
             self.conclusion = widgets.AppLayout(
                 left_sidebar=conclusion_label,
@@ -215,7 +219,7 @@ class Deductive:
         """Creates button"""
         def clear_cells(_=None):
             """Button function"""
-            self.utils.clear_code_cells_below(
+            self.boutils.clear_code_cells_above(
                 self.cell_count)
 
         button = self.bogui.create_button(
@@ -224,25 +228,23 @@ class Deductive:
             style='danger')
         return button
 
-    def save_results(self, hypothesis, null_hypothesis, confirmed):
+    def save_results(self, confirmed):
         """Prints results and hides widgets"""
-        text = f'''
-        Deductive Analysis\n
-        {hypothesis.value}\n
-        {null_hypothesis.value}\n
-        Accepted: {confirmed.value}
-        '''
-        print(text)
+        text = f'## Conclusion\\nAccepted: {confirmed.value}'
+        self.boutils.create_markdown_cells_above(1, text=text)
         self.confirmed_grid.close()
         self.conclusion.close()
 
-    def create_new_analysis_button(self, hypo, null, radio):
-        """Creates button"""
+    def create_new_analysis_button(self, radio):
+        """Creates button
+        
+        Args:
+            radio (radiobutton): the hypothesis radiobutton widget
+        """
         def start_new_analysis(_=None):
             """Button function"""
-            self.save_results(hypo, null, radio)
-            command = 'BringOrder(data_import=False)'
-            self.utils.create_and_execute_code_cell(command)
+            self.save_results(radio)
+            self.start_new()
 
         button = self.bogui.create_button(
             desc='New analysis',
@@ -261,13 +263,11 @@ class Deductive:
         clear_cells_button = self.create_clear_button()
 
         grid = widgets.GridspecLayout(
-            3,
+            2,
             2,
             justify_items='center',
             width='70%',
-            align_items='bottom')
-        grid[0, :] = widgets.VBox(
-            [hypothesis, null_hypothesis])
+            align_items='top')
         grid[1, 0] = widgets.HBox(
             [cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(

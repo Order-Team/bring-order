@@ -10,6 +10,8 @@ sys.path.insert(1, class_dir)
 from bogui import BOGui
 from bodi import Bodi
 from boutils import BOUtils
+from deductive import Deductive
+from inductive import Inductive
 
 
 class BringOrder:
@@ -18,12 +20,10 @@ class BringOrder:
         """Class constructor"""
         self.boutils = BOUtils()
         self.bogui = BOGui()
-        self.deductive_button = self.bogui.create_button(
-            desc='Deductive',
-            command=self.start_deductive_analysis)
-        self.inductive_button = self.bogui.create_button(
-            desc='Inductive',
-            command=self.start_inductive_analysis)
+        self.deductive = None
+        self.inductive = None
+        self.deductive_button = None
+        self.inductive_button = None
         self.bodi = Bodi(
             self.boutils,
             self.bogui,
@@ -33,6 +33,22 @@ class BringOrder:
         else:
             self.start_analysis()
 
+    def create_deductive_button(self):
+        """Creates deductive button"""
+        button = self.bogui.create_button(
+            desc='Deductive',
+            command=self.start_deductive_analysis)
+        
+        return button
+    
+    def create_inductive_button(self):
+        """Creates inductive button"""
+        button = self.bogui.create_button(
+            desc='Inductive',
+            command=self.start_inductive_analysis)
+        
+        return button
+
     def close_buttons(self):
         """Hides buttons"""
         self.deductive_button.close()
@@ -40,30 +56,34 @@ class BringOrder:
 
     def start_deductive_analysis(self, _=None):
         """Starts deductive analysis"""
-        display(
-            Javascript('IPython.notebook.kernel.execute("from bring_order.deductive import Deductive")')
-        )
+
         self.close_buttons()
-        self.boutils.create_markdown_cells_at_bottom(1, "## Deductive analysis")
         if not hasattr(self, 'data_limitations'):
             self.data_limitations = self.bodi.data_limitations.value
-        self.boutils.create_and_execute_code_cell(f'Deductive(data_limitations="{self.data_limitations}")')
+        self.deductive.data_limitations = self.bodi.data_limitations.value
+        self.deductive.start_deductive_analysis()
 
     def start_inductive_analysis(self, _=None):
         """Starts inductive analysis"""
-        display(
-            Javascript('IPython.notebook.kernel.execute("from bring_order.inductive import Inductive")')
-        )
         self.close_buttons()
-        self.boutils.create_markdown_cells_at_bottom(1, "## Inductive analysis")
-        self.boutils.create_and_execute_code_cell('Inductive()')
+        self.inductive.start_inductive_analysis()
 
     def bring_order(self):
         """Starts data import phase"""
-        self.boutils.create_markdown_cells_at_bottom(1, "# New analysis")
         self.bodi.bodi()
     
     def start_analysis(self):
+        self.deductive = Deductive(
+            self.bogui,
+            self.boutils,
+            self.start_analysis
+        )
+        self.inductive = Inductive(
+            self.bogui,
+            self.boutils
+        )
+        self.deductive_button = self.create_deductive_button()
+        self.inductive_button = self.create_inductive_button()
         display(widgets.HBox([self.deductive_button, self.inductive_button]))
 
     def __repr__(self):

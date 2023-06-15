@@ -2,22 +2,19 @@
 import uuid
 from ipywidgets import widgets
 from IPython.display import display
-from boutils import BOUtils
-from bogui import BOGui
 
 class Inductive:
     """Class that guides inductive analysis"""
-    def __init__(self):
+    def __init__(self, bogui, boutils):
         """Class constructor."""
         self.cell_count = 0
-        self.bogui = BOGui()
-        self.utils = BOUtils()
+        self.bogui = bogui
+        self.utils = boutils
         self.add_cells_int = self.bogui.create_int_text()
         self.cell_operations = self.create_cell_operations()
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
         self.empty_notes_error = self.bogui.create_error_message()
-        self.start_inductive_analysis()
 
     def create_open_cells_button(self):
         """Creates button"""

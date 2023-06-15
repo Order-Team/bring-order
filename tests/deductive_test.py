@@ -11,7 +11,8 @@ class TestDeductive(unittest.TestCase):
     def setUp(self):
         """ test instance of Deductive - class
         """
-        self.instance = Deductive()
+        start_new = Mock()
+        self.instance = Deductive(BOGui(), BOUtils(), start_new)
 
     def test_empty_hypothesis(self):
         self.instance.hypothesis_input.value = "" 
@@ -51,8 +52,13 @@ class TestDeductive(unittest.TestCase):
         self.instance.save_hypotheses(self)
         self.assertIsNotNone(self.instance.confirmed_grid)
 
+    def test_bad_hypotheses_are_cleared(self):
+        self.instance.clear_hypotheses = MagicMock()
+        self.instance.limitation_prompt = MagicMock()
+        self.instance.bad_hypotheses()
+        self.instance.clear_hypotheses.assert_called()
 
-        
+
 
 
 

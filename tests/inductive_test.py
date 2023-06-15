@@ -7,11 +7,8 @@ from bring_order.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
-        self.test_bogui = BOGui()
-        self.test_utils = BOUtils()
-        self.instance = Inductive()
-        self.instance.utils = Mock(wraps=BOUtils)
-        self.instance.bogui = Mock()
+        self.instance = Inductive(BOGui(), BOUtils())
+        self.instance.bogui.create_button = Mock()
 
     def test_cell_count_starts_at_0(self):
         self.assertEqual(self.instance.cell_count, 0)
