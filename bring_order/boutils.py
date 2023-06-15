@@ -136,6 +136,22 @@ class BOUtils:
         '''
         display(Javascript(command))
 
+    # Refactoring note: delete_cell_above could be deleted
+    # and delete_cell_from_current could be used instead with distance=-1
+    # This can also replace delete_cell with distance=cell_count
+    # if that method is still needed after inductive has been changed to cells above version
+    def delete_cell_from_current(self, distance):
+        """Deletes a cell that has the index of the active cell index + distance
+        
+        Args:
+            distance (int): target cell index with respect to active cell
+        """
+        command = f'''
+        var index = IPython.notebook.get_selected_index() + {distance};
+        IPython.notebook.delete_cell(index);
+        '''
+        display(Javascript(command))
+
     def delete_cell(self, cell_count):
         """Deletes the last analysis cell"""
         command = f'''
@@ -189,6 +205,27 @@ class BOUtils:
         code.set_text('{code}');
         Jupyter.notebook.execute_cells([-1]);
         if ({hide_input_string}) (code.input.hide());
+        '''
+        display(Javascript(command))
+
+    def execute_cell_from_current(self, distance, code='', hide_input=True):
+        """Executes code in cell that has the index of the active cell index + distance
+        
+        Args:
+            distance (int): target cell index with respect to active cell
+            code (str): Python code to be executed
+            hide_input (boolean): hides input of the executed cell, defaults to True 
+        """
+        if hide_input:
+            hide_input_string = 'true'
+        else:
+            hide_input_string = 'false'
+        command = f'''
+        var index = IPython.notebook.get_selected_index() + {distance};
+        var cell = IPython.notebook.get_cell(index);
+        cell.set_text("{code}");
+        IPython.notebook.execute_cells([index]);
+        if ({hide_input_string}) (cell.input.hide());
         '''
         display(Javascript(command))
 

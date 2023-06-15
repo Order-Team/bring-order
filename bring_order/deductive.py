@@ -12,7 +12,6 @@ class Deductive:
             bogui (BOGui)
             boutils (BOUtils)
             start_new (function): Function to start new analysis with same data
-            data_limitations (str)
         """
         self.cell_count = 0
         self.start_new = start_new
@@ -126,7 +125,7 @@ class Deductive:
 
     def save_hypotheses(self, _=None):
         """Saves hypotheses and displays buttons for running code"""
-        hypotheses = f'Hypothesis: {self.hypothesis_input.value}\\nNull hypothesis: {self.null_input.value}'
+        hypotheses = f'- Hypothesis: {self.hypothesis_input.value}\\n- Null hypothesis: {self.null_input.value}'
         text = f'# Deductive analysis\\n## Hypotheses\\n{hypotheses}\\n## Data analysis'
         if self.check_hypotheses():
             self.boutils.create_markdown_cells_above(1, text=text)
@@ -199,12 +198,15 @@ class Deductive:
                 value='Accepted hypothesis:')
             conclusion = self.bogui.create_radiobuttons(
                 options=[hypothesis.value, null_hypothesis.value])
-            new_button = self.create_new_analysis_button(
+            new_analysis_button = self.create_new_analysis_button(
                 conclusion)
+            new_data_button = self.create_new_data_button(conclusion)
+            all_done_button = self.create_all_done_button(conclusion)
             self.conclusion = widgets.AppLayout(
                 left_sidebar=conclusion_label,
                 center=conclusion,
-                footer=new_button)
+                footer=widgets.HBox([new_analysis_button, new_data_button, all_done_button])
+            )
 
             display(self.conclusion)
 
@@ -226,30 +228,6 @@ class Deductive:
             desc='Clear cells',
             command=clear_cells,
             style='danger')
-        return button
-
-    def save_results(self, confirmed):
-        """Prints results and hides widgets"""
-        text = f'## Conclusion\\nAccepted: {confirmed.value}'
-        self.boutils.create_markdown_cells_above(1, text=text)
-        self.confirmed_grid.close()
-        self.conclusion.close()
-
-    def create_new_analysis_button(self, radio):
-        """Creates button
-        
-        Args:
-            radio (radiobutton): the hypothesis radiobutton widget
-        """
-        def start_new_analysis(_=None):
-            """Button function"""
-            self.save_results(radio)
-            self.start_new()
-
-        button = self.bogui.create_button(
-            desc='New analysis',
-            command=start_new_analysis)
-
         return button
 
     def create_confirmed_grid(self, hypothesis, null_hypothesis):
@@ -277,6 +255,67 @@ class Deductive:
             bottom_right=clear_cells_button)
 
         return grid
+    
+    def save_results(self, confirmed):
+        """Prints results and hides widgets"""
+        text = f'## Conclusion\\nAccepted: {confirmed.value}'
+        self.boutils.create_markdown_cells_above(1, text=text)
+        self.confirmed_grid.close()
+        self.conclusion.close()
+
+    def create_new_analysis_button(self, radio):
+        """Creates button
+        
+        Args:
+            radio (radiobutton): the hypothesis radiobutton widget
+        """
+        def start_new_analysis(_=None):
+            """Button function"""
+            self.save_results(radio)
+            self.start_new()
+
+        button = self.bogui.create_button(
+            desc='New analysis',
+            command=start_new_analysis)
+
+        return button
+
+    def create_new_data_button(self, radio):
+        """Creates button
+        
+        Args:
+            radio (radiobutton): the hypothesis radiobutton widget
+        """
+
+        def start_analysis_with_new_data(_=None):
+            """Button function"""
+            self.save_results(radio)
+            self.boutils.execute_cell_from_current(1, 'BringOrder()')
+
+        button = self.bogui.create_button(
+            desc='Prepare new data',
+            command=start_analysis_with_new_data
+        )
+
+        return button
+
+    def create_all_done_button(self, radio):
+        """Creates button
+        
+        Args:
+            radio (radiobutton): the hypothesis radiobutton widget
+        """
+
+        def all_done(_=None):
+            self.save_results(radio)
+            self.boutils.delete_cell_from_current(1)
+
+        button = self.bogui.create_button(
+            desc='All done',
+            command=all_done
+        )
+
+        return button
 
     def __repr__(self):
         return ''
