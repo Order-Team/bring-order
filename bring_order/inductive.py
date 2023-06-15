@@ -14,6 +14,7 @@ class Inductive:
         self.cell_operations = self.create_cell_operations()
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
+        self.empty_notes_error = self.bogui.create_error_message()
 
     def create_open_cells_button(self):
         """Creates button"""
@@ -58,7 +59,7 @@ class Inductive:
                 value='Summarize your analysis:')
             ready_button = self.create_ready_button()
             self.conclusion = widgets.VBox([widgets.HBox(
-                    [notes_label, self.notes]),ready_button])
+                    [notes_label, self.notes]),ready_button, self.empty_notes_error])
 
             display(self.conclusion)
 
@@ -93,8 +94,11 @@ class Inductive:
     def create_ready_button(self):
         """Creates Ready button"""
         def execute_ready(_=None):
-            self.save_results()
-            self.new_analysis()
+            if self.check_notes():
+                self.save_results()
+                self.new_analysis()
+            else:
+                self.empty_notes_error.value = 'Summary cannot be empty'
 
         button = self.bogui.create_button(
             desc="Ready",
@@ -102,6 +106,12 @@ class Inductive:
             command=execute_ready
         )
         return button
+
+    def check_notes(self):
+        '''Checks that summarization was filled'''
+        if self.notes.value == '':
+            return False
+        return True
 
     def create_new_analysis_button(self):
         """Creates New Analysis button"""

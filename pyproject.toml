@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "bring-order"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
-authors = ["zmejka <evgeniia.minaeva@tutanota.com>"]
+authors = ["BringOrder team"]
 readme = "README.md"
 
 

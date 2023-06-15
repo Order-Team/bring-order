@@ -1,3 +1,19 @@
+Metadata-Version: 2.1
+Name: bringorder
+Version: 0.1.0
+Summary: The tool library is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
+Home-page: https://github.com/Order-Team/bring-order/tree/main
+Author: Bring-Order team
+Author-email: example@email.com
+License: MIT
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # bring-order
 ![GitHub Actions](https://github.com/Order-Team/bring-order/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/Order-team/bring-order/branch/main/graph/badge.svg?token=e8bdd46f-46b0-410c-820b-84ffca9ca53c)](https://codecov.io/gh/Order-team/bring-order)
@@ -50,7 +66,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 - In Jupyter Notebook execute
 
 ``` 
-    from bringorder import BringOrder
+    from bring_order import BringOrder
     BringOrder()
 ```
 
@@ -81,7 +97,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 #### Run style check
 
 ```bash
-    pylint bringorder
+    pylint bring_order
 ```
 
 #### Run robot tests
