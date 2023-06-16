@@ -19,6 +19,12 @@ class TestInductive(unittest.TestCase):
     def test_that_empty_summary_returns_false(self):
         self.assertFalse(self.instance.check_notes())
 
+    def test_open_cells_button_is_created(self):
+        self.assertEqual(self.instance.buttons['Open cells'].description, 'Open cells')
+
+    def test_correct_amount_of_buttons_is_created(self):
+        self.assertEqual(len(self.instance.buttons), 6)
+
     def test_filled_summary_returns_true(self):
         self.instance.notes.value = "Childrens' usage of psychosis medication has increased."
         self.assertTrue(self.instance.check_notes())   
