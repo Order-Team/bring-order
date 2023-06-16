@@ -10,19 +10,27 @@ class Inductive:
         self.bogui = bogui
         self.utils = boutils
         self.cell_count = 0
-        button_list = [['Open cells', self.open_cells, 'warning'],
-                   ['Delete last cell', self.delete_last_cell, 'danger'],
-                   ['Clear cells', self.clear_cells, 'danger'],
-                   ['Run cells', self.run_cells, 'primary'],
-                   ['New analysis', self.start_new_analysis, 'success'],
-                   ["Ready", self.execute_ready, 'primary']
-                 ]
-        self.buttons = self.init_buttons(button_list)
+        self.buttons = self.bogui.init_buttons(self.button_list)
         self.add_cells_int = self.bogui.create_int_text()
         self.notes = self.bogui.create_text_area()
         self.cell_operations = self.create_cell_operations()
         self.conclusion = None
         self.empty_notes_error = self.bogui.create_error_message()
+
+    @property
+    def button_list(self):
+        """Buttons for Inductive class.
+        Returns buttons as list of tuples.        .
+
+        Returns:
+            list of tuples in format (description: str, command: func, style: str) """
+        button_list = [('Open cells', self.open_cells, 'warning'),
+                   ('Delete last cell', self.delete_last_cell, 'danger'),
+                   ('Clear cells', self.clear_cells, 'danger'),
+                   ('Run cells', self.run_cells, 'primary'),
+                   ('New analysis', self.start_new_analysis, 'success'),
+                   ('Ready', self.execute_ready, 'primary')]
+        return button_list
 
     def open_cells(self, _=None):
         """Open cells button function that opens the selected
@@ -84,15 +92,6 @@ class Inductive:
         if self.notes.value == '':
             return False
         return True
-
-    def init_buttons(self, buttons):
-        """Initializes buttons needed by inductive class."""
-        button_list = {}
-        for button in buttons:
-            new_button = self.bogui.create_button(desc=button[0],
-                                                  command=button[1], style=button[2])
-            button_list[button[0]] = new_button
-        return button_list
 
     def create_cell_operations(self):
         """Displays buttons for operations in inductive analysis"""
