@@ -26,3 +26,19 @@ class TestBodi(unittest.TestCase):
     def test_check_limitations_returns_true_when_not_empty(self):
         self.instance.data_limitations.value = "Some limitations"
         self.assertTrue(self.instance.check_limitations())
+
+    def test_open_cells_button_creates_button(self):
+        self.instance.create_open_cells_button()
+        self.instance.bogui.create_button.assert_called()
+
+    def test_create_delete_button_creates_button(self):
+        self.instance.create_delete_button()
+        self.instance.bogui.create_button.assert_called()
+
+    def test_create_run_button_creates_button(self):
+        self.instance.create_run_button()
+        self.instance.bogui.create_button.assert_called()
+
+    def test_create_analysis_button_creates_button(self):
+        self.instance.create_analysis_button()
+        self.instance.bogui.create_button.assert_called()
