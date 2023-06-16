@@ -16,6 +16,7 @@ class Inductive:
         self.cell_operations = self.create_cell_operations()
         self.conclusion = None
         self.empty_notes_error = self.bogui.create_error_message()
+        self.observations = []
 
     @property
     def button_list(self):
@@ -29,7 +30,10 @@ class Inductive:
                    ('Clear cells', self.clear_cells, 'danger'),
                    ('Run cells', self.run_cells, 'primary'),
                    ('New analysis', self.start_new_analysis, 'success'),
-                   ('Ready', self.execute_ready, 'primary')]
+                   ('Get summary', self.execute_ready, 'primary'),
+                   ('Submit observation', self.new_observation, 'primary')                  
+                   ]
+        
         return button_list
 
     def open_cells(self, _=None):
@@ -37,7 +41,7 @@ class Inductive:
         number of code cells and one markdown cell"""
         self.cell_count += self.add_cells_int.value + 1
         self.utils.create_code_cells_above(self.add_cells_int.value)
-        self.utils.create_markdown_cells_above(1,'## Explain what you have observed')
+        
 
     def delete_last_cell(self, _=None):
         """Delete last cell-button function"""
@@ -50,40 +54,49 @@ class Inductive:
         self.utils.clear_code_cells_above(self.cell_count)
 
     def run_cells(self, _=None):
+       
         """Executes cells above and displays text area for summarization of analysis."""
         self.utils.run_cells_above(self.cell_count)
-
         if self.conclusion:
             self.conclusion.close()
 
-        notes_label = self.bogui.create_label(value='Summarize your analysis:')
+        notes_label = self.bogui.create_label(value='Explain what you observed:')
         self.conclusion = widgets.VBox([widgets.HBox(
-                [notes_label, self.notes]),self.buttons['Ready'], self.empty_notes_error])
+                [notes_label, self.notes]), self.buttons['Submit observation'], self.buttons['Get summary'], self.empty_notes_error
+                ])
 
         display(self.conclusion)
+    
+    def new_observation(self, _=None):
+        if self.check_notes():
+            self.conclusion.close()
+        
+        else:
+            self.empty_notes_error.value = 'Observation field can not be empty'
+
 
     def start_new_analysis(self, _=None):
         """Starts new bringorder object"""
         command = 'BringOrder(data_import=False)'
         self.utils.create_and_execute_code_cell(command)
-
+    
+   
     def execute_ready(self, _=None):
         """Executes code cells after Ready button is clicked."""
+       
         if self.check_notes():
-            self.save_results()
+            self.display_summary()
             self.new_analysis()
         else:
-            self.empty_notes_error.value = 'Summary cannot be empty'
+            self.empty_notes_error.value = 'Observation field can not be empty'
 
-    def save_results(self):
+    def display_summary(self):
         """Prints notes"""
-        text = f'''Inductive Analysis\n Notes:\n {self.notes.value}'''
-
-        """tallentaminen
-        
-        new = InductiveSummary()
-        new.add(uuid.uuid4(), 15, 'data') """
+        observation_string = ''.join((f"Observation {i+1}: {observation}\n") for i, observation in enumerate(self.observations))
+        text = f'''All your observations from the data:\n {observation_string}'''
         print(text)
+
+      
         self.cell_operations.close()
         self.conclusion.close()
 
@@ -91,6 +104,8 @@ class Inductive:
         '''Checks that summarization was filled'''
         if self.notes.value == '':
             return False
+
+        self.observations.append(self.notes.value)
         return True
 
     def create_cell_operations(self):
