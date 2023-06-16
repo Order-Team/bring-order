@@ -23,7 +23,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(self.instance.buttons['Open cells'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 6)
+        self.assertEqual(len(self.instance.buttons), 7)
 
     def test_filled_summary_returns_true(self):
         self.instance.notes.value = "Childrens' usage of psychosis medication has increased."
@@ -33,7 +33,7 @@ class TestInductive(unittest.TestCase):
         self.instance.check_notes = MagicMock()
         self.instance.check_notes.return_value = False
         self.instance.execute_ready()
-        self.assertEqual(self.instance.empty_notes_error.value, 'Summary cannot be empty')
+        self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
 
     def test_cell_count_cannot_be_less_than_zero(self):
         self.instance.delete_last_cell()
