@@ -11,4 +11,4 @@ Notebook Should Be Open
 
 Calling BringOrder Should Succeed After Import
     Run Notebook
-    Page Should Contain  New Analysis
+    Page Should Contain  Prepare your data

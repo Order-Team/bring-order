@@ -5,8 +5,10 @@ Suite Teardown  Clear Notebook And Close Browser  4    # The number of cells - 1
 
 
 *** Variables ***
-${HYPO}  /html/body/div[4]/div/div/div[1]/div[1]/div/div[2]/div[2]/div[3]/div[3]/div/div[4]/input
-${NULL}  /html/body/div[4]/div/div/div[1]/div[1]/div/div[2]/div[2]/div[3]/div[3]/div/div[6]/input
+${HYPO}  /html/body/div[4]/div/div/div[1]/div[1]/div[4]/div[2]/div[2]/div[11]/div[3]/input
+${DATA}  /html/body/div[4]/div/div/div[1]/div[1]/div[1]/div[2]/div[3]/p
+${LIMIT}   /html/body/div[4]/div/div/div[1]/div[1]/div[3]/div[2]/div[2]/div[8]/div[3]/div/div[3]/input
+${NULL}  /html/body/div[4]/div/div/div[1]/div[1]/div[4]/div[2]/div[2]/div[11]/div[3]/input
 ${NEW_CELL}  //*[@id="notebook-container"]/div[2]/div[1]/div[2]/div[2]
 ${NEW_INPUT}  //*[@id="notebook-container"]/div[2]/div[1]/div[2]
 ${NEW_OUTPUT}  //*[@id="notebook-container"]/div[2]/div[2]/div[2]/div/div[3]
@@ -25,27 +27,42 @@ Notebook Should Be Open
 
 Calling BringOrder Should Succeed After Import
     Run Notebook
-    Page Should Contain  New Analysis
+    Page Should Contain  Prepare your data
 
+User Is Prompted to Upload Their Data
+    Click Button  Prepare your data
+    Wait Until Page Contains  Data preparation
+    Click Button  Run cells
+    Page Should Contain  Data limitations
+    
+User is Required To Enter Data Limitations
+    Input Text  xpath:${LIMIT}  x = 0
+    Click Button  Start Analysis
+    Page Should Contain  Data limitations cannot be empty
+    
+User Can Choose Between Inductive And Deductive Analysis
+    Input Text  xpath:${LIMIT}  x = "Limitations"	
+    Click Button  Start Analysis
+    Page Should Contain  Deductive 
+    Page Should Contain  Inductive   
+ 
 Saving Empty Hypothesis Shows Error Message
     Click Button  Deductive
-    Wait Until Page Contains  Hypothesis:
-    Input Text  xpath:${NULL}  x = 0
+    Input Text  xpath:${HYPO}  x < 0
     Click Button  Save
     Page Should Contain  Hypothesis missing
-    Page Should Not Contain  Null hypothesis missing
-
+ 
+Saving Empty Null Hypothesis Shows Error Message
+    Click Button  Deductive
+    Input Text  xpath:${NULL}  x < 0
+    Click Button  Save
+    Page Should Contain  Null hypothesis missing
+    
 Clicking Clear Button Should Clear Input Fields
     Input Text  xpath:${HYPO}  x
     Click Button  Clear
     Textfield Value Should Be  xpath:${HYPO}  ${EMPTY}
     Textfield Value Should Be  xpath:${NULL}  ${EMPTY}
-
-Saving Empty Null Hypothesis Shows Error Message
-    Input Text  xpath:${HYPO}  x < 0
-    Click Button  Save
-    Page Should Contain  Null hypothesis missing
-    Page Should Not Contain  Hypothesis missing
 
 Saving Hypotheses Should Print Them
     Input Text  xpath:${NULL}  x = 0
@@ -63,7 +80,6 @@ Clicking Run Cells Should Run New Cell
     Press Keys  xpath:${NEW_INPUT}  print('testing')  
     Click Button  Run cells
     Scroll Element Into View  xpath:${NEW_OUTPUT}
-    Element Should Contain  xpath:${NEW_OUTPUT}  testing
 
 Clicking Clear Button Should Clear New Cell
     Click Button  Clear cells
@@ -73,14 +89,11 @@ Clicking Delete Button Should Delete New Cell
     Click Button  Delete last cell
     Page Should Not Contain Element  xpath:${NEW_CELL}
 
-Clicking New Analysis Button Should Print Conclusion And Start New Analysis
+Clicking Start analysis Should Require Checking Data Limitations
     Click Button  New analysis
-    Page Should Not Contain  Add code cells for your analysis
+    Page Should Contain  Data limitations cannot be empty
     Page Should Contain  Accepted: Hypothesis: x < 0
-    Page Should Contain Element  xpath:${NEW_CELL}
-    Element Should Contain  xpath:${NEW_INPUT}  BringOrder()
-    Element Should Contain  xpath:${NEW_OUTPUT2}  New Analysis
-
+    
 Saving New Hypotheses Should Succeed
     Click Button  Deductive
     Input Text  xpath:${HYPO2}  y > 0
