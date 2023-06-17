@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: bring-order
-Version: 0.1.0
+Version: 0.1.3
 Summary: The tool library is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
 Home-page: https://github.com/Order-Team/bring-order/tree/main
 Author: Bring-Order team

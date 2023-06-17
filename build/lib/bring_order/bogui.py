@@ -1,7 +1,6 @@
 """Methods for creating widgets"""
 from ipywidgets import widgets
 
-
 class BOGui:
     """General methods for creating widgets"""
     def __init__(self):
@@ -14,6 +13,24 @@ class BOGui:
                                 tooltip=tooltip)
         button.on_click(command)
         return button
+
+    def init_buttons(self, buttons):
+        """Initializes buttons.
+
+        args:
+            buttons: list of tuples.
+
+        returns:
+            dictionary containing the buttons
+
+        """
+        button_list = {}
+        for button in buttons:
+            new_button = self.create_button(desc=button[0],
+                                                  command=button[1],
+                                                  style=button[2])
+            button_list[button[0]] = new_button
+        return button_list
 
     def create_message(self, value, style={'font-family': 'Arial, Helvetica, sans-serif',
                                            'font_size': '15px'}):

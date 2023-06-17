@@ -14,7 +14,8 @@ class Bodi:
         self.start_analysis = start_analysis
         self.boutils = boutils
         self.bogui = bogui
-        self.cell_count = 1
+        self.cell_count = 0
+        self.prepare_data_button = self.create_prepare_data_button()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
         self.data_limitations = self.bogui.create_text_area()
@@ -49,7 +50,7 @@ class Bodi:
         def open_cells(_=None):
             """Button function"""
             self.cell_count += self.add_cells_int.value
-            self.boutils.create_code_cells_at_bottom(self.add_cells_int.value)
+            self.boutils.create_code_cells_above(self.add_cells_int.value)
 
         button = self.bogui.create_button(
             desc='Open cells',
@@ -66,9 +67,8 @@ class Bodi:
         """
         def delete_last_cell(_=None):
             """Button function"""
-            if self.cell_count > 2:
-                self.boutils.delete_cell(
-                    self.cell_count)
+            if self.cell_count > 1:
+                self.boutils.delete_cell_above()
                 self.cell_count -= 1
 
         button = self.bogui.create_button(
@@ -82,7 +82,7 @@ class Bodi:
         """Creates button"""
         def run_cells(_=None):
             """Button function"""
-            self.boutils.run_cells(
+            self.boutils.run_cells_above(
                 self.cell_count)
 
             if self.limitation_grid:
@@ -107,6 +107,7 @@ class Bodi:
         return button
 
     def check_limitations(self):
+        '''Checks that limitations have been given or commented'''
         if self.data_limitations.value == '':
             return False
         return True
@@ -116,8 +117,9 @@ class Bodi:
         def start_analysis(_=None):
             """Button function"""
             if self.check_limitations():
-                limitations = f'''Data limitations:\n{self.data_limitations.value}'''
-                print(limitations)
+                limitations = self.data_limitations.value.replace('\n', '\\n')
+                text = f'## Data limitations\\n{limitations}'
+                self.boutils.create_markdown_cells_above(1, text=text)
                 self.import_grid.close()
                 self.limitation_grid.close()
                 self.start_analysis()
@@ -132,8 +134,25 @@ class Bodi:
 
         return button
 
+    def create_prepare_data_button(self):
+        """Creates button"""
+        button = self.bogui.create_button(
+            desc='Prepare your data',
+            command=self.start_data_import,
+            style='success'
+        )
+
+        return button
+
+    def start_data_import(self, _=None):
+        """Creates markdown for data description and shows buttons for data import"""
+        self.boutils.hide_current_input()
+        text = '# Data preparation\\n## Data description\\nDescribe your data here\\n## Data import and cleaning'
+        self.boutils.create_markdown_cells_above(1, text=text)
+        self.cell_count += 1
+        self.prepare_data_button.close()
+        display(self.import_grid)
+
     def bodi(self):
         '''Main function'''
-        self.boutils.create_markdown_cells_at_bottom(1, text="## Data description")
-        self.cell_count += 1
-        display(self.import_grid)
+        display(self.prepare_data_button)
