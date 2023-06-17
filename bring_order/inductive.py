@@ -1,5 +1,4 @@
 """Class for Inductive analysis"""
-#import uuid
 from ipywidgets import widgets
 from IPython.display import display
 
@@ -21,7 +20,6 @@ class Inductive:
     @property
     def button_list(self):
         """Buttons for Inductive class.
-        Returns buttons as list of tuples.        .
 
         Returns:
             list of tuples in format (description: str, command: func, style: str) """
@@ -31,17 +29,17 @@ class Inductive:
                    ('Run cells', self.run_cells, 'primary'),
                    ('New analysis', self.start_new_analysis, 'success'),
                    ('Get summary', self.execute_ready, 'primary'),
-                   ('Submit observation', self.new_observation, 'primary')                  
+                   ('Submit observation', self.new_observation, 'primary')
                    ]
-        
+
         return button_list
 
     def open_cells(self, _=None):
         """Open cells button function that opens the selected
-        number of code cells and one markdown cell"""
+        number of code cells"""
         self.cell_count += self.add_cells_int.value + 1
         self.utils.create_code_cells_above(self.add_cells_int.value)
-        
+
 
     def delete_last_cell(self, _=None):
         """Delete last cell-button function"""
@@ -54,36 +52,34 @@ class Inductive:
         self.utils.clear_code_cells_above(self.cell_count)
 
     def run_cells(self, _=None):
-       
-        """Executes cells above and displays text area for summarization of analysis."""
+        """Executes cells above and displays text area for observations of analysis."""
         self.utils.run_cells_above(self.cell_count)
         if self.conclusion:
             self.conclusion.close()
 
         notes_label = self.bogui.create_label(value='Explain what you observed:')
         self.conclusion = widgets.VBox([widgets.HBox(
-                [notes_label, self.notes]), self.buttons['Submit observation'], self.buttons['Get summary'], self.empty_notes_error
+                [notes_label, self.notes]),
+                self.buttons['Submit observation'],
+                self.buttons['Get summary'], self.empty_notes_error
                 ])
 
         display(self.conclusion)
-    
+
     def new_observation(self, _=None):
+        '''Checks new observation'''
         if self.check_notes():
             self.conclusion.close()
-        
         else:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
-
     def start_new_analysis(self, _=None):
-        """Starts new bringorder object"""
+        """Starts new bringorder object with old data"""
         command = 'BringOrder(data_import=False)'
         self.utils.create_and_execute_code_cell(command)
-    
-   
+
     def execute_ready(self, _=None):
-        """Executes code cells after Ready button is clicked."""
-       
+        """Executes code cells after Get summary button is clicked."""
         if self.check_notes():
             self.display_summary()
             self.new_analysis()
@@ -91,17 +87,17 @@ class Inductive:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
     def display_summary(self):
-        """Prints notes"""
-        observation_string = ''.join((f"Observation {i+1}: {observation}\n") for i, observation in enumerate(self.observations))
+        """Prints all observations"""
+        observation_string = ''.join((f"Observation {i+1}: {observation}\n") for i, observation
+                 in enumerate(self.observations))
         text = f'''All your observations from the data:\n {observation_string}'''
         print(text)
 
-      
         self.cell_operations.close()
         self.conclusion.close()
 
     def check_notes(self):
-        '''Checks that summarization was filled'''
+        '''Checks that text field was filled'''
         if self.notes.value == '':
             return False
 
@@ -127,7 +123,7 @@ class Inductive:
 
     def new_analysis(self):
         '''Display button to start a new analysis'''
-        display(self.buttons['New analysis']) #(self.new_analysis_button)
+        display(self.buttons['New analysis'])
 
     def __repr__(self):
         return ''

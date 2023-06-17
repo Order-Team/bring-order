@@ -107,6 +107,7 @@ class Bodi:
         return button
 
     def check_limitations(self):
+        '''Checks that limitations have been given or commented'''
         if self.data_limitations.value == '':
             return False
         return True
@@ -132,7 +133,7 @@ class Bodi:
         )
 
         return button
-    
+
     def create_prepare_data_button(self):
         """Creates button"""
         button = self.bogui.create_button(
@@ -142,7 +143,7 @@ class Bodi:
         )
 
         return button
-    
+
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
         self.boutils.hide_current_input()

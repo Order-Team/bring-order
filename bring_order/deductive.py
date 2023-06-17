@@ -255,7 +255,7 @@ class Deductive:
             bottom_right=clear_cells_button)
 
         return grid
-    
+
     def save_results(self, confirmed):
         """Prints results and hides widgets"""
         text = f'## Conclusion\\nAccepted: {confirmed.value}'
@@ -319,4 +319,3 @@ class Deductive:
 
     def __repr__(self):
         return ''
-    
