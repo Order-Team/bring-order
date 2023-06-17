@@ -28,8 +28,9 @@ class Inductive:
                    ('Clear cells', self.clear_cells, 'danger'),
                    ('Run cells', self.run_cells, 'primary'),
                    ('New analysis', self.start_new_analysis, 'success'),
-                   ('Get summary', self.execute_ready, 'primary'),
-                   ('Submit observation', self.new_observation, 'primary')
+                   ('Ready', self.execute_ready, 'primary'),
+                   ('Submit observation', self.new_observation, 'warning'),
+                   ('Prepare new data', self.prepare_new_data_pressed, 'success')
                    ]
 
         return button_list
@@ -61,7 +62,7 @@ class Inductive:
         self.conclusion = widgets.VBox([widgets.HBox(
                 [notes_label, self.notes]),
                 self.buttons['Submit observation'],
-                self.buttons['Get summary'], self.empty_notes_error
+                self.buttons['Ready'], self.empty_notes_error
                 ])
 
         display(self.conclusion)
@@ -76,6 +77,11 @@ class Inductive:
     def start_new_analysis(self, _=None):
         """Starts new bringorder object with old data"""
         command = 'BringOrder(data_import=False)'
+        self.utils.create_and_execute_code_cell(command)
+
+    def prepare_new_data_pressed(self, _=None):
+        '''Starts new analysis with importing new data'''
+        command = 'BringOrder(data_import=True)'
         self.utils.create_and_execute_code_cell(command)
 
     def execute_ready(self, _=None):
@@ -122,8 +128,8 @@ class Inductive:
         display(self.cell_operations)
 
     def new_analysis(self):
-        '''Display button to start a new analysis'''
-        display(self.buttons['New analysis'])
+        '''Display buttons to start a new analysis or prepare new data for analysis'''
+        display(widgets.HBox([self.buttons['New analysis'], self.buttons['Prepare new data']]))
 
     def __repr__(self):
         return ''

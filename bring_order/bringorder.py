@@ -2,6 +2,7 @@
 import os
 import sys
 from ipywidgets import widgets
+from IPython.display import display
 
 wd = os.getcwd()
 class_dir = os.path.dirname(os.path.realpath(__file__))
