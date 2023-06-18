@@ -40,7 +40,7 @@ class Inductive:
     def open_cells(self, _=None):
         """Open cells button function that opens the selected
         number of code cells"""
-        self.cell_count += self.add_cells_int.value + 1
+        self.cell_count += self.add_cells_int.value
         self.utils.create_code_cells_above(self.add_cells_int.value)
 
     def delete_last_cell(self, _=None):
