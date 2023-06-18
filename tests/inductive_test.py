@@ -7,7 +7,8 @@ from bring_order.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
-        self.instance = Inductive(BOGui(), BOUtils())
+        start_new = Mock()
+        self.instance = Inductive(BOGui(), BOUtils(), start_new)
         self.instance.bogui.create_button = Mock()
 
     def test_cell_count_starts_at_0(self):
@@ -23,7 +24,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(self.instance.buttons['Open cells'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 8)
+        self.assertEqual(len(self.instance.buttons), 9)
 
     def test_filled_summary_returns_true(self):
         self.instance.notes.value = "Childrens' usage of psychosis medication has increased."

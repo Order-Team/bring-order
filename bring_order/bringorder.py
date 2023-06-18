@@ -16,7 +16,7 @@ from inductive import Inductive
 
 class BringOrder:
     """Main class"""
-    def __init__(self, data_import=True):
+    def __init__(self):
         """Class constructor"""
         self.boutils = BOUtils()
         self.bogui = BOGui()
@@ -28,10 +28,7 @@ class BringOrder:
             self.boutils,
             self.bogui,
             self.start_analysis)
-        if data_import:
-            self.bring_order()
-        else:
-            self.start_analysis()
+        self.bring_order()
 
     def create_deductive_button(self):
         """Creates deductive button"""
@@ -73,6 +70,7 @@ class BringOrder:
         self.bodi.bodi()
 
     def start_analysis(self):
+        """Starts analysis phase"""
         self.deductive = Deductive(
             self.bogui,
             self.boutils,
@@ -80,7 +78,8 @@ class BringOrder:
         )
         self.inductive = Inductive(
             self.bogui,
-            self.boutils
+            self.boutils,
+            self.start_analysis
         )
         self.deductive_button = self.create_deductive_button()
         self.inductive_button = self.create_inductive_button()
