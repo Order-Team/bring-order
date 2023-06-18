@@ -59,8 +59,8 @@ class BringOrder:
 
         self.close_buttons()
         if not hasattr(self, 'data_limitations'):
-            self.data_limitations = self.bodi.data_limitations.value
-        self.deductive.data_limitations = self.bodi.data_limitations.value
+            self.data_limitations = self.bodi.data_limitations
+        self.deductive.data_limitations = self.bodi.data_limitations
         self.deductive.start_deductive_analysis()
 
     def start_inductive_analysis(self, _=None):

@@ -25,7 +25,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
         self.conclusion = None
-        self.data_limitations = 'Data limitations missing'
+        self.data_limitations = ['Data limitations missing']
         self.limitation_prompt = None
 
     @property
@@ -70,9 +70,12 @@ class Deductive:
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
         #print('checking limits: ' + self.data_limitations) #This is for debugging
+        
+        limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count, item in enumerate(self.data_limitations, start=1))
+                
         limitation_prompt_text = widgets.HTML(
             'Do the hypotheses fit within the limitations of the data set?' 
-            + '<br>' + self.data_limitations)
+            + '<br>' + limitations)
 
         self.limitation_prompt = widgets.VBox([limitation_prompt_text,
             widgets.HBox([self.buttons['Yes'], self.buttons['No']])

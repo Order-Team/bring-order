@@ -105,10 +105,9 @@ class Bodi:
         add_more_limitations_button = self.create_add_more_limitations_button()
 
         rows = len(self.data_limitations)
-        if rows <3:
-            rows = 3
-            for i in range(3):
-                self.data_limitations.append(self.bogui.create_text_area('', f'Limitation {i+1}'))
+        if rows == 0:
+            self.data_limitations.append(self.bogui.create_text_area('', f'Limitation 1: '))
+            rows +=1
 
         grid = GridspecLayout(rows, 1)
 
@@ -145,7 +144,7 @@ class Bodi:
 
         return button
 
-    def check_limitations(self, item):
+    def check_limitations(self, item=''):
         '''Checks that limitations have been given or commented'''
         if item == '':
             return False
