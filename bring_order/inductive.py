@@ -88,11 +88,19 @@ class Inductive:
         display(self.conclusion)
 
     def new_observation(self, _=None):
-        '''Checks new observation and resets cell count'''
+        """Checks new observation, saves it, and resets cell count"""
         if self.check_notes():
+            self.observations.append(self.notes.value)
+            number = len(self.observations)
+            notes_list = self.notes.value.split('\n')
+            notes = '<br />'.join(notes_list)
+            self.utils.create_markdown_cells_above(1, f'## Observation {number}\\n{notes}')
+            self.buttons_disabled(False)
+            self.empty_notes_error.value = ''
             self.conclusion.close()
             self.notes.value = ''
             self.cell_count = 0
+
         else:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
@@ -140,17 +148,9 @@ class Inductive:
         self.new_analysis()
 
     def check_notes(self):
-        '''Checks that text field was filled'''
+        """Checks that text field was filled"""
         if self.notes.value == '':
             return False
-
-        self.observations.append(self.notes.value)
-        number = len(self.observations)
-        notes_list = self.notes.value.split('\n')
-        notes = '<br />'.join(notes_list)
-        self.utils.create_markdown_cells_above(1, f'## Observation {number}\\n{notes}')
-        self.buttons_disabled(False)
-        self.empty_notes_error.value = ''
 
         return True
 
