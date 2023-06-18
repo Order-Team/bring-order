@@ -1,13 +1,14 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
-from IPython.display import display
+from IPython.display import display, clear_output
 
 class Inductive:
     """Class that guides inductive analysis"""
-    def __init__(self, bogui, boutils):
+    def __init__(self, bogui, boutils, start_new):
         """Class constructor."""
         self.bogui = bogui
         self.utils = boutils
+        self.start_new = start_new
         self.cell_count = 0
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.add_cells_int = self.bogui.create_int_text()
@@ -30,7 +31,8 @@ class Inductive:
                    ('New analysis', self.start_new_analysis, 'success'),
                    ('Ready', self.execute_ready, 'primary'),
                    ('Submit observation', self.new_observation, 'warning'),
-                   ('Prepare new data', self.prepare_new_data_pressed, 'success')
+                   ('Prepare new data', self.prepare_new_data_pressed, 'success'),
+                   ('All done', self.all_done, 'success')
                    ]
 
         return button_list
@@ -40,7 +42,6 @@ class Inductive:
         number of code cells"""
         self.cell_count += self.add_cells_int.value + 1
         self.utils.create_code_cells_above(self.add_cells_int.value)
-
 
     def delete_last_cell(self, _=None):
         """Delete last cell-button function"""
@@ -73,18 +74,18 @@ class Inductive:
         '''Checks new observation'''
         if self.check_notes():
             self.conclusion.close()
+            self.notes.value = ''
         else:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
     def start_new_analysis(self, _=None):
         """Starts new bringorder object with old data"""
-        command = 'BringOrder(data_import=False)'
-        self.utils.create_and_execute_code_cell(command)
+        clear_output(wait=True)
+        self.start_new()
 
     def prepare_new_data_pressed(self, _=None):
         '''Starts new analysis with importing new data'''
-        command = 'BringOrder(data_import=True)'
-        self.utils.create_and_execute_code_cell(command)
+        self.utils.execute_cell_from_current(0, 'BringOrder()')
 
     def execute_ready(self, _=None):
         """Executes code cells after Get summary button is clicked."""
@@ -130,9 +131,17 @@ class Inductive:
         """Starts inductive analysis"""
         display(self.cell_operations)
 
+    def all_done(self, _=None):
+        """Button function to delete the widget cell"""
+        self.utils.delete_cell_from_current(0)
+
     def new_analysis(self):
         '''Display buttons to start a new analysis or prepare new data for analysis'''
-        display(widgets.HBox([self.buttons['New analysis'], self.buttons['Prepare new data']]))
+        display(widgets.HBox([
+            self.buttons['New analysis'],
+            self.buttons['Prepare new data'],
+            self.buttons['All done']]
+        ))
 
     def __repr__(self):
         return ''
