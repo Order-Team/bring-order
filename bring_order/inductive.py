@@ -61,9 +61,11 @@ class Inductive:
         notes_label = self.bogui.create_label(value='Explain what you observed:')
         self.conclusion = widgets.VBox([widgets.HBox(
                 [notes_label, self.notes]),
-                self.buttons['Submit observation'],
-                self.buttons['Ready'], self.empty_notes_error
-                ])
+                widgets.TwoByTwoLayout(
+               top_left= self.empty_notes_error,
+               bottom_left= self.buttons['Ready'],
+               bottom_right=self.buttons['Submit observation'],
+               merge=False)])
 
         display(self.conclusion)
 
@@ -94,10 +96,11 @@ class Inductive:
 
     def display_summary(self):
         """Prints all observations"""
-        observation_string = ''.join((f"Observation {i+1}: {observation}\n") for i, observation
+        observation_string = ' \\n '.join((f"Observation {i+1}: {observation} \\n ") for i, observation
                  in enumerate(self.observations))
-        text = f'''All your observations from the data:\n {observation_string}'''
-        print(text)
+        text = f'''## All your observations from the data: \\n {observation_string}'''
+        
+        self.utils.create_markdown_cells_above(1, text=text)
 
         self.cell_operations.close()
         self.conclusion.close()

@@ -4,6 +4,7 @@ and requirements of data. After code cells displays "ready to analyse" button. A
 pressed displays text field and "ready" button. Empty text field is not accepted.'''
 from ipywidgets import widgets
 from IPython.display import display
+from ipywidgets import GridspecLayout
 
 
 class Bodi:
@@ -18,7 +19,7 @@ class Bodi:
         self.prepare_data_button = self.create_prepare_data_button()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
-        self.data_limitations = self.bogui.create_text_area()
+        self.data_limitations = []
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
 
@@ -77,6 +78,52 @@ class Bodi:
             style='danger')
 
         return button
+    
+    def add_limitation(self, event=None):
+    
+        #self.check_limitations()
+        if self.limitation_grid:
+                self.limitation_grid.close()
+
+        self.data_limitations.append(self.bogui.create_text_area('',f'Limitation {len(self.data_limitations)+1}: '))
+
+        self.display_limitations()
+        
+    def create_add_more_limitations_button(self):
+        button = self.bogui.create_button(
+                'Add more limitations',
+                self.add_limitation
+            )
+        return button
+    
+
+    def display_limitations(self):
+        limitations_label = self.bogui.create_message(
+                value='Identify limitations to the data: what kind of questions cannot be answered with it?')
+            
+        analyze_button = self.create_analysis_button()
+        add_more_limitations_button = self.create_add_more_limitations_button()
+
+        rows = len(self.data_limitations)
+        if rows <3:
+            rows = 3
+            for i in range(3):
+                self.data_limitations.append(self.bogui.create_text_area('', f'Limitation {i+1}'))
+
+        grid = GridspecLayout(rows, 1)
+
+        for i in range(rows):
+            for j in range(1):
+                grid[i, j] = self.data_limitations[i]
+        
+
+        self.limitation_grid = widgets.AppLayout(
+            header=limitations_label,
+            center=grid,
+            footer=widgets.HBox([analyze_button, self.empty_limitations_error, add_more_limitations_button ])
+        )
+
+        display(self.limitation_grid)
 
     def create_run_button(self):
         """Creates button"""
@@ -87,17 +134,9 @@ class Bodi:
 
             if self.limitation_grid:
                 self.limitation_grid.close()
+            
+            self.display_limitations()
 
-            limitations_label = self.bogui.create_message(
-                value='Data limitations:')
-            analyze_button = self.create_analysis_button()
-            self.limitation_grid = widgets.AppLayout(
-                left_sidebar=limitations_label,
-                center=self.data_limitations,
-                footer=widgets.HBox([analyze_button, self.empty_limitations_error])
-            )
-
-            display(self.limitation_grid)
 
         button = self.bogui.create_button(
             desc='Run cells',
@@ -108,22 +147,24 @@ class Bodi:
 
     def check_limitations(self):
         '''Checks that limitations have been given or commented'''
-        if self.data_limitations.value == '':
-            return False
+       
+        for limitation in self.data_limitations:
+            if limitation.value == '':
+                return False
         return True
-
+        
+    
     def create_analysis_button(self):
         """Creates button"""
         def start_analysis(_=None):
             """Button function"""
             if self.check_limitations():
-                limitations = self.data_limitations.value.replace('\n', '\\n')
-                text = f'## Data limitations\\n{limitations}'
+                limitations = ' \\n '.join(f"Limitation {count}: {item.value} \\n" for count, item in enumerate(self.data_limitations, start=1))
+                text = f'## Data limitations \\n {limitations}'
                 self.boutils.create_markdown_cells_above(1, text=text)
                 self.import_grid.close()
                 self.limitation_grid.close()
                 self.start_analysis()
-
             else:
                 self.empty_limitations_error.value = 'Data limitations cannot be empty'
 

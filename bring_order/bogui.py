@@ -51,9 +51,9 @@ class BOGui:
         input_field = widgets.Text(value=default_value)
         return input_field
 
-    def create_text_area(self, default_value=''):
+    def create_text_area(self, default_value='', place_holder=''):
         """Creates text box"""
-        text_area = widgets.Textarea(value=default_value,layout={'width': '80%'})
+        text_area = widgets.Textarea(value=default_value,layout={'width': '80%'}, placeholder=place_holder)
         return text_area
 
     def create_label(self, value):
