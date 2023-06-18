@@ -129,6 +129,7 @@ class Inductive:
 
     def start_inductive_analysis(self):
         """Starts inductive analysis"""
+        self.utils.create_markdown_cells_above(1, '# Inductive analysis')
         display(self.cell_operations)
 
     def all_done(self, _=None):
