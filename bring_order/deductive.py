@@ -2,7 +2,6 @@
 from ipywidgets import widgets
 from IPython.display import display
 
-
 class Deductive:
     """Class that guides deductive analysis"""
     def __init__(self, bogui, boutils, start_new):
@@ -17,9 +16,10 @@ class Deductive:
         self.start_new = start_new
         self.bogui = bogui
         self.boutils = boutils
-        self.hypothesis_input = self.bogui.create_input_field()
+        self.buttons = self.bogui.init_buttons(self.button_list)
+        #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
+        self.hypotheses = [self.bogui.create_input_field(), self.bogui.create_input_field()]
         self.empty_hypo_error = self.bogui.create_error_message()
-        self.null_input = self.bogui.create_input_field()
         self.empty_null_error = self.bogui.create_error_message()
         self.hypotheses_grid = self.create_hypotheses_grid()
         self.add_cells_int = self.bogui.create_int_text()
@@ -28,66 +28,55 @@ class Deductive:
         self.data_limitations = 'Data limitations missing'
         self.limitation_prompt = None
 
+    @property
+    def button_list(self):
+        """Buttons for deductive class.
+
+        Returns:
+            list of tuples in format (description: str, command: func, style: str)"""
+        button_list = [('Open cells', self.open_cells, 'warning'),
+                       ('Delete last cell', self.delete_last_cell, 'danger'),
+                       ('Save', self.check_data_limitations, 'success'),
+                       ('Clear', self.clear_hypotheses, 'primary'),
+                       ('Yes', self.valid_hypotheses, 'success'),
+                       ('No', self.bad_hypotheses, 'warning'),
+                       ('Run cells', self.run_cells, 'primary'),
+                       ('Clear cells', self.clear_cells, 'danger'),
+                       ('New analysis', self.start_new_analysis, 'success'),
+                       ('Prepare new data', self.start_analysis_with_new_data, 'success'),
+                       ('All done', self.all_done, 'success')]
+        return button_list
+
     def create_hypotheses_grid(self):
         """Creates widgets"""
         hypothesis_label = self.bogui.create_label('Hypothesis:')
         null_label = self.bogui.create_label('Null hypothesis:')
-        save_button = self.bogui.create_button(
-            desc='Save',
-            command=self.check_data_limitations)
-        clear_button = self.bogui.create_button(
-            desc='Clear',
-            command=self.clear_hypotheses,
-            style='primary')
         empty = self.bogui.create_placeholder()
 
-        grid = self.bogui.create_grid(
-            5,
-            2,
-            [empty,
-             self.empty_hypo_error,
-             hypothesis_label,
-             self.hypothesis_input,
-             null_label,
-             self.null_input,
-             empty,
-             self.empty_null_error,
-             empty,
-             widgets.HBox(
-                [save_button, clear_button])
+        grid = self.bogui.create_grid(5, 2,
+            [empty, self.empty_hypo_error,
+             hypothesis_label, self.hypotheses[0],
+             null_label, self.hypotheses[1],
+             empty, self.empty_null_error,
+             empty, widgets.HBox([self.buttons['Save'], self.buttons['Clear']])
             ])
-
         return grid
 
     def start_deductive_analysis(self, _=None):
         """Button function for deductive analysis"""
         display(self.hypotheses_grid)
-        self.hypothesis_input.focus()
+        self.hypotheses[0].focus()
 
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
         #print('checking limits: ' + self.data_limitations) #This is for debugging
-        self.limitation_prompt_text = widgets.HTML(
+        limitation_prompt_text = widgets.HTML(
             'Do the hypotheses fit within the limitations of the data set?' 
-            + '<br>'
-            + self.data_limitations)
-        valid_hypotheses_button = self.bogui.create_button(
-            desc='Yes',
-            command=self.valid_hypotheses
-        )
-        bad_hypotheses_button = self.bogui.create_button(
-            desc='No',
-            command=self.bad_hypotheses,
-            style='warning'
-        )
-        self.limitation_prompt = widgets.VBox(
-            [
-            self.limitation_prompt_text,
-            widgets.HBox([
-                valid_hypotheses_button, bad_hypotheses_button
-                ])
-            ]
-        )
+            + '<br>' + self.data_limitations)
+
+        self.limitation_prompt = widgets.VBox([limitation_prompt_text,
+            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
+            ])
         display(self.limitation_prompt)
 
     def valid_hypotheses(self, _=None):
@@ -108,15 +97,15 @@ class Deductive:
         Returns:
             True/False
         """
-        if len(self.hypothesis_input.value) > 0 and len(self.null_input.value) > 0:
+        if len(self.hypotheses[0].value) > 0 and len(self.hypotheses[1].value) > 0:
             return True
 
-        if self.hypothesis_input.value == '':
+        if self.hypotheses[0].value == '':
             self.empty_hypo_error.value = 'Hypothesis missing'
         else:
             self.empty_hypo_error.value = ''
 
-        if self.null_input.value == '':
+        if self.hypotheses[1].value == '':
             self.empty_null_error.value = 'Null hypothesis missing'
         else:
             self.empty_null_error.value = ''
@@ -125,197 +114,96 @@ class Deductive:
 
     def save_hypotheses(self, _=None):
         """Saves hypotheses and displays buttons for running code"""
-        hypotheses = f'- Hypothesis: {self.hypothesis_input.value}\\n- Null hypothesis: {self.null_input.value}'
+        hypotheses = f'- Hypothesis: {self.hypotheses[0].value}\
+        \\n- Null hypothesis: {self.hypotheses[1].value}'
         text = f'# Deductive analysis\\n## Hypotheses\\n{hypotheses}\\n## Data analysis'
         if self.check_hypotheses():
             self.boutils.create_markdown_cells_above(1, text=text)
-            confirmed_hypothesis = self.bogui.create_message(
-                value=f'Hypothesis: {self.hypothesis_input.value}')
-            confirmed_null = self.bogui.create_message(
-                value=f'Null hypothesis: {self.null_input.value}')
-            self.confirmed_grid = self.create_confirmed_grid(
-                confirmed_hypothesis,
-                confirmed_null)
+            self.confirmed_grid = self.create_confirmed_grid()
             self.hypotheses_grid.close()
             display(self.confirmed_grid)
 
     def clear_hypotheses(self, _=None):
         """Button function for resetting hypothesis and null hypothesis inputs"""
-        self.hypothesis_input.value = ''
-        self.null_input.value = ''
+        self.hypotheses[0].value = ''
+        self.hypotheses[1].value = ''
         self.empty_hypo_error.value = ''
         self.empty_null_error.value = ''
-        self.hypothesis_input.focus()
+        self.hypotheses[0].focus()
 
-    def create_open_cells_button(self):
-        """Creates button for opening new code cells for analysis.
+    def open_cells(self, _=None):
+        """Button function for opening new code cells"""
+        self.cell_count += self.add_cells_int.value
+        self.boutils.create_code_cells_above(self.add_cells_int.value)
 
-        Returns:
-            button
-        """
-        def open_cells(_=None):
-            """Button function"""
-            self.cell_count += self.add_cells_int.value
-            self.boutils.create_code_cells_above(self.add_cells_int.value)
+    def delete_last_cell(self, _=None):
+        """Button function for deleting the last code cell"""
+        if self.cell_count > 0:
+            self.boutils.delete_cell_above()
+            self.cell_count -= 1
 
-        button = self.bogui.create_button(
-            desc='Open cells',
-            command=open_cells,
-            style='warning')
+    def run_cells(self, _=None):
+        """Button function"""
+        self.boutils.run_cells_above(
+            self.cell_count)
 
-        return button
+        if self.conclusion:
+            self.conclusion.close()
 
-    def create_delete_button(self):
-        """Creates button for deleting the last code cell
+        conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
+        conclusion = self.bogui.create_radiobuttons(
+            options=[f'Hypothesis: {self.hypotheses[0].value}',
+                     f'Null hypothesis: {self.hypotheses[1].value}'])
 
-        Returns:
-            button
-        """
-        def delete_last_cell(_=None):
-            """Button function"""
-            if self.cell_count > 0:
-                self.boutils.delete_cell_above()
-                self.cell_count -= 1
+        self.conclusion = widgets.AppLayout(
+            left_sidebar=conclusion_label,
+            center=conclusion,
+            footer=widgets.HBox([self.buttons['New analysis'],
+                                 self.buttons['Prepare new data'],
+                                 self.buttons['All done']])
+        )
+        display(self.conclusion)
 
-        button = self.bogui.create_button(
-            desc='Delete last cell',
-            command=delete_last_cell,
-            style='danger')
+    def clear_cells(self, _=None):
+        """Clear button function to clear cells above"""
+        self.boutils.clear_code_cells_above(self.cell_count)
 
-        return button
-
-    def create_run_button(self, hypothesis, null_hypothesis):
-        """Creates button"""
-        def run_cells(_=None):
-            """Button function"""
-            self.boutils.run_cells_above(
-                self.cell_count)
-
-            if self.conclusion:
-                self.conclusion.close()
-
-            conclusion_label = self.bogui.create_message(
-                value='Accepted hypothesis:')
-            conclusion = self.bogui.create_radiobuttons(
-                options=[hypothesis.value, null_hypothesis.value])
-            new_analysis_button = self.create_new_analysis_button(
-                conclusion)
-            new_data_button = self.create_new_data_button(conclusion)
-            all_done_button = self.create_all_done_button(conclusion)
-            self.conclusion = widgets.AppLayout(
-                left_sidebar=conclusion_label,
-                center=conclusion,
-                footer=widgets.HBox([new_analysis_button, new_data_button, all_done_button])
-            )
-
-            display(self.conclusion)
-
-        button = self.bogui.create_button(
-            desc='Run cells',
-            command=run_cells,
-            style='primary')
-
-        return button
-
-    def create_clear_button(self):
-        """Creates button"""
-        def clear_cells(_=None):
-            """Button function"""
-            self.boutils.clear_code_cells_above(
-                self.cell_count)
-
-        button = self.bogui.create_button(
-            desc='Clear cells',
-            command=clear_cells,
-            style='danger')
-        return button
-
-    def create_confirmed_grid(self, hypothesis, null_hypothesis):
+    def create_confirmed_grid(self):
         """Creates widget grid"""
-        cell_number_label = self.bogui.create_label(
-            'Add code cells for your analysis:')
+        cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
-        open_cells_button = self.create_open_cells_button()
-        delete_cell_button = self.create_delete_button()
-        run_cells_button = self.create_run_button(hypothesis, null_hypothesis)
-        clear_cells_button = self.create_clear_button()
-
-        grid = widgets.GridspecLayout(
-            2,
-            2,
-            justify_items='center',
-            width='70%',
-            align_items='top')
-        grid[1, 0] = widgets.HBox(
-            [cell_number_label, self.add_cells_int])
+        grid = widgets.GridspecLayout(2, 2, justify_items='center', width='70%', align_items='top')
+        grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(
-            top_left=open_cells_button,
-            bottom_left=run_cells_button,
-            top_right=delete_cell_button,
-            bottom_right=clear_cells_button)
+            top_left=self.buttons['Open cells'],
+            bottom_left=self.buttons['Run cells'],
+            top_right=self.buttons['Delete last cell'],
+            bottom_right=self.buttons['Clear cells'])
 
         return grid
 
-    def save_results(self, confirmed):
+    def save_results(self):
         """Prints results and hides widgets"""
-        text = f'## Conclusion\\nAccepted: {confirmed.value}'
+        text = f'## Conclusion\\nAccepted: {self.conclusion.center.value}'
         self.boutils.create_markdown_cells_above(1, text=text)
         self.confirmed_grid.close()
         self.conclusion.close()
 
-    def create_new_analysis_button(self, radio):
-        """Creates button
-        
-        Args:
-            radio (radiobutton): the hypothesis radiobutton widget
-        """
-        def start_new_analysis(_=None):
-            """Button function"""
-            self.save_results(radio)
-            self.start_new()
+    def start_new_analysis(self, _=None):
+        """Button function to save results and star new analysis"""
+        self.save_results()
+        self.start_new()
 
-        button = self.bogui.create_button(
-            desc='New analysis',
-            command=start_new_analysis)
+    def start_analysis_with_new_data(self, _=None):
+        """Button function to start over with new data"""
+        self.save_results()
+        self.boutils.execute_cell_from_current(1, 'BringOrder()')
 
-        return button
 
-    def create_new_data_button(self, radio):
-        """Creates button
-        
-        Args:
-            radio (radiobutton): the hypothesis radiobutton widget
-        """
-
-        def start_analysis_with_new_data(_=None):
-            """Button function"""
-            self.save_results(radio)
-            self.boutils.execute_cell_from_current(1, 'BringOrder()')
-
-        button = self.bogui.create_button(
-            desc='Prepare new data',
-            command=start_analysis_with_new_data
-        )
-
-        return button
-
-    def create_all_done_button(self, radio):
-        """Creates button
-        
-        Args:
-            radio (radiobutton): the hypothesis radiobutton widget
-        """
-
-        def all_done(_=None):
-            self.save_results(radio)
-            self.boutils.delete_cell_from_current(1)
-
-        button = self.bogui.create_button(
-            desc='All done',
-            command=all_done
-        )
-
-        return button
+    def all_done(self, _=None):
+        """Button function to save results when ready."""
+        self.save_results()
+        self.boutils.delete_cell_from_current(1)
 
     def __repr__(self):
         return ''

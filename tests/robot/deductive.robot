@@ -7,7 +7,7 @@ Suite Teardown  Clear Notebook And Close Browser  4    # The number of cells - 1
 *** Variables ***
 ${HYPO}  /html/body/div[4]/div/div/div[1]/div[1]/div[4]/div[2]/div[2]/div[11]/div[3]/input
 ${DATA}  /html/body/div[4]/div/div/div[1]/div[1]/div[1]/div[2]/div[3]/p
-${LIMIT}   /html/body/div[4]/div/div/div[1]/div[1]/div[3]/div[2]/div[2]/div[8]/div[3]/div/div[3]/input
+${LIMIT}  //*[@id="Data-limitations"]
 ${NULL}  /html/body/div[4]/div/div/div[1]/div[1]/div[4]/div[2]/div[2]/div[11]/div[3]/input
 ${NEW_CELL}  //*[@id="notebook-container"]/div[2]/div[1]/div[2]/div[2]
 ${NEW_INPUT}  //*[@id="notebook-container"]/div[2]/div[1]/div[2]
@@ -36,13 +36,12 @@ User Is Prompted to Upload Their Data
     Page Should Contain  Data limitations
     
 User is Required To Enter Data Limitations
-    Input Text  xpath:${LIMIT}  x = 0
-    Click Button  Start Analysis
+    Click Button  Start analysis
     Page Should Contain  Data limitations cannot be empty
     
 User Can Choose Between Inductive And Deductive Analysis
-    Input Text  xpath:${LIMIT}  x = "Limitations"	
-    Click Button  Start Analysis
+    Input Text  xpath:${LIMIT} x = "Limitations"	
+    Click Button  Start analysis
     Page Should Contain  Deductive 
     Page Should Contain  Inductive   
  
@@ -81,8 +80,8 @@ Clicking Run Cells Should Run New Cell
     Click Button  Run cells
     Scroll Element Into View  xpath:${NEW_OUTPUT}
 
-Clicking Clear Button Should Clear New Cell
-    Click Button  Clear cells
+Clicking Delete last cell Button Should Delete Cell
+    Click Button  Delete last cell
     Element Should Not Contain  xpath:${NEW_INPUT}  print('testing')
 
 Clicking Delete Button Should Delete New Cell
