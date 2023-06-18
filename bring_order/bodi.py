@@ -145,20 +145,25 @@ class Bodi:
 
         return button
 
-    def check_limitations(self):
+    def check_limitations(self, item):
         '''Checks that limitations have been given or commented'''
-       
-        for limitation in self.data_limitations:
-            if limitation.value == '':
-                return False
+        if item == '':
+            return False
         return True
         
-    
+
+    def call_check_limitation(self):
+        for limitation in self.data_limitations:
+            if not self.check_limitations(limitation.value):
+                return False
+        return True
+
+
     def create_analysis_button(self):
         """Creates button"""
         def start_analysis(_=None):
             """Button function"""
-            if self.check_limitations():
+            if self.call_check_limitation():
                 limitations = ' \\n '.join(f"Limitation {count}: {item.value} \\n" for count, item in enumerate(self.data_limitations, start=1))
                 text = f'## Data limitations \\n {limitations}'
                 self.boutils.create_markdown_cells_above(1, text=text)

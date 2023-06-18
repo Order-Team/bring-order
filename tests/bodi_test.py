@@ -24,8 +24,8 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.check_limitations())
 
     def test_check_limitations_returns_true_when_not_empty(self):
-        self.instance.data_limitations.value = "Some limitations"
-        self.assertTrue(self.instance.check_limitations())
+        value = "Some limitations"
+        self.assertTrue(self.instance.check_limitations(value))
 
     def test_open_cells_button_creates_button(self):
         self.instance.create_open_cells_button()
