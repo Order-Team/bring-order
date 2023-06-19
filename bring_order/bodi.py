@@ -3,7 +3,7 @@ Creates code cells for importing and cleaning data and markdown cell to describe
 and requirements of data. After code cells displays "ready to analyse" button. After button is 
 pressed displays text field and "ready" button. Empty text field is not accepted.'''
 from ipywidgets import widgets
-from IPython.display import display
+from IPython.display import display, clear_output
 from ipywidgets import GridspecLayout
 
 
@@ -16,7 +16,8 @@ class Bodi:
         self.boutils = boutils
         self.bogui = bogui
         self.cell_count = 0
-        self.prepare_data_button = self.create_prepare_data_button()
+        self.data_description = self.bogui.create_text_area()
+        self.save_description_button = self.create_save_description_button()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
         self.data_limitations = []
@@ -179,10 +180,10 @@ class Bodi:
 
         return button
 
-    def create_prepare_data_button(self):
+    def create_save_description_button(self):
         """Creates button"""
         button = self.bogui.create_button(
-            desc='Prepare your data',
+            desc='Save description',
             command=self.start_data_import,
             style='success'
         )
@@ -191,13 +192,30 @@ class Bodi:
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
-        self.boutils.hide_current_input()
-        text = '# Data preparation\\n## Data description\\nDescribe your data here\\n## Data import and cleaning'
-        self.boutils.create_markdown_cells_above(1, text=text)
-        self.cell_count += 1
-        self.prepare_data_button.close()
-        display(self.import_grid)
+        if self.data_description.value == '':
+            self.bodi(error='You must give some description of the data')
+        
+        else:
+            self.boutils.hide_current_input()
+            clear_output(wait=True)
+            display(self.import_grid)
 
-    def bodi(self):
+            description = '<br />'.join(self.data_description.value.split('\n'))
+            text = f'# Data preparation\\n## Data description\\n{description}\\n## Data import and cleaning'
+            self.boutils.create_markdown_cells_above(1, text=text)
+            self.cell_count += 1
+
+    def bodi(self, error=''):
         '''Main function'''
-        display(self.prepare_data_button)
+        clear_output(wait=True)
+
+        description_label = self.bogui.create_label('Describe your data:')
+        error_message = self.bogui.create_error_message(error)
+
+        grid = widgets.VBox([
+            widgets.HBox([description_label, self.data_description]),
+            error_message,
+            self.save_description_button
+        ])
+
+        display(grid)

@@ -17,6 +17,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui = Mock()
 
     def test_start_data_hides_current_input(self):
+        self.instance.data_description.value = 'Some description'
         self.instance.start_data_import()
         self.instance.boutils.hide_current_input.assert_called()
 
