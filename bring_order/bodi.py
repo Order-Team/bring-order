@@ -16,98 +16,83 @@ class Bodi:
         self.boutils = boutils
         self.bogui = bogui
         self.cell_count = 0
+        self.buttons = self.bogui.init_buttons(self.button_list)
         self.data_description = self.bogui.create_text_area()
-        self.save_description_button = self.create_save_description_button()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
         self.data_limitations = []
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
 
+    @property
+    def button_list(self):
+        """Buttons for Bodi class.
+
+        Returns:
+            list of tuples in format (description: str, command: func, style: str) """
+        button_list = [
+            ('Save description', self.start_data_import, 'success'),
+            ('Open cells', self.open_cells, 'warning'),
+            ('Delete last cell', self.delete_last_cell, 'danger'),
+            ('Run cells', self.run_cells, 'primary'),
+            ('Add limitation', self.add_limitation, 'primary'),
+            ('Start analysis', self.start_analysis_clicked, 'success')
+        ]
+
+        return button_list
+
     def data_import_grid(self):
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label(
             'Add code cells for data preparation:')
 
-        open_cells_button = self.create_open_cells_button()
-        delete_cell_button = self.create_delete_button()
-        run_cells_button = self.create_run_button()
-
         grid = widgets.HBox([
             cell_number_label,
             self.add_cells_int,
-            open_cells_button,
-            run_cells_button,
-            delete_cell_button
+            self.buttons['Open cells'],
+            self.buttons['Run cells'],
+            self.buttons['Delete last cell']
         ])
 
         return grid
 
-    def create_open_cells_button(self):
-        """Creates button for opening new code cells for analysis.
+    def open_cells(self, _=None):
+        """Button function that opens selected number of cells above widget cell"""
+        self.cell_count += self.add_cells_int.value
+        self.boutils.create_code_cells_above(self.add_cells_int.value)
 
-        Returns:
-            button
-        """
-        def open_cells(_=None):
-            """Button function"""
-            self.cell_count += self.add_cells_int.value
-            self.boutils.create_code_cells_above(self.add_cells_int.value)
+    def delete_last_cell(self, _=None):
+        """Button function to delete the last data import code cell"""
+        if self.cell_count > 1:
+            self.boutils.delete_cell_above()
+            self.cell_count -= 1
 
-        button = self.bogui.create_button(
-            desc='Open cells',
-            command=open_cells,
-            style='warning')
+    def run_cells(self, _=None):
+        """Button function that runs data import cells"""
+        self.boutils.run_cells_above(self.cell_count)
 
-        return button
-
-    def create_delete_button(self):
-        """Creates button for deleting the last code cell
-
-        Returns:
-            button
-        """
-        def delete_last_cell(_=None):
-            """Button function"""
-            if self.cell_count > 1:
-                self.boutils.delete_cell_above()
-                self.cell_count -= 1
-
-        button = self.bogui.create_button(
-            desc='Delete last cell',
-            command=delete_last_cell,
-            style='danger')
-
-        return button
-    
-    def add_limitation(self, event=None):
-    
-        #self.check_limitations()
         if self.limitation_grid:
-                self.limitation_grid.close()
+            self.limitation_grid.close()
+
+        self.display_limitations()
+
+    def add_limitation(self, _=None):
+        """Button function to add new limitation"""
+        if self.limitation_grid:
+            self.limitation_grid.close()
 
         self.data_limitations.append(self.bogui.create_text_area('',f'Limitation {len(self.data_limitations)+1}: '))
 
         self.display_limitations()
-        
-    def create_add_more_limitations_button(self):
-        button = self.bogui.create_button(
-                'Add more limitations',
-                self.add_limitation
-            )
-        return button
-    
 
     def display_limitations(self):
+        """Shows text boxes and buttons for adding limitations"""
         limitations_label = self.bogui.create_message(
                 value='Identify limitations to the data: what kind of questions cannot be answered with it?')
-            
-        analyze_button = self.create_analysis_button()
-        add_more_limitations_button = self.create_add_more_limitations_button()
 
         rows = len(self.data_limitations)
         if rows == 0:
-            self.data_limitations.append(self.bogui.create_text_area('', f'Limitation 1: '))
+            self.data_limitations.append(self.bogui.create_text_area('', 'Limitation 1: '))
             rows +=1
 
         grid = GridspecLayout(rows, 1)
@@ -115,44 +100,27 @@ class Bodi:
         for i in range(rows):
             for j in range(1):
                 grid[i, j] = self.data_limitations[i]
-        
 
         self.limitation_grid = widgets.AppLayout(
             header=limitations_label,
             center=grid,
-            footer=widgets.HBox([analyze_button, self.empty_limitations_error, add_more_limitations_button ])
+            footer=widgets.HBox([
+                self.buttons['Start analysis'],
+                self.empty_limitations_error,
+                self.buttons['Add limitation']
+            ])
         )
 
         display(self.limitation_grid)
 
-    def create_run_button(self):
-        """Creates button"""
-        def run_cells(_=None):
-            """Button function"""
-            self.boutils.run_cells_above(
-                self.cell_count)
-
-            if self.limitation_grid:
-                self.limitation_grid.close()
-            
-            self.display_limitations()
-
-
-        button = self.bogui.create_button(
-            desc='Run cells',
-            command=run_cells,
-            style='primary')
-
-        return button
-
     def check_limitations(self, item=''):
-        '''Checks that limitations have been given or commented'''
+        """Checks that limitations have been given or commented"""
         if item == '':
             return False
         return True
-        
 
     def call_check_limitation(self):
+        """Checks that none of the limitations is empty"""
         for limitation in self.data_limitations:
             if not self.check_limitations(limitation.value):
                 return False
@@ -166,48 +134,28 @@ class Bodi:
         """
 
         formatted_limitations = '## Data limitations\\n'
-        for index in range(len(self.data_limitations)):
-            limitation = '<br />'.join(self.data_limitations[index].value.split('\n'))
+        for index, item in enumerate(self.data_limitations):
+            limitation = '<br />'.join(item.value.split('\n'))
             limitation_text = f'### Limitation {index+1}\\n{limitation}\\n'
             formatted_limitations += limitation_text
 
         return formatted_limitations
 
-    def create_analysis_button(self):
-        """Creates button"""
-        def start_analysis(_=None):
-            """Button function"""
-            if self.call_check_limitation():
-                text = self.format_limitations_for_markdown()
-                self.boutils.create_markdown_cells_above(1, text=text)
-                self.import_grid.close()
-                self.limitation_grid.close()
-                self.start_analysis()
-            else:
-                self.empty_limitations_error.value = 'Data limitations cannot be empty'
-
-        button = self.bogui.create_button(
-            'Start analysis',
-            start_analysis
-        )
-
-        return button
-
-    def create_save_description_button(self):
-        """Creates button"""
-        button = self.bogui.create_button(
-            desc='Save description',
-            command=self.start_data_import,
-            style='success'
-        )
-
-        return button
+    def start_analysis_clicked(self, _=None):
+        """Button function to start analysis after data preparation"""
+        if self.call_check_limitation():
+            text = self.format_limitations_for_markdown()
+            self.boutils.create_markdown_cells_above(1, text=text)
+            clear_output(wait=True)
+            self.start_analysis()
+        else:
+            self.empty_limitations_error.value = 'Data limitations cannot be empty'
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
         if self.data_description.value == '':
             self.bodi(error='You must give some description of the data')
-        
+
         else:
             self.boutils.hide_current_input()
             clear_output(wait=True)
@@ -219,7 +167,7 @@ class Bodi:
             self.cell_count += 1
 
     def bodi(self, error=''):
-        '''Main function'''
+        """Main function"""
         clear_output(wait=True)
 
         description_label = self.bogui.create_label('Describe your data:')
@@ -228,7 +176,7 @@ class Bodi:
         grid = widgets.VBox([
             widgets.HBox([description_label, self.data_description]),
             error_message,
-            self.save_description_button
+            self.buttons['Save description']
         ])
 
         display(grid)
