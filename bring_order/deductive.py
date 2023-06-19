@@ -70,17 +70,17 @@ class Deductive:
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
         #print('checking limits: ' + self.data_limitations) #This is for debugging
-        
-        limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count, item in enumerate(self.data_limitations, start=1))
-                
-        limitation_prompt_text = widgets.HTML(
-            'Do the hypotheses fit within the limitations of the data set?' 
-            + '<br>' + limitations)
+        if self.check_hypotheses():
+            limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count, item in enumerate(self.data_limitations, start=1))
+                    
+            limitation_prompt_text = widgets.HTML(
+                'Do the hypotheses fit within the limitations of the data set?' 
+                + '<br>' + limitations)
 
-        self.limitation_prompt = widgets.VBox([limitation_prompt_text,
-            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
-            ])
-        display(self.limitation_prompt)
+            self.limitation_prompt = widgets.VBox([limitation_prompt_text,
+                widgets.HBox([self.buttons['Yes'], self.buttons['No']])
+                ])
+            display(self.limitation_prompt)
 
     def valid_hypotheses(self, _=None):
         """Closes the data limitation check prompt and calls save_hypotheses()"""
