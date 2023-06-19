@@ -32,8 +32,7 @@ class BOGui:
             button_list[button[0]] = new_button
         return button_list
 
-    def create_message(self, value, style={'font-family': 'Arial, Helvetica, sans-serif',
-                                           'font_size': '15px'}):
+    def create_message(self, value, style={'font_size': '15px'}):
         """Creates HTML"""
         message = widgets.HTML(value=value, style=style)
         return message
@@ -41,8 +40,7 @@ class BOGui:
     def create_error_message(self, value=''):
         """Creates HTML, color: red"""
         error = self.create_message(value=value,
-                                    style={'font-family': 'Arial, Helvetica, sans-serif',
-                                           'font_size': '12px',
+                                    style={'font_size': '12px',
                                            'text_color': 'red'})
         return error
 

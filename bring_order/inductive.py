@@ -13,7 +13,6 @@ class Inductive:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.add_cells_int = self.bogui.create_int_text()
         self.notes = self.bogui.create_text_area()
-        self.cell_operations = self.create_cell_operations()
         self.conclusion = None
         self.summary = self.bogui.create_text_area()
         self.empty_notes_error = self.bogui.create_error_message()
@@ -34,8 +33,7 @@ class Inductive:
                    ('Submit observation', self.new_observation, 'warning'),
                    ('Submit summary', self.submit_summary, 'success'),
                    ('Prepare new data', self.prepare_new_data_pressed, 'success'),
-                   ('All done', self.all_done, 'success')
-                   ]
+                   ('All done', self.all_done, 'success')]
 
         return button_list
 
@@ -71,7 +69,7 @@ class Inductive:
         """Executes cells above and displays text area for observations of analysis."""
         if self.cell_count == 0:
             return
-        
+
         self.utils.run_cells_above(self.cell_count)
         if self.conclusion:
             self.conclusion.close()
@@ -140,7 +138,7 @@ class Inductive:
         if self.summary.value == '':
             self.display_summary(error='You must write some kind of summary')
             return
-        
+
         summary_list = self.summary.value.split('\n')
         summary = '<br />'.join(summary_list)
         self.utils.create_markdown_cells_above(1, text=f'## Summary\\n{summary}')
@@ -151,7 +149,6 @@ class Inductive:
         """Checks that text field was filled"""
         if self.notes.value == '':
             return False
-
         return True
 
     def create_cell_operations(self):
@@ -170,13 +167,13 @@ class Inductive:
         grid[0, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[:, 1] = cell_buttons
         grid[1, 2] = self.buttons['Ready to summarize']
-        
+
         return grid
 
     def start_inductive_analysis(self):
         """Starts inductive analysis"""
         self.utils.create_markdown_cells_above(1, '# Inductive analysis')
-        display(self.cell_operations)
+        display(self.create_cell_operations())
 
     def all_done(self, _=None):
         """Button function to delete the widget cell"""
