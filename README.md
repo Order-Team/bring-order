@@ -4,7 +4,7 @@
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
 The tool is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
-User can choose deductive or inductive analysis.
+User can import and prepare data for analysis, add limitations and perform deductive or inductive analysis.
 Deductive analysis asks the user to set the hypothesis and null hypothesis, run their analysis, and confirm one of the hypotheses.
 Inductive analysis is an option to perform explorative analysis and write notes about it.
 
@@ -17,8 +17,10 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 * [Minutes of meetings](https://drive.google.com/drive/folders/1kwXCKbx7egHf8qYDIb4fRffNnad6Qd1t)
 
 ## Installation
+### Installation from PyPi
 
-### Installation from TestPypi
+### Linux
+
 - If you don't have Jupyter Notebook installed, install it with
 ```bash
     pip install notebook
@@ -36,11 +38,44 @@ Inductive analysis is an option to perform explorative analysis and write notes 
     pip install --upgrade ipywidgets
 ```
 
-- Install testbringorder extention:
+- Install bring-order extention:
 ```bash
-    pip install -i https://test.pypi.org/simple/ testbringorder
+    pip install bring-order
 ```
 
+### Windows
+
+- If you don't have Jupyter Notebook installed, install Anaconda with [Anaconda download](https://www.anaconda.com/download)
+
+- Use Anaconda Powershell Prompt 
+
+- If you don't have ipywidgets installed, install it with
+```bash
+    pip install ipywidgets
+```
+- If you have an old version of ipywidgets installed, upgrade it with
+```bash
+    pip install --upgrade ipywidgets
+```
+
+- Install bring-order extention:
+```bash
+    pip install bring-order
+```
+
+### MacOS
+- If you don't have ipywidgets installed, install it with
+```bash
+    python3 -m pip install "ipywidgets"
+```
+- If you have an old version of ipywidgets installed, upgrade it with
+```bash
+    python3 -m pip install --upgrade ipywidgets
+```
+- Install bring-order extention:
+```bash
+    python3 -m pip install "bring-order"
+```
 ### Usage
 - Open Jupyter Notebook with
 ```bash
@@ -50,7 +85,10 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 - In Jupyter Notebook execute
 
 ``` 
-    from bringorder import BringOrder
+    from bring_order import BringOrder  or  from bring_order import *
+```
+- Start using package by executing
+``` 
     BringOrder()
 ```
 
