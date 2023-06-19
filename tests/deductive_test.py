@@ -13,6 +13,7 @@ class TestDeductive(unittest.TestCase):
         """
         start_new = Mock()
         self.instance = Deductive(BOGui(), BOUtils(), start_new)
+        self.instance.boutils = Mock()
 
     def test_empty_hypothesis(self):
         self.instance.hypotheses[0].value = ""
@@ -45,10 +46,10 @@ class TestDeductive(unittest.TestCase):
     def test_saving_hypotheses_displays_grid(self):
         self.instance.hypotheses[0].value = "Roses are red"
         self.instance.hypotheses[1].value = "Violets are blue"
-        Deductive.check_hypotheses = MagicMock()   
-        Deductive.check_hypotheses.return_value = True
-        Deductive.create_confirmed_grid = MagicMock()
-        Deductive.create_confirmed_grid.return_value = "Hello"
+        self.instance.check_hypotheses = MagicMock()   
+        self.instance.check_hypotheses.return_value = True
+        self.instance.create_confirmed_grid = MagicMock()
+        self.instance.create_confirmed_grid.return_value = "Hello"
         self.instance.save_hypotheses(self)
         self.assertIsNotNone(self.instance.confirmed_grid)
 
@@ -57,6 +58,13 @@ class TestDeductive(unittest.TestCase):
         self.instance.limitation_prompt = MagicMock()
         self.instance.bad_hypotheses()
         self.instance.clear_hypotheses.assert_called()
+
+    def test_all_done_hides_widgets(self):
+        self.instance.save_results = MagicMock()
+        self.instance.all_done()
+        self.instance.save_results.assert_called()
+        
+        
 
 
 

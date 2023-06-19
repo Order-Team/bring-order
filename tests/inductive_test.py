@@ -9,8 +9,10 @@ class TestInductive(unittest.TestCase):
     def setUp(self):
         start_new = Mock()
         self.instance = Inductive(BOGui(), BOUtils(), start_new)
+        self.instance.utils = Mock()
+        self.instance.bogui = Mock()
         self.instance.bogui.create_button = Mock()
-
+        
     def test_cell_count_starts_at_0(self):
         self.assertEqual(self.instance.cell_count, 0)
 
@@ -50,19 +52,25 @@ class TestInductive(unittest.TestCase):
         self.instance.add_cells_int.value = 3
         self.instance.open_cells()  
         self.assertEqual(6, self.instance.cell_count)  
+        self.instance.utils.create_code_cells_above.assert_called()
 
-    # def test_open_cells_button_creates_button(self):
-    #     self.instance.create_open_cells_button()
-    #     self.instance.bogui.create_button.assert_called()
-    #
-    # def test_create_delete_button_creates_button(self):
-    #     self.instance.create_delete_button()
-    #     self.instance.bogui.create_button.assert_called()
-    #
-    # def test_create_run_button_creates_button(self):
-    #     self.instance.create_run_button()
-    #     self.instance.bogui.create_button.assert_called()
-    #
-    # def test_create_clear_button_creates_button(self):
-    #     self.instance.create_clear_button()
-    #     self.instance.bogui.create_button.assert_called()
+    def test_zero_cells_are_not_run(self):
+        self.instance.run_cells()
+        self.instance.utils.run_cells_above.assert_not_called()
+
+    def test_new_observation_cannot_be_empty(self):
+        self.instance.check_notes = MagicMock()
+        self.instance.check_notes.return_value = False
+        self.instance.new_observation()
+        self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
+  
+    def test_new_observation_is_saved(self):
+        self.instance.observations.append("There is a lot of noise.")
+        self.instance.check_notes = MagicMock()        
+        self.instance.conclusion = MagicMock()
+        self.instance.notes.value = "The sample is too small."
+        self.instance.check_notes.return_value = True
+        self.instance.new_observation()
+        self.assertEqual(2, len(self.instance.observations))
+        
+
