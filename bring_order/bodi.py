@@ -58,8 +58,9 @@ class Bodi:
 
     def open_cells(self, _=None):
         """Button function that opens selected number of cells above widget cell"""
-        self.cell_count += self.add_cells_int.value
-        self.boutils.create_code_cells_above(self.add_cells_int.value)
+        if self.add_cells_int.value > 0:
+            self.cell_count += self.add_cells_int.value
+            self.boutils.create_code_cells_above(self.add_cells_int.value)
 
     def delete_last_cell(self, _=None):
         """Button function to delete the last data import code cell"""
