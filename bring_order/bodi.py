@@ -158,14 +158,27 @@ class Bodi:
                 return False
         return True
 
+    def format_limitations_for_markdown(self):
+        """Formats limitations for markdown to prevent Javascript error
+        
+        Returns:
+            formatted_limitations (str)
+        """
+
+        formatted_limitations = '## Data limitations\\n'
+        for index in range(len(self.data_limitations)):
+            limitation = '<br />'.join(self.data_limitations[index].value.split('\n'))
+            limitation_text = f'### Limitation {index+1}\\n{limitation}\\n'
+            formatted_limitations += limitation_text
+
+        return formatted_limitations
 
     def create_analysis_button(self):
         """Creates button"""
         def start_analysis(_=None):
             """Button function"""
             if self.call_check_limitation():
-                limitations = ' \\n '.join(f"Limitation {count}: {item.value} \\n" for count, item in enumerate(self.data_limitations, start=1))
-                text = f'## Data limitations \\n {limitations}'
+                text = self.format_limitations_for_markdown()
                 self.boutils.create_markdown_cells_above(1, text=text)
                 self.import_grid.close()
                 self.limitation_grid.close()
