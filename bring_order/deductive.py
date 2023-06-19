@@ -72,7 +72,7 @@ class Deductive:
         #print('checking limits: ' + self.data_limitations) #This is for debugging
         if self.check_hypotheses():
             limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count, item in enumerate(self.data_limitations, start=1))
-                    
+
             limitation_prompt_text = widgets.HTML(
                 'Do the hypotheses fit within the limitations of the data set?' 
                 + '<br>' + limitations)
@@ -145,25 +145,35 @@ class Deductive:
             self.boutils.delete_cell_above()
             self.cell_count -= 1
 
+    def deactivate_cell_operations(self):
+        """Deactivates buttons after runnig code block"""
+        self.buttons['Open cells'].disabled = True
+        self.buttons['Clear cells'].disabled = True
+        self.buttons['Delete last cell'].disabled = True
+
     def run_cells(self, _=None):
         """Button function"""
         self.boutils.run_cells_above(
             self.cell_count)
+        self.deactivate_cell_operations()
 
         if self.conclusion:
             self.conclusion.close()
 
+        question = self.bogui.create_message(value='What happened?')
         conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
         conclusion = self.bogui.create_radiobuttons(
             options=[f'Hypothesis: {self.hypotheses[0].value}',
                      f'Null hypothesis: {self.hypotheses[1].value}'])
 
         self.conclusion = widgets.AppLayout(
+            header=question,
             left_sidebar=conclusion_label,
             center=conclusion,
-            footer=widgets.HBox([self.buttons['New analysis'],
-                                 self.buttons['Prepare new data'],
-                                 self.buttons['All done']])
+            footer=widgets.HBox([
+                self.buttons['New analysis'],
+                self.buttons['Prepare new data'],
+                self.buttons['All done']])
         )
         display(self.conclusion)
 
@@ -187,7 +197,7 @@ class Deductive:
 
     def save_results(self):
         """Prints results and hides widgets"""
-        text = f'## Conclusion\\nAccepted: {self.conclusion.center.value}'
+        text = f'## Accepted hypothesis\\n{self.conclusion.center.value}'
         self.boutils.create_markdown_cells_above(1, text=text)
         self.confirmed_grid.close()
         self.conclusion.close()
