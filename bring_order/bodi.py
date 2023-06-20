@@ -83,7 +83,7 @@ class Bodi:
         if self.limitation_grid:
             self.limitation_grid.close()
 
-        self.data_limitations.append(self.bogui.create_text_area('',f'Limitation {len(self.data_limitations)+1}: '))
+        self.data_limitations.append(self.bogui.create_text_area('',f'Limitation {len(self.data_limitations)+1}'))
 
         self.display_limitations()
 
@@ -94,7 +94,7 @@ class Bodi:
 
         rows = len(self.data_limitations)
         if rows == 0:
-            self.data_limitations.append(self.bogui.create_text_area('', 'Limitation 1: '))
+            self.data_limitations.append(self.bogui.create_text_area('', 'Limitation 1'))
             rows +=1
 
         grid = GridspecLayout(rows, 1)
@@ -128,7 +128,7 @@ class Bodi:
                 return False
         return True
 
-    def format_limitations_for_markdown(self):
+    def format_limitations(self):
         """Formats limitations for markdown to prevent Javascript error
         
         Returns:
@@ -136,7 +136,7 @@ class Bodi:
         """
 
         formatted_limitations = '## Limitations\\n'
-        for index, item in enumerate(self.data_limitations):
+        for item in self.data_limitations:
             limitation = '<br />'.join(item.value.split('\n'))
             limitation_text = f'- {limitation}\\n'
             formatted_limitations += limitation_text
@@ -146,12 +146,24 @@ class Bodi:
     def start_analysis_clicked(self, _=None):
         """Button function to start analysis after data preparation"""
         if self.call_check_limitation():
-            text = self.format_limitations_for_markdown()
+            text = self.format_limitations()
             self.boutils.create_markdown_cells_above(1, text=text)
             clear_output(wait=True)
             self.start_analysis()
         else:
             self.empty_limitations_error.value = 'Data limitations cannot be empty'
+
+    def format_data_description(self):
+        """Formats data description for markdown
+        
+        Returns:
+            formatted_text (str)
+        """
+        title = f'# Data: {self.data_name.value}'
+        description = '<br />'.join(self.data_description.value.split('\n'))
+        formatted_text = f'{title}\\n## Description\\n{description}\\n## Import and cleaning'
+
+        return formatted_text
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
@@ -165,10 +177,7 @@ class Bodi:
             clear_output(wait=True)
             display(self.import_grid)
 
-            title = f'# Data: {self.data_name.value}'
-            description = '<br />'.join(self.data_description.value.split('\n'))
-            text = f'{title}\\n## Description\\n{description}\\n## Import and cleaning'
-            self.boutils.create_markdown_cells_above(1, text=text)
+            self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
 
     def bodi(self, error=''):

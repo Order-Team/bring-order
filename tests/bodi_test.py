@@ -1,5 +1,5 @@
 import unittest
-import bring_order
+from ipywidgets import widgets
 from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
@@ -72,3 +72,106 @@ class TestBodi(unittest.TestCase):
         self.instance.call_check_limitation = Mock()
         self.instance.start_analysis_clicked()
         self.instance.call_check_limitation.assert_called()
+
+    def test_format_data_description_returns_correct_string(self):
+        self.instance.data_name.value = 'My data'
+        self.instance.data_description.value = 'List of integers.'
+        text = self.instance.format_data_description()
+        correct = '# Data: My data\\n## Description\\nList of integers.\\n## Import and cleaning'
+        self.assertEqual(text, correct)
+
+    def test_format_data_description_returns_correct_string_with_new_line(self):
+        self.instance.data_name.value = 'My data'
+        self.instance.data_description.value = 'List of integers.\nAscending order.'
+        text = self.instance.format_data_description()
+        correct = '# Data: My data\\n## Description\\nList of integers.<br />Ascending order.\\n## Import and cleaning'
+        self.assertEqual(text, correct)
+
+    def test_format_limitations_returns_correct_string(self):
+        for n in range(2):
+            self.instance.data_limitations.append(
+                widgets.Text(f'Limitation{n}')
+            )
+        text = self.instance.format_limitations()
+        correct = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
+        self.assertEqual(text, correct)
+
+    def test_add_limitation_adds_limitation_input_to_list(self):
+        self.instance.bogui.create_text_area = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.add_limitation()
+        self.assertEqual(len(self.instance.data_limitations), 1)
+        self.instance.add_limitation()
+        self.assertEqual(len(self.instance.data_limitations), 2)
+
+    def test_run_cells_runs_the_correct_amount_of_cells(self):
+        self.instance.bogui.create_text_area = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.cell_count = 3
+        self.instance.run_cells()
+        self.instance.boutils.run_cells_above.assert_called_with(3)
+
+    def test_call_check_limitation_returns_false_when_one_limitation_is_empty(self):
+        self.instance.data_limitations.append(widgets.Text('Limitation'))
+        self.instance.data_limitations.append(widgets.Text(''))
+        self.assertFalse(self.instance.call_check_limitation())
+
+    def test_call_check_limitation_returns_true_with_no_empty_limitations(self):
+        for n in range(2):
+            self.instance.data_limitations.append(
+                widgets.Text(f'Limitation{n}')
+            )
+        self.assertTrue(self.instance.call_check_limitation())
+
+    def test_start_analysis_clicked_creates_markdown_cell(self):
+        for n in range(2):
+            self.instance.data_limitations.append(
+                widgets.Text(f'Limitation{n}')
+            )
+        text = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
+        self.instance.start_analysis_clicked()
+        self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
+
+    def test_start_analysis_clicked_sets_error_message_if_limitations_are_empty(self):
+        self.assertEqual(self.instance.empty_limitations_error.value, '')
+        self.instance.data_limitations.append(widgets.Text(''))
+        self.instance.start_analysis_clicked()
+        self.assertEqual(
+            self.instance.empty_limitations_error.value,
+            'Data limitations cannot be empty'
+        )
+        self.instance.boutils.create_markdown_cells_above.assert_not_called()
+
+    def test_start_data_import_sets_error_message_if_data_name_empty(self):
+        self.instance.bodi = Mock()
+        self.instance.start_data_import()
+        self.instance.bodi.assert_called_with(error='You must name the data set')
+        self.instance.boutils.create_markdown_cells_above.assert_not_called()
+
+    def test_start_data_import_sets_error_message_if_description_empty(self):
+        self.instance.bodi = Mock()
+        self.instance.data_name.value = 'My data'
+        self.instance.start_data_import()
+        self.instance.bodi.assert_called_with(
+            error='You must give some description of the data'
+        )
+        self.instance.boutils.create_markdown_cells_above.assert_not_called()
+
+    def test_start_data_import_creates_markdown_cell(self):
+        self.instance.data_name.value = 'My data'
+        self.instance.data_description.value = 'The sample size is 100.'
+        self.instance.start_data_import()
+        text = '# Data: My data\\n## Description\\nThe sample size is 100.\\n## Import and cleaning'
+        self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
+
+    def test_start_data_import_increases_cell_count(self):
+        self.instance.data_name.value = 'My data'
+        self.instance.data_description.value = 'The sample size is 100.'
+        self.instance.start_data_import()
+        self.assertEqual(self.instance.cell_count, 1)
+
+    def test_open_cells_does_not_open_negative_amount_of_cells(self):
+        self.instance.add_cells_int.value = -1
+        self.instance.open_cells()
+        self.assertEqual(self.instance.cell_count, 0)
+        self.instance.boutils.create_code_cells_above.assert_not_called()
