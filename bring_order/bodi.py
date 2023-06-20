@@ -134,10 +134,10 @@ class Bodi:
             formatted_limitations (str)
         """
 
-        formatted_limitations = '## Data limitations\\n'
+        formatted_limitations = '## Limitations\\n'
         for index, item in enumerate(self.data_limitations):
             limitation = '<br />'.join(item.value.split('\n'))
-            limitation_text = f'### Limitation {index+1}\\n{limitation}\\n'
+            limitation_text = f'- {limitation}\\n'
             formatted_limitations += limitation_text
 
         return formatted_limitations
@@ -163,7 +163,7 @@ class Bodi:
             display(self.import_grid)
 
             description = '<br />'.join(self.data_description.value.split('\n'))
-            text = f'# Data preparation\\n## Data description\\n{description}\\n## Data import and cleaning'
+            text = f'# Data\\n## Description\\n{description}\\n## Import and cleaning'
             self.boutils.create_markdown_cells_above(1, text=text)
             self.cell_count += 1
 
