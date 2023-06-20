@@ -17,6 +17,7 @@ class Bodi:
         self.bogui = bogui
         self.cell_count = 0
         self.buttons = self.bogui.init_buttons(self.button_list)
+        self.data_name = self.bogui.create_input_field()
         self.data_description = self.bogui.create_text_area()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
@@ -154,7 +155,9 @@ class Bodi:
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
-        if self.data_description.value == '':
+        if self.data_name.value == '':
+            self.bodi(error='You must name the data set')
+        elif self.data_description.value == '':
             self.bodi(error='You must give some description of the data')
 
         else:
@@ -162,8 +165,9 @@ class Bodi:
             clear_output(wait=True)
             display(self.import_grid)
 
+            title = f'# Data: {self.data_name.value}'
             description = '<br />'.join(self.data_description.value.split('\n'))
-            text = f'# Data\\n## Description\\n{description}\\n## Import and cleaning'
+            text = f'{title}\\n## Description\\n{description}\\n## Import and cleaning'
             self.boutils.create_markdown_cells_above(1, text=text)
             self.cell_count += 1
 
@@ -171,13 +175,35 @@ class Bodi:
         """Main function"""
         clear_output(wait=True)
 
-        description_label = self.bogui.create_label('Describe your data:')
+        title = self.bogui.create_message('What kind of data are you using?')
+        data_title_label = self.bogui.create_label('Name of the data set:')
+        description_label = self.bogui.create_label('Description of the data:')
         error_message = self.bogui.create_error_message(error)
 
-        grid = widgets.VBox([
-            widgets.HBox([description_label, self.data_description]),
-            error_message,
-            self.buttons['Save description']
-        ])
+        grid = widgets.AppLayout(
+            header=title,
+            left_sidebar=widgets.VBox([
+                data_title_label,
+                description_label
+            ]),
+            center=widgets.AppLayout(
+                center=widgets.VBox([
+                    self.data_name,
+                    self.data_description
+                ]),
+                right_sidebar=widgets.VBox([
+                    error_message,
+                    self.buttons['Save description']
+                ]),
+                pane_widths=[0, 5, 2],
+                align_items='bottom'
+            ),
+            pane_widths=[2, 11, 0]
+        )
 
         display(grid)
+
+        if 'description' in error:
+            self.data_description.focus()
+        else:
+            self.data_name.focus()
