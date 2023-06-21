@@ -1,6 +1,6 @@
 """Deductive class"""
 from ipywidgets import widgets
-from IPython.display import display
+from IPython.display import display, Javascript
 
 class Deductive:
     """Class that guides deductive analysis"""
@@ -18,7 +18,8 @@ class Deductive:
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
-        self.hypotheses = [self.bogui.create_input_field(), self.bogui.create_input_field()]
+        self.hypotheses = [self.bogui.create_input_field(),
+                           self.bogui.create_input_field()]
         self.empty_hypo_error = self.bogui.create_error_message()
         self.empty_null_error = self.bogui.create_error_message()
         self.hypotheses_grid = self.create_hypotheses_grid()
@@ -27,6 +28,8 @@ class Deductive:
         self.conclusion = None
         self.data_limitations = ['Data limitations missing']
         self.limitation_prompt = None
+        self.export_view = widgets.HBox([self.buttons['Export to pdf'],
+                                         self.buttons['Close BringOrder']])
 
     @property
     def button_list(self):
@@ -44,7 +47,9 @@ class Deductive:
                        ('Clear cells', self.clear_cells, 'danger'),
                        ('New analysis', self.start_new_analysis, 'success'),
                        ('Prepare new data', self.start_analysis_with_new_data, 'success'),
-                       ('All done', self.all_done, 'success')]
+                       ('All done', self.all_done, 'success'),
+                       ('Export to pdf', self.export_to_pdf, 'success'),
+                       ('Close BringOrder', self.no_export, 'success')]
         return button_list
 
     def create_hypotheses_grid(self):
@@ -71,7 +76,8 @@ class Deductive:
         """Displays the prompt for the check against data limitations"""
         #print('checking limits: ' + self.data_limitations) #This is for debugging
         if self.check_hypotheses():
-            limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count, item in enumerate(self.data_limitations, start=1))
+            limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
+                                  item in enumerate(self.data_limitations, start=1))
 
             limitation_prompt_text = widgets.HTML(
                 'Do the hypotheses fit within the limitations of the data set?' 
@@ -217,7 +223,20 @@ class Deductive:
     def all_done(self, _=None):
         """Button function to save results when ready."""
         self.save_results()
-        self.boutils.delete_cell_from_current(1)
+        #self.boutils.delete_cell_from_current(1)
+        display(self.export_view)
+
+    
+    def export_to_pdf(self, _=None):
+        """Button function to export the notebook to pdf."""
+        #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
+        self.export_view.close()
+        display(Javascript('print()'))
+        self.boutils.delete_cell_from_current(0)
+
+    def no_export(self, _=None):
+        """Button function to close widgets without exporting."""
+        self.boutils.delete_cell_from_current(0)
 
     def __repr__(self):
         return ''

@@ -1,6 +1,6 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
-from IPython.display import display, clear_output
+from IPython.display import display, clear_output, Javascript
 
 class Inductive:
     """Class that guides inductive analysis"""
@@ -17,6 +17,13 @@ class Inductive:
         self.summary = self.bogui.create_text_area()
         self.empty_notes_error = self.bogui.create_error_message()
         self.observations = []
+        self.new_analysis_view = widgets.HBox([
+            self.buttons['New analysis'],
+            self.buttons['Prepare new data'],
+            self.buttons['All done']]
+        )
+        self.export_view = widgets.HBox([self.buttons['Export to pdf'],
+                                         self.buttons['Close BringOrder']])
 
     @property
     def button_list(self):
@@ -33,7 +40,9 @@ class Inductive:
                    ('Submit observation', self.new_observation, 'warning'),
                    ('Submit summary', self.submit_summary, 'success'),
                    ('Prepare new data', self.prepare_new_data_pressed, 'success'),
-                   ('All done', self.all_done, 'success')]
+                   ('All done', self.all_done, 'success'),
+                   ('Export to pdf', self.export_to_pdf, 'success'),
+                   ('Close BringOrder', self.no_export, 'success')]
 
         return button_list
 
@@ -177,16 +186,27 @@ class Inductive:
         display(self.create_cell_operations())
 
     def all_done(self, _=None):
-        """Button function to delete the widget cell"""
+        """Button function to display the export/close phase."""
+        #self.boutils.delete_cell_from_current(1)
+        self.new_analysis_view.close()
+        display(self.export_view)
+
+    
+    def export_to_pdf(self, _=None):
+        """Button function to export the notebook to pdf."""
+        """Button function to export the notebook to pdf."""
+        #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
+        self.export_view.close()
+        display(Javascript('print()'))
+        self.boutils.delete_cell_from_current(0)
+
+    def no_export(self, _=None):
+        """Button function to close widgets without exporting."""
         self.utils.delete_cell_from_current(0)
 
     def new_analysis(self):
         """Display buttons to start a new analysis or prepare new data for analysis"""
-        display(widgets.HBox([
-            self.buttons['New analysis'],
-            self.buttons['Prepare new data'],
-            self.buttons['All done']]
-        ))
+        display(self.new_analysis_view)
 
     def __repr__(self):
         return ''
