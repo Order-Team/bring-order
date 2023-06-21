@@ -72,6 +72,7 @@ class Deductive:
 
     def start_deductive_analysis(self, _=None):
         """Button function for deductive analysis"""
+        self.boutils.create_markdown_cells_above(1, '# Deductive analysis')
         text = self.bogui.create_message('Describe the theory and insights')
 
         grid = widgets.AppLayout(header=text,
@@ -86,11 +87,9 @@ class Deductive:
         if self.theory_desc.value == '':
             self.theory_error.value='You must describe your theory and insights!'
         else:
-
-            """Here will be function for save theory button that 
-            creates markdown cell and shows hypothesis widgets!!"""
-
-            self.boutils.hide_current_input()
+            formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
+            theory_md = f'## Theory\\n{formatted_theory}'
+            self.boutils.create_markdown_cells_above(1, theory_md)
             clear_output(wait=True)            
             self.add_hypothesis()
 
@@ -101,7 +100,6 @@ class Deductive:
 
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
-        #print('checking limits: ' + self.data_limitations) #This is for debugging
         if self.check_hypotheses():
             limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
                                   item in enumerate(self.data_limitations, start=1))
@@ -152,7 +150,7 @@ class Deductive:
         """Saves hypotheses and displays buttons for running code"""
         hypotheses = f'- Hypothesis: {self.hypotheses[0].value}\
         \\n- Null hypothesis: {self.hypotheses[1].value}'
-        text = f'# Deductive analysis\\n## Hypotheses\\n{hypotheses}\\n## Data analysis'
+        text = f'## Hypotheses\\n{hypotheses}\\n## Data analysis'
         if self.check_hypotheses():
             self.boutils.create_markdown_cells_above(1, text=text)
             self.confirmed_grid = self.create_confirmed_grid()
