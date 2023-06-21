@@ -1,6 +1,6 @@
 """Deductive class"""
 from ipywidgets import widgets
-from IPython.display import display, Javascript
+from IPython.display import display, Javascript, clear_output
 
 class Deductive:
     """Class that guides deductive analysis"""
@@ -17,11 +17,13 @@ class Deductive:
         self.bogui = bogui
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
+        self.theory_desc = self.bogui.create_text_area()
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
         self.hypotheses = [self.bogui.create_input_field(),
                            self.bogui.create_input_field()]
         self.empty_hypo_error = self.bogui.create_error_message()
         self.empty_null_error = self.bogui.create_error_message()
+        self.theory_error = self.bogui.create_error_message()
         self.hypotheses_grid = self.create_hypotheses_grid()
         self.add_cells_int = self.bogui.create_int_text()
         self.confirmed_grid = None
@@ -49,7 +51,8 @@ class Deductive:
                        ('Prepare new data', self.start_analysis_with_new_data, 'success'),
                        ('All done', self.all_done, 'success'),
                        ('Export to pdf', self.export_to_pdf, 'success'),
-                       ('Close BringOrder', self.no_export, 'success')]
+                       ('Close BringOrder', self.no_export, 'success'),
+                       ('Save theory', self.save_theory, 'success')]
         return button_list
 
     def create_hypotheses_grid(self):
@@ -69,6 +72,30 @@ class Deductive:
 
     def start_deductive_analysis(self, _=None):
         """Button function for deductive analysis"""
+        text = self.bogui.create_message('Describe the theory and insights')
+
+        grid = widgets.AppLayout(header=text,
+            center=widgets.VBox([self.theory_desc,
+                                 self.theory_error,
+                                 self.buttons['Save theory']]),
+            pane_widths=[1, 6, 0], grid_gap='12px')
+        display(grid)
+
+    def save_theory(self, _=None):
+        """Function for saving theory and insights"""
+        if self.theory_desc.value == '':
+            self.theory_error.value='You must describe your theory and insights!'
+        else:
+
+            """Here will be function for save theory button that 
+            creates markdown cell and shows hypothesis widgets!!"""
+
+            self.boutils.hide_current_input()
+            clear_output(wait=True)            
+            self.add_hypothesis()
+
+    def add_hypothesis(self, _=None):
+        '''displays hypothesis inputs and control buttons'''
         display(self.hypotheses_grid)
         self.hypotheses[0].focus()
 
@@ -226,7 +253,6 @@ class Deductive:
         #self.boutils.delete_cell_from_current(1)
         display(self.export_view)
 
-    
     def export_to_pdf(self, _=None):
         """Button function to export the notebook to pdf."""
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
