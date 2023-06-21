@@ -111,7 +111,7 @@ class Inductive:
             first_words += f' {word}'
             if any(mark in word for mark in ['.', '?', '!']):
                 return first_words.strip('.')
-        
+
         first_words.strip('.').strip(',')
         if len(word_list) > 5:
             first_words += '...'
@@ -125,7 +125,7 @@ class Inductive:
             formatted_obs (str)
         """
         formatted_obs = f'## Observation {len(self.observations)}: '
-        
+
         notes_list = self.notes.value.split('\n')
         first_line_list = notes_list[0].split(' ')
         first_words = self.get_first_words(first_line_list)
@@ -246,7 +246,7 @@ class Inductive:
         #self.boutils.delete_cell_from_current(1)
         self.new_analysis_view.close()
         display(self.export_view)
-    
+
     def export_to_pdf(self, _=None):
         """Button function to export the notebook to pdf."""
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
