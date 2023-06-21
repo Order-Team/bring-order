@@ -72,5 +72,66 @@ class TestInductive(unittest.TestCase):
         self.instance.check_notes.return_value = True
         self.instance.new_observation()
         self.assertEqual(2, len(self.instance.observations))
-        
 
+    def test_get_first_words_returns_correct_string_with_short_list(self):
+        words = ['Short', 'list']
+        first_words = self.instance.get_first_words(words)
+        self.assertEqual(first_words, 'Short list')
+
+    def test_get_first_words_returns_correct_string_with_long_list(self):
+        words = ['Long', 'list', 'has', 'more', 'words', 'than', 'short', 'list']
+        first_words = self.instance.get_first_words(words)
+        self.assertEqual(first_words, 'Long list has more words...')
+
+    def test_get_first_words_returns_first_short_sentence(self):
+        words = ['My', 'sentence', 'is', 'short.', 'It', 'is', 'ok.']
+        first_words = self.instance.get_first_words(words)
+        self.assertEqual(first_words, 'My sentence is short')
+
+    def test_get_first_words_returns_first_short_question(self):
+        words = ['What', 'to', 'ask?', 'I', 'do', 'not', 'know.']
+        first_words = self.instance.get_first_words(words)
+        self.assertEqual(first_words, 'What to ask?')
+
+    def test_get_first_words_returns_first_short_exclamation(self):
+        words = ['I', 'want', 'ice', 'cream!', 'Preferably', 'mint', 'Puffet.']
+        first_words = self.instance.get_first_words(words)
+        self.assertEqual(first_words, 'I want ice cream!')
+
+    def test_format_observation_returns_correct_string(self):
+        obs = 'The day is sunny.'
+        self.instance.notes.value = obs
+        self.instance.observations.append(obs)
+        text = self.instance.format_observation()
+        correct = '## Observation 1: The day is sunny\\nThe day is sunny.'
+        self.assertEqual(text, correct)
+
+    def test_format_observation_returns_correct_string_with_line_breaks(self):
+        obs = 'The day is sunny.\nYesterday was sunny, too.'
+        self.instance.notes.value = obs
+        self.instance.observations.append(obs)
+        text = self.instance.format_observation()
+        correct = '## Observation 1: The day is sunny\\nThe day is sunny.<br />Yesterday was sunny, too.'
+        self.assertEqual(text, correct)
+
+    def test_format_observation_returns_correct_observation_number_in_string(self):
+        obs1 = 'The day is sunny.'
+        obs2 = 'Dogs are sleeping.'
+        self.instance.observations.append(obs1)
+        self.instance.observations.append(obs2)
+        self.instance.notes.value = obs2
+        text = self.instance.format_observation()
+        correct = '## Observation 2: Dogs are sleeping\\nDogs are sleeping.'
+        self.assertEqual(text, correct)
+
+    def test_format_summary_returns_correct_string(self):
+        self.instance.summary.value = "It's been a nice warm summer day today."
+        text = self.instance.format_summary()
+        correct = "## Summary: It's been a nice warm...\\nIt's been a nice warm summer day today."
+        self.assertEqual(text, correct)
+
+    def test_format_summary_returns_correct_string_with_line_breaks(self):
+        self.instance.summary.value = 'Hot day.\nI would like to go swimming.'
+        text = self.instance.format_summary()
+        correct = '## Summary: Hot day\\nHot day.<br />I would like to go swimming.'
+        self.assertEqual(text, correct)
