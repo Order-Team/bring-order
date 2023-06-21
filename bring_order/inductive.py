@@ -95,14 +95,53 @@ class Inductive:
 
         display(self.conclusion)
 
+    def get_first_words(self, word_list):
+        """Takes a word list and returns a string that has the first sentence or
+        the first five words and three dots if the sentence is longer.
+        
+        Args:
+            word_list (list)
+            
+        Returns:
+            first_words (str)
+        """
+        first_words = f'{word_list[0]}'
+
+        for word in word_list[1:5]:
+            first_words += f' {word}'
+            if any(mark in word for mark in ['.', '?', '!']):
+                return first_words.strip('.')
+        
+        first_words.strip('.').strip(',')
+        if len(word_list) > 5:
+            first_words += '...'
+
+        return first_words
+
+    def format_observation(self):
+        """Formats observation for markdown.
+        
+        Returns:
+            formatted_obs (str)
+        """
+        formatted_obs = f'## Observation {len(self.observations)}: '
+        
+        notes_list = self.notes.value.split('\n')
+        first_line_list = notes_list[0].split(' ')
+        first_words = self.get_first_words(first_line_list)
+        formatted_obs += f'{first_words}\\n'
+
+        notes = '<br />'.join(notes_list)
+        formatted_obs += notes
+
+        return formatted_obs
+
     def new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count"""
         if self.check_notes():
             self.observations.append(self.notes.value)
-            number = len(self.observations)
-            notes_list = self.notes.value.split('\n')
-            notes = '<br />'.join(notes_list)
-            self.utils.create_markdown_cells_above(1, f'## Observation {number}\\n{notes}')
+            text = self.format_observation()
+            self.utils.create_markdown_cells_above(1, text=text)
             self.buttons_disabled(False)
             self.empty_notes_error.value = ''
             self.conclusion.close()
@@ -143,15 +182,32 @@ class Inductive:
         ])
         display(grid)
 
+    def format_summary(self):
+        """Formats summary for markdown
+        
+        Returns:
+            formatted_summary (str)
+        """
+        formatted_summary = '## Summary: '
+
+        summary_list = self.summary.value.split('\n')
+        first_line_list = summary_list[0].split(' ')
+        first_words = self.get_first_words(first_line_list)
+        formatted_summary += f'{first_words}\\n'
+
+        summary = '<br />'.join(summary_list)
+        formatted_summary += summary
+
+        return formatted_summary
+
     def submit_summary(self, _=None):
         """Button function to submit summary"""
         if self.summary.value == '':
             self.display_summary(error='You must write some kind of summary')
             return
 
-        summary_list = self.summary.value.split('\n')
-        summary = '<br />'.join(summary_list)
-        self.utils.create_markdown_cells_above(1, text=f'## Summary\\n{summary}')
+        text = self.format_summary()
+        self.utils.create_markdown_cells_above(1, text=text)
         clear_output(wait=False)
         self.new_analysis()
 
@@ -190,15 +246,13 @@ class Inductive:
         #self.boutils.delete_cell_from_current(1)
         self.new_analysis_view.close()
         display(self.export_view)
-
     
     def export_to_pdf(self, _=None):
-        """Button function to export the notebook to pdf."""
         """Button function to export the notebook to pdf."""
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
         self.export_view.close()
         display(Javascript('print()'))
-        self.boutils.delete_cell_from_current(0)
+        self.utils.delete_cell_from_current(0)
 
     def no_export(self, _=None):
         """Button function to close widgets without exporting."""
