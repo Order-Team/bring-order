@@ -195,19 +195,16 @@ class Bodi:
                 data_title_label,
                 description_label
             ]),
-            center=widgets.AppLayout(
-                center=widgets.VBox([
+            center=widgets.VBox([
                     self.data_name,
                     self.data_description
-                ]),
-                right_sidebar=widgets.VBox([
-                    error_message,
-                    self.buttons['Save description']
-                ]),
-                pane_widths=[0, 5, 2],
-                align_items='bottom'
-            ),
-            pane_widths=[2, 11, 0]
+            ]),
+            footer=widgets.HBox([
+                self.buttons['Save description'],
+                error_message,
+            ]),
+            pane_widths=[1, 5, 0],
+            grid_gap='10px'
         )
 
         display(grid)
