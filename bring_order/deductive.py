@@ -19,19 +19,13 @@ class Deductive:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.theory_desc = self.bogui.create_text_area()
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
-        self.hypotheses = [self.bogui.create_input_field(),
-                           self.bogui.create_input_field()]
-        self.empty_hypo_error = self.bogui.create_error_message()
-        self.empty_null_error = self.bogui.create_error_message()
-        self.theory_error = self.bogui.create_error_message()
-        self.hypotheses_grid = self.create_hypotheses_grid()
+        self.hypotheses = [
+            self.bogui.create_input_field(),
+            self.bogui.create_input_field()
+        ]
         self.add_cells_int = self.bogui.create_int_text()
-        self.confirmed_grid = None
         self.conclusion = None
         self.data_limitations = ['Data limitations missing']
-        self.limitation_prompt = None
-        self.export_view = widgets.HBox([self.buttons['Export to pdf'],
-                                         self.buttons['Close BringOrder']])
 
     @property
     def button_list(self):
@@ -41,8 +35,8 @@ class Deductive:
             list of tuples in format (description: str, command: func, style: str)"""
         button_list = [('Open cells', self.open_cells, 'warning'),
                        ('Delete last cell', self.delete_last_cell, 'danger'),
-                       ('Save', self.check_data_limitations, 'success'),
-                       ('Clear', self.clear_hypotheses, 'primary'),
+                       ('Save', self.check_theory_and_hypotheses, 'success'),
+                       ('Clear hypotheses', self.clear_hypotheses, 'primary'),
                        ('Yes', self.valid_hypotheses, 'success'),
                        ('No', self.bad_hypotheses, 'warning'),
                        ('Run cells', self.run_cells, 'primary'),
@@ -52,52 +46,133 @@ class Deductive:
                        ('All done', self.all_done, 'success'),
                        ('Export to pdf', self.export_to_pdf, 'success'),
                        ('Close BringOrder', self.no_export, 'success'),
-                       ('Save theory', self.save_theory, 'success')]
+                       ('Clear theory', self.clear_theory, 'primary')]
 
         return button_list
 
-    def create_hypotheses_grid(self):
-        """Creates widgets"""
-        hypothesis_label = self.bogui.create_label('Hypothesis:')
-        null_label = self.bogui.create_label('Null hypothesis:')
-        empty = self.bogui.create_placeholder()
+    def __create_hypotheses_grid(self, empty_hypo_error='', empty_null_error=''):
+        """Creates the view for setting hypotheses
+        
+        Args:
+            empty_hypo_error (str): error message for empty hypothesis, optional
+            empty_null_error (str): error message for empty null hypothesis, optional
+        """
+        grid = widgets.AppLayout(
+            header = self.bogui.create_message('Set the hypotheses:'),
+            left_sidebar = widgets.VBox([
+                self.bogui.create_label('Hypothesis:'),
+                self.bogui.create_label('Null hypothesis:')
+            ]),
+            center = widgets.VBox([
+                widgets.HBox([
+                    self.hypotheses[0],
+                    self.bogui.create_error_message(empty_hypo_error)
+                ]),
+                widgets.HBox([
+                    self.hypotheses[1],
+                    self.bogui.create_error_message(empty_null_error)
+                ]),
+                self.buttons['Clear hypotheses']
+            ]),
+            footer = self.buttons['Save'],
+            pane_widths = [1, 6, 0],
+            grid_gap = '18px'
+        )
 
-        grid = self.bogui.create_grid(5, 2,
-            [empty, self.empty_hypo_error,
-             hypothesis_label, self.hypotheses[0],
-             null_label, self.hypotheses[1],
-             empty, self.empty_null_error,
-             empty, widgets.HBox([self.buttons['Save'], self.buttons['Clear']])
-            ])
+        return grid
+
+    def __create_theory_grid(self, error=''):
+        """Creates the view for summarizing theory
+        
+        Args:
+            error (str): error message, optional
+        """
+        grid = widgets.AppLayout(
+            header=self.bogui.create_message('Describe the theory and insights:'),
+            center=widgets.VBox([
+                self.theory_desc,
+                self.bogui.create_error_message(error),
+                self.buttons['Clear theory']
+            ]),
+            pane_widths=[1, 6, 0],
+            grid_gap='12px'
+        )
 
         return grid
 
     def start_deductive_analysis(self, _=None):
         """Button function for deductive analysis"""
+        theory_grid = self.__create_theory_grid()
+        hypotheses_grid = self.__create_hypotheses_grid()
 
-        text = self.bogui.create_message('Describe the theory and insights')
-
-        grid = widgets.AppLayout(header=text,
-            center=widgets.VBox([self.theory_desc,
-                                 self.theory_error,
-                                 self.buttons['Save theory']]),
-            pane_widths=[1, 6, 0], grid_gap='12px')
-
-        display(grid)
+        clear_output(wait=True)
+        display(theory_grid)
+        display(hypotheses_grid)
         self.theory_desc.focus()
 
-    def save_theory(self, _=None):
-        """Function for saving theory and insights"""
-        if self.theory_desc.value == '':
-            self.theory_error.value='You must describe your theory and insights!'
-        else:
-            clear_output(wait=True)
-            display(self.hypotheses_grid)
-            self.hypotheses[0].focus()
+    def clear_theory(self, _=None):
+        """Function for clearing theory and insights"""
+        self.theory_desc.value = ''
+        self.theory_desc.focus()
 
-    def check_data_limitations(self, _=None):
-        """Displays the prompt for the check against data limitations"""
-        if self.check_hypotheses():
+    def focus_first_empty(self, input_list):
+        """Sets focus to the first widget on the list that has empty value
+        
+        Args:
+            input_list (list): list of input widgets
+
+        Retruns:
+            item (widget): the item that was focused (or None if no empty item on the list)
+        """
+        focused = None
+        for item in input_list:
+            if item.value == '':
+                item.focus()
+                focused = item
+                break
+
+        return focused
+    
+    def get_error_messages(self):
+        """Returns error messages for empty theory, hypothesis, and null hypothesis
+        
+        Returns:
+            errors (tuple)
+        """
+        empty_theory = 'You must describe your theory and insights'
+        empty_hypo = 'Hypothesis missing'
+        empty_null = 'Null hypothesis missing'
+
+        theory_error = empty_theory if self.theory_desc.value == '' else ''
+        empty_hypo_error = empty_hypo if self.hypotheses[0].value == '' else ''
+        empty_null_error = empty_null if self.hypotheses[1].value == '' else ''
+
+        return (theory_error, empty_hypo_error, empty_null_error)
+
+    def check_theory_and_hypotheses(self, _=None):
+        """Checks theory and hypotheses and displays the prompt for
+        the check against data limitations
+        
+        Returns:
+            True/False: True if theory, hypothesis, and null hypothesis are all filled
+        """
+
+        # Set error messages
+        theory_error, empty_hypo_error, empty_null_error = self.get_error_messages()
+        theory_grid = self.__create_theory_grid(theory_error)
+        hypotheses_grid = self.__create_hypotheses_grid(empty_hypo_error, empty_null_error)
+
+        # Show error messages if any of the required values are empty
+        if len(theory_error + empty_hypo_error + empty_null_error) > 0:
+            clear_output(wait=True)
+            display(theory_grid)
+            display(hypotheses_grid)
+            self.focus_first_empty([self.theory_desc] + self.hypotheses)
+
+            return False
+
+        # Show limitation prompt if all values are ok
+        else:
             limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
                                   item in enumerate(self.data_limitations, start=1))
 
@@ -105,43 +180,25 @@ class Deductive:
                 'Do the hypotheses fit within the limitations of the data set?' 
                 + '<br>' + limitations)
 
-            self.limitation_prompt = widgets.VBox([limitation_prompt_text,
+            limitation_prompt = widgets.VBox([limitation_prompt_text,
                 widgets.HBox([self.buttons['Yes'], self.buttons['No']])
                 ])
-            display(self.limitation_prompt)
+            display(limitation_prompt)
+
+            return True
 
     def valid_hypotheses(self, _=None):
-        """Closes the data limitation check prompt and calls save_hypotheses()"""
-        self.limitation_prompt.close()
-        self.save_hypotheses()
+        """Saves theory and hypotheses"""
+        self.save_theory_and_hypotheses()
 
     def bad_hypotheses(self, _=None):
         """Closes the data limitation check prompt and calls clear_hypotheses()"""
-        # TODO: set some error message for a hypothesis that doesn't fit
-        # data limitations and ask the user for a better one
-        self.limitation_prompt.close()
+        theory_grid = self.__create_theory_grid()
+        hypotheses_grid = self.__create_hypotheses_grid('Hypotheses must fit data limitations')
+        clear_output(wait=True)
+        display(theory_grid)
+        display(hypotheses_grid)
         self.clear_hypotheses()
-
-    def check_hypotheses(self):
-        """Checks that hypothesis and null hypothesis are not empty.
-
-        Returns:
-            True/False
-        """
-        if len(self.hypotheses[0].value) > 0 and len(self.hypotheses[1].value) > 0:
-            return True
-
-        if self.hypotheses[0].value == '':
-            self.empty_hypo_error.value = 'Hypothesis missing'
-        else:
-            self.empty_hypo_error.value = ''
-
-        if self.hypotheses[1].value == '':
-            self.empty_null_error.value = 'Null hypothesis missing'
-        else:
-            self.empty_null_error.value = ''
-
-        return False
 
     def format_hypotheses_and_theory(self):
         """Formats hypotheses and theory for markdown
@@ -158,22 +215,19 @@ class Deductive:
 
         return formatted_text
 
-    def save_hypotheses(self, _=None):
-        """Saves hypotheses and displays buttons for running code"""
-        if self.check_hypotheses():
-            text = self.format_hypotheses_and_theory()
-            self.boutils.create_markdown_cells_above(1, text=text)
-            self.confirmed_grid = self.create_confirmed_grid()
-            self.hypotheses_grid.close()
-            display(self.confirmed_grid)
-            self.add_cells_int.focus()
+    def save_theory_and_hypotheses(self, _=None):
+        """Saves theory and hypotheses and displays buttons for running code"""
+        text = self.format_hypotheses_and_theory()
+        self.boutils.create_markdown_cells_above(1, text=text)
+        cell_operations = self.__create_cell_operations_grid()
+        clear_output(wait=True)
+        display(cell_operations)
+        self.add_cells_int.focus()
 
     def clear_hypotheses(self, _=None):
         """Button function for resetting hypothesis and null hypothesis inputs"""
         self.hypotheses[0].value = ''
         self.hypotheses[1].value = ''
-        self.empty_hypo_error.value = ''
-        self.empty_null_error.value = ''
         self.hypotheses[0].focus()
 
     def open_cells(self, _=None):
@@ -194,38 +248,46 @@ class Deductive:
         self.buttons['Clear cells'].disabled = True
         self.buttons['Delete last cell'].disabled = True
 
+    def __create_conclusion_grid(self):
+        question = self.bogui.create_message(value='What happened?')
+        conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
+        self.conclusion = self.bogui.create_radiobuttons(
+            options=[f'Hypothesis: {self.hypotheses[0].value}',
+                     f'Null hypothesis: {self.hypotheses[1].value}'])
+
+        grid = widgets.AppLayout(
+            header=question,
+            left_sidebar=conclusion_label,
+            center=self.conclusion,
+            footer=widgets.HBox([
+                self.buttons['New analysis'],
+                self.buttons['Prepare new data'],
+                self.buttons['All done']
+            ]),
+            pane_widths=[1, 5, 0],
+            grid_gap='12px'
+        )
+
+        return grid
+
     def run_cells(self, _=None):
-        """Button function"""
+        """Runs code cells, deactivates cell operations, and shows radiobuttons"""
         self.boutils.run_cells_above(
             self.cell_count)
         self.deactivate_cell_operations()
 
-        if self.conclusion:
-            self.conclusion.close()
-
-        question = self.bogui.create_message(value='What happened?')
-        conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
-        conclusion = self.bogui.create_radiobuttons(
-            options=[f'Hypothesis: {self.hypotheses[0].value}',
-                     f'Null hypothesis: {self.hypotheses[1].value}'])
-
-        self.conclusion = widgets.AppLayout(
-            header=question,
-            left_sidebar=conclusion_label,
-            center=conclusion,
-            footer=widgets.HBox([
-                self.buttons['New analysis'],
-                self.buttons['Prepare new data'],
-                self.buttons['All done']])
-        )
-        display(self.conclusion)
+        clear_output(wait=True)
+        cell_operations = self.__create_cell_operations_grid()
+        conclusion = self.__create_conclusion_grid()
+        display(cell_operations)
+        display(conclusion)
         conclusion.focus()
 
     def clear_cells(self, _=None):
         """Clear button function to clear cells above"""
         self.boutils.clear_code_cells_above(self.cell_count)
 
-    def create_confirmed_grid(self):
+    def __create_cell_operations_grid(self):
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
@@ -240,11 +302,10 @@ class Deductive:
         return grid
 
     def save_results(self):
-        """Prints results and hides widgets"""
-        text = f'## Accepted hypothesis\\n{self.conclusion.center.value}'
+        """Prints results as markdown and hides widgets"""
+        text = f'## Accepted hypothesis\\n{self.conclusion.value}'
         self.boutils.create_markdown_cells_above(1, text=text)
-        self.confirmed_grid.close()
-        self.conclusion.close()
+        clear_output(wait=True)
 
     def start_new_analysis(self, _=None):
         """Button function to save results and star new analysis"""
@@ -259,13 +320,16 @@ class Deductive:
     def all_done(self, _=None):
         """Button function to save results when ready."""
         self.save_results()
-        #self.boutils.delete_cell_from_current(1)
-        display(self.export_view)
+        export_view = widgets.HBox([
+            self.buttons['Export to pdf'],
+            self.buttons['Close BringOrder']
+        ])
+        display(export_view)
 
     def export_to_pdf(self, _=None):
         """Button function to export the notebook to pdf."""
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
-        self.export_view.close()
+        clear_output(wait=False)
         display(Javascript('print()'))
         self.boutils.delete_cell_from_current(0)
 
