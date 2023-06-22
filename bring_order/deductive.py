@@ -37,7 +37,7 @@ class Deductive:
                        ('Delete last cell', self.delete_last_cell, 'danger'),
                        ('Save', self.check_theory_and_hypotheses, 'success'),
                        ('Clear hypotheses', self.clear_hypotheses, 'primary'),
-                       ('Yes', self.valid_hypotheses, 'success'),
+                       ('Yes', self.save_theory_and_hypotheses, 'success'),
                        ('No', self.bad_hypotheses, 'warning'),
                        ('Run cells', self.run_cells, 'primary'),
                        ('Clear cells', self.clear_cells, 'danger'),
@@ -132,7 +132,7 @@ class Deductive:
                 break
 
         return focused
-    
+
     def get_error_messages(self):
         """Returns error messages for empty theory, hypothesis, and null hypothesis
         
@@ -172,24 +172,20 @@ class Deductive:
             return False
 
         # Show limitation prompt if all values are ok
-        else:
-            limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
-                                  item in enumerate(self.data_limitations, start=1))
+        limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
+            item in enumerate(self.data_limitations, start=1))
 
-            limitation_prompt_text = widgets.HTML(
-                'Do the hypotheses fit within the limitations of the data set?' 
-                + '<br>' + limitations)
+        limitation_prompt_text = widgets.HTML(
+            'Do the hypotheses fit within the limitations of the data set?' 
+            + '<br>' + limitations)
 
-            limitation_prompt = widgets.VBox([limitation_prompt_text,
-                widgets.HBox([self.buttons['Yes'], self.buttons['No']])
-                ])
-            display(limitation_prompt)
+        limitation_prompt = widgets.VBox([limitation_prompt_text,
+            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
+        ])
 
-            return True
+        display(limitation_prompt)
 
-    def valid_hypotheses(self, _=None):
-        """Saves theory and hypotheses"""
-        self.save_theory_and_hypotheses()
+        return True
 
     def bad_hypotheses(self, _=None):
         """Closes the data limitation check prompt and calls clear_hypotheses()"""
