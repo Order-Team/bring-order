@@ -26,6 +26,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.conclusion = None
         self.data_limitations = ['Data limitations missing']
+        self.result_description = ''
 
     @property
     def button_list(self):
@@ -250,22 +251,20 @@ class Deductive:
         self.conclusion = self.bogui.create_radiobuttons(
             options=[f'Hypothesis: {self.hypotheses[0].value}',
                      f'Null hypothesis: {self.hypotheses[1].value}'])
-
-        grid = widgets.AppLayout(
-            header=question,
-            left_sidebar=conclusion_label,
-            center=self.conclusion,
-            footer=widgets.HBox([
-                self.buttons['New analysis'],
-                self.buttons['Prepare new data'],
-                self.buttons['All done']
-            ]),
-            pane_widths=[1, 5, 0],
-            grid_gap='12px'
-        )
-
+        self.result_description = self.bogui.create_text_area()
+        notes_label = self.bogui.create_message(value='Describe your results here:')
+      
+        grid = widgets.GridspecLayout(5, 3, justify_items='center', width='70%', align_items='bottom')
+        grid[0, 0] = question
+        grid[1, 0] = conclusion_label
+        grid[1, 1:] = self.conclusion 
+        grid[2, :] = notes_label
+        grid[3, :] = self.result_description
+        grid[4, 0] = self.buttons['New analysis']
+        grid[4, 1] =  self.buttons['Prepare new data']      
+        grid[4, 2] =  self.buttons['All done']
         return grid
-
+    
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
         self.boutils.run_cells_above(
@@ -287,7 +286,7 @@ class Deductive:
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
-        grid = widgets.GridspecLayout(2, 2, justify_items='center', width='70%', align_items='top')
+        grid = widgets.GridspecLayout(2, 2, justify_items='center', width='70%', align_items='center')
         grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(
             top_left=self.buttons['Open cells'],
