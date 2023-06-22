@@ -53,6 +53,7 @@ class Deductive:
                        ('Export to pdf', self.export_to_pdf, 'success'),
                        ('Close BringOrder', self.no_export, 'success'),
                        ('Save theory', self.save_theory, 'success')]
+
         return button_list
 
     def create_hypotheses_grid(self):
@@ -68,11 +69,12 @@ class Deductive:
              empty, self.empty_null_error,
              empty, widgets.HBox([self.buttons['Save'], self.buttons['Clear']])
             ])
+
         return grid
 
     def start_deductive_analysis(self, _=None):
         """Button function for deductive analysis"""
-        self.boutils.create_markdown_cells_above(1, '# Deductive analysis')
+
         text = self.bogui.create_message('Describe the theory and insights')
 
         grid = widgets.AppLayout(header=text,
@@ -80,23 +82,18 @@ class Deductive:
                                  self.theory_error,
                                  self.buttons['Save theory']]),
             pane_widths=[1, 6, 0], grid_gap='12px')
+
         display(grid)
+        self.theory_desc.focus()
 
     def save_theory(self, _=None):
         """Function for saving theory and insights"""
         if self.theory_desc.value == '':
             self.theory_error.value='You must describe your theory and insights!'
         else:
-            formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
-            theory_md = f'## Theory\\n{formatted_theory}'
-            self.boutils.create_markdown_cells_above(1, theory_md)
-            clear_output(wait=True)            
-            self.add_hypothesis()
-
-    def add_hypothesis(self, _=None):
-        '''displays hypothesis inputs and control buttons'''
-        display(self.hypotheses_grid)
-        self.hypotheses[0].focus()
+            clear_output(wait=True)
+            display(self.hypotheses_grid)
+            self.hypotheses[0].focus()
 
     def check_data_limitations(self, _=None):
         """Displays the prompt for the check against data limitations"""
@@ -146,16 +143,30 @@ class Deductive:
 
         return False
 
-    def save_hypotheses(self, _=None):
-        """Saves hypotheses and displays buttons for running code"""
+    def format_hypotheses_and_theory(self):
+        """Formats hypotheses and theory for markdown
+        
+        Returns:
+            formatted_text (str)
+        """
+        formatted_text = f'# Deductive analysis: {self.hypotheses[0].value}\\n'
+        formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
+        formatted_text += f'## Theory and insights\\n{formatted_theory}\\n'
         hypotheses = f'- Hypothesis: {self.hypotheses[0].value}\
         \\n- Null hypothesis: {self.hypotheses[1].value}'
-        text = f'## Hypotheses\\n{hypotheses}\\n## Data analysis'
+        formatted_text += f'## Hypotheses\\n{hypotheses}\\n## Data analysis'
+
+        return formatted_text
+
+    def save_hypotheses(self, _=None):
+        """Saves hypotheses and displays buttons for running code"""
         if self.check_hypotheses():
+            text = self.format_hypotheses_and_theory()
             self.boutils.create_markdown_cells_above(1, text=text)
             self.confirmed_grid = self.create_confirmed_grid()
             self.hypotheses_grid.close()
             display(self.confirmed_grid)
+            self.add_cells_int.focus()
 
     def clear_hypotheses(self, _=None):
         """Button function for resetting hypothesis and null hypothesis inputs"""
@@ -208,6 +219,7 @@ class Deductive:
                 self.buttons['All done']])
         )
         display(self.conclusion)
+        conclusion.focus()
 
     def clear_cells(self, _=None):
         """Clear button function to clear cells above"""
@@ -243,7 +255,6 @@ class Deductive:
         """Button function to start over with new data"""
         self.save_results()
         self.boutils.execute_cell_from_current(1, 'BringOrder()')
-
 
     def all_done(self, _=None):
         """Button function to save results when ready."""
