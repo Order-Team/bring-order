@@ -34,20 +34,20 @@ class Deductive:
 
         Returns:
             list of tuples in format (description: str, command: func, style: str)"""
-        button_list = [('Open cells', self.open_cells, 'warning'),
+        button_list = [('Open cells', self.open_cells, 'primary'),
                        ('Delete last cell', self.delete_last_cell, 'danger'),
                        ('Save', self.check_theory_and_hypotheses, 'success'),
-                       ('Clear hypotheses', self.clear_hypotheses, 'primary'),
+                       ('Clear hypotheses', self.clear_hypotheses, 'warning'),
                        ('Yes', self.save_theory_and_hypotheses, 'success'),
                        ('No', self.bad_hypotheses, 'warning'),
-                       ('Run cells', self.run_cells, 'primary'),
+                       ('Run cells', self.run_cells, 'warning'),
                        ('Clear cells', self.clear_cells, 'danger'),
                        ('New analysis', self.start_new_analysis, 'success'),
                        ('Prepare new data', self.start_analysis_with_new_data, 'success'),
                        ('All done', self.all_done, 'success'),
                        ('Export to pdf', self.export_to_pdf, 'success'),
                        ('Close BringOrder', self.no_export, 'success'),
-                       ('Clear theory', self.clear_theory, 'primary')]
+                       ('Clear theory', self.clear_theory, 'warning')]
 
         return button_list
 
@@ -150,6 +150,31 @@ class Deductive:
 
         return (theory_error, empty_hypo_error, empty_null_error)
 
+    def __create_limitation_prompt(self):
+        """Creates limitation prompt grid"""
+        limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
+            item in enumerate(self.data_limitations, start=1))
+
+        hypothesis_text = self.bogui.create_message(
+            f'You have set hypothesis: {self.hypotheses[0].value}'
+        )
+        null_text = self.bogui.create_message(
+            f'You have set null hypothesis: {self.hypotheses[1].value}'
+        )
+
+        limitation_prompt_text = widgets.HTML(
+            'Do the hypotheses fit within the limitations of the data set?' 
+            + '<br>' + limitations)
+
+        limitation_prompt = widgets.VBox([
+            hypothesis_text,
+            null_text,
+            limitation_prompt_text,
+            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
+        ])
+
+        return limitation_prompt
+
     def check_theory_and_hypotheses(self, _=None):
         """Checks theory and hypotheses and displays the prompt for
         the check against data limitations
@@ -173,17 +198,8 @@ class Deductive:
             return False
 
         # Show limitation prompt if all values are ok
-        limitations = ''.join(f"Limitation {count}: {item.value} <br>" for count,
-            item in enumerate(self.data_limitations, start=1))
-
-        limitation_prompt_text = widgets.HTML(
-            'Do the hypotheses fit within the limitations of the data set?' 
-            + '<br>' + limitations)
-
-        limitation_prompt = widgets.VBox([limitation_prompt_text,
-            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
-        ])
-
+        limitation_prompt = self.__create_limitation_prompt()
+        clear_output(wait=True)
         display(limitation_prompt)
 
         return True
@@ -253,18 +269,18 @@ class Deductive:
                      f'Null hypothesis: {self.hypotheses[1].value}'])
         self.result_description = self.bogui.create_text_area()
         notes_label = self.bogui.create_message(value='Describe your results here:')
-      
+
         grid = widgets.GridspecLayout(5, 3, justify_items='center', width='70%', align_items='bottom')
         grid[0, 0] = question
         grid[1, 0] = conclusion_label
-        grid[1, 1:] = self.conclusion 
+        grid[1, 1:] = self.conclusion
         grid[2, :] = notes_label
         grid[3, :] = self.result_description
         grid[4, 0] = self.buttons['New analysis']
-        grid[4, 1] =  self.buttons['Prepare new data']      
+        grid[4, 1] =  self.buttons['Prepare new data']
         grid[4, 2] =  self.buttons['All done']
         return grid
-    
+
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
         self.boutils.run_cells_above(
