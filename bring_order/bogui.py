@@ -53,7 +53,7 @@ class BOGui:
         """Creates text box"""
         text_area = widgets.Textarea(value=default_value,layout={'width': '70%'}, placeholder=place_holder)
         return text_area
-
+    
     def create_label(self, value):
         """Creates label"""
         label = widgets.Label(value=value,
