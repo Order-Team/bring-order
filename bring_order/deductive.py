@@ -61,8 +61,8 @@ class Deductive:
         grid = widgets.AppLayout(
             header = self.bogui.create_message('Set the hypotheses:'),
             left_sidebar = widgets.VBox([
-                self.bogui.create_label('Hypothesis (H0):'),
-                self.bogui.create_label('Null hypothesis (H1):')
+                self.bogui.create_label('Hypothesis (H1):'),
+                self.bogui.create_label('Null hypothesis (H0):')
             ]),
             center = widgets.VBox([
                 widgets.HBox([
@@ -154,10 +154,10 @@ class Deductive:
         """Creates limitation prompt grid"""
        
         hypothesis_text = self.bogui.create_message(
-            f'You have set hypothesis (H0): {self.hypotheses[0].value}'
+            f'You have set hypothesis (H1): {self.hypotheses[0].value}'
         )
         null_text = self.bogui.create_message(
-            f'You have set null hypothesis (H1): {self.hypotheses[1].value}'
+            f'You have set null hypothesis (H0): {self.hypotheses[1].value}'
         )
 
         limitations = "<ul>\n"
@@ -224,8 +224,8 @@ class Deductive:
         formatted_text = f'# Deductive analysis: {self.hypotheses[0].value}\\n'
         formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
         formatted_text += f'## Theory and insights\\n{formatted_theory}\\n'
-        hypotheses = f'- Hypothesis (H0): {self.hypotheses[0].value}\
-        \\n- Null hypothesis (H1): {self.hypotheses[1].value}'
+        hypotheses = f'- Hypothesis (H1): {self.hypotheses[0].value}\
+        \\n- Null hypothesis (H0): {self.hypotheses[1].value}'
         formatted_text += f'## Hypotheses\\n{hypotheses}\\n## Data analysis'
 
         return formatted_text
@@ -267,8 +267,8 @@ class Deductive:
         question = self.bogui.create_message(value='What happened?')
         conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
         self.conclusion = self.bogui.create_radiobuttons(
-            options=[f'H0: {self.hypotheses[0].value}',
-                     f'H1: {self.hypotheses[1].value}'])
+            options=[f'H1: {self.hypotheses[0].value}',
+                     f'H0: {self.hypotheses[1].value}'])
         notes_label = self.bogui.create_message(value='Describe your results here:')
 
         grid = widgets.AppLayout(
@@ -326,8 +326,8 @@ class Deductive:
         """Prints results as markdown and hides widgets"""
         
         text = (f'## Conclusion\\n ### The accepted hypothesis: {self.conclusion.value}\\n'
-                f'The hypotheses were:\\n - Hypothesis (H0): {self.hypotheses[0].value}\\n'
-                f'- Null hypothesis (H1): {self.hypotheses[1].value}\\n')
+                f'The hypotheses were:\\n - Hypothesis (H1): {self.hypotheses[0].value}\\n'
+                f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n')
         
         if self.result_description.value:
             formatted_description = '<br />'.join(self.result_description.value.split('\n'))
