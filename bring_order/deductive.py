@@ -325,14 +325,13 @@ class Deductive:
     def save_results(self):
         """Prints results as markdown and hides widgets"""
         
-        text = (f'## Conclusion\\n ### The accepted hypothesis: {self.conclusion.value}\\n'
-                f'The hypotheses were:\\n - Hypothesis (H1): {self.hypotheses[0].value}\\n'
+        text = (f'## Conclusion\\n### Accepted hypothesis: {self.conclusion.value[4:]}\\n'
+                f'The hypotheses were:\\n- Hypothesis (H1): {self.hypotheses[0].value}\\n'
                 f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n')
         
         if self.result_description.value:
             formatted_description = '<br />'.join(self.result_description.value.split('\n'))
             text += f'### Notes\\n {formatted_description}'
-        
         
         self.boutils.create_markdown_cells_above(1, text=text)
         clear_output(wait=True)
