@@ -41,7 +41,7 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash)
         
       - name: Install pypa/build
-        run: 
+        run: |
           poetry version $(git describe --tags --abbrev=0)
           python3 -m pip install build --user
 
