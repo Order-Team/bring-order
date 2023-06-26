@@ -1,19 +1,18 @@
-name: CI
+name: Publish
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
+  # Triggers the workflow on release events
+  release:
+    types: [ created ]
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+  
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -40,3 +39,22 @@ jobs:
         run: poetry run coverage xml
       - name: Coverage report to Codecov
         run: bash <(curl -s https://codecov.io/bash)
+        
+      - name: Install pypa/build
+        run: 
+          poetry version $(git describe --tags --abbrev=0)
+          python3 -m pip install build --user
+
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build --sdist --wheel --outdir dist/.
+        
+      - name: Publish distribution package to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          
+      - name: Publish distribution package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
