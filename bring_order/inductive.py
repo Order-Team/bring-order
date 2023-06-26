@@ -168,14 +168,23 @@ class Inductive:
     def display_summary(self, error=''):
         """Prints all observations and asks for summary"""
         clear_output(wait=True)
-        observation_string = '\n'.join((f"Observation {i+1}: {observation}\n") for i, observation
-                 in enumerate(self.observations))
-        text = f'All your observations from the data:\n\n{observation_string}'
-        print(text)
+
+        observations = "<ul>\n"
+        observations += "\n".join(["<li>" + observation + "</li>" for observation in self.observations])
+        observations += "\n</ul>"
+
+        observation_list = widgets.HTML(
+            '</br>'+'<h4>All your observations from the data:</h4>'+observations)
+
+        # observation_string = '\n'.join((f"Observation {i+1}: {observation}\n") for i, observation
+        #          in enumerate(self.observations))
+        # text = f'All your observations from the data:\n\n{observation_string}'
+        # print(text)
 
         summary_label = self.bogui.create_label('What do these observations mean?')
         error_message = self.bogui.create_error_message(value=error)
         grid = widgets.VBox([
+            observation_list,
             widgets.HBox([summary_label, self.summary]),
             error_message,
             self.buttons['Submit summary']
