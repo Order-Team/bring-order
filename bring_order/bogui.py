@@ -44,7 +44,7 @@ class BOGui:
                                            'text_color': 'red'})
         return error
 
-    def create_input_field(self, default_value=''):
+    def create_input_field(self, default_value='', input=''):
         """Creates input field"""
         input_field = widgets.Text(value=default_value)
         return input_field

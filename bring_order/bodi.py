@@ -24,6 +24,7 @@ class Bodi:
         self.data_limitations = []
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
+        self.remove_button = self.bogui.create_button('Remove limitation', self.remove_limitation)
 
     @property
     def button_list(self):
@@ -72,48 +73,48 @@ class Bodi:
     def run_cells(self, _=None):
         """Button function that runs data import cells"""
         self.boutils.run_cells_above(self.cell_count)
-
         if self.limitation_grid:
             self.limitation_grid.close()
-
         self.display_limitations()
 
     def add_limitation(self, _=None):
         """Button function to add new limitation"""
         if self.limitation_grid:
             self.limitation_grid.close()
-
-        self.data_limitations.append(self.bogui.create_text_area('',f'Limitation {len(self.data_limitations)+1}'))
-
+        self.data_limitations.append(self.bogui.create_input_field('',f'Limitation {len(self.data_limitations)+1}'))        
         self.display_limitations()
+
+    def remove_limitation(self, _=None):
+        """Button function to remove a limitation field"""
+        if len(self.data_limitations) > 1:
+            # implementation 
+            self.data_limitations.pop()   
 
     def display_limitations(self):
         """Shows text boxes and buttons for adding limitations"""
         limitations_label = self.bogui.create_message(
                 value='Identify limitations to the data: what kind of questions cannot be answered with it?')
-
         rows = len(self.data_limitations)
         if rows == 0:
-            self.data_limitations.append(self.bogui.create_text_area('', 'Limitation 1'))
+            self.data_limitations.append(self.bogui.create_input_field('', 'Limitation 1'))
             rows +=1
-
         grid = GridspecLayout(rows, 1)
-
         for i in range(rows):
             for j in range(1):
-                grid[i, j] = self.data_limitations[i]
-
+                grid[i, j] = self.data_limitations[i]                
+          
         self.limitation_grid = widgets.AppLayout(
             header=limitations_label,
             center=grid,
             footer=widgets.HBox([
                 self.buttons['Start analysis'],
                 self.empty_limitations_error,
-                self.buttons['Add limitation']
+                self.buttons['Add limitation'],
+                self.remove_button
             ])
         )
+        display(self.limitation_grid)        
 
-        display(self.limitation_grid)
 
     def check_limitations(self, item=''):
         """Checks that limitations have been given or commented"""
@@ -129,12 +130,10 @@ class Bodi:
         return True
 
     def format_limitations(self):
-        """Formats limitations for markdown to prevent Javascript error
-        
+        """Formats limitations for markdown to prevent Javascript error        
         Returns:
             formatted_limitations (str)
         """
-
         formatted_limitations = '## Limitations\\n'
         for item in self.data_limitations:
             limitation = '<br />'.join(item.value.split('\n'))
@@ -161,7 +160,7 @@ class Bodi:
         """
         title = f'# Data: {self.data_name.value}'
         description = '<br />'.join(self.data_description.value.split('\n'))
-        formatted_text = f'{title}\\n## Description\\n{description}\\n## Import and cleaning'
+        formatted_text = f'{title}\\n## Description\\n{description}'
 
         return formatted_text
 
@@ -206,7 +205,6 @@ class Bodi:
             pane_widths=[1, 5, 0],
             grid_gap='10px'
         )
-
         display(grid)
 
         if 'description' in error:

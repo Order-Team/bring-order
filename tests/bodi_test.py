@@ -77,14 +77,14 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.'
         text = self.instance.format_data_description()
-        correct = '# Data: My data\\n## Description\\nList of integers.\\n## Import and cleaning'
+        correct = '# Data: My data\\n## Description\\nList of integers.'
         self.assertEqual(text, correct)
 
     def test_format_data_description_returns_correct_string_with_new_line(self):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.\nAscending order.'
         text = self.instance.format_data_description()
-        correct = '# Data: My data\\n## Description\\nList of integers.<br />Ascending order.\\n## Import and cleaning'
+        correct = '# Data: My data\\n## Description\\nList of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
 
     def test_format_limitations_returns_correct_string(self):
@@ -97,7 +97,7 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(text, correct)
 
     def test_add_limitation_adds_limitation_input_to_list(self):
-        self.instance.bogui.create_text_area = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.add_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)
@@ -105,7 +105,7 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(len(self.instance.data_limitations), 2)
 
     def test_run_cells_runs_the_correct_amount_of_cells(self):
-        self.instance.bogui.create_text_area = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.cell_count = 3
         self.instance.run_cells()
@@ -161,7 +161,7 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'The sample size is 100.'
         self.instance.start_data_import()
-        text = '# Data: My data\\n## Description\\nThe sample size is 100.\\n## Import and cleaning'
+        text = '# Data: My data\\n## Description\\nThe sample size is 100.'
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_start_data_import_increases_cell_count(self):
