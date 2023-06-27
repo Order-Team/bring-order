@@ -14,7 +14,7 @@ class Inductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.notes = self.bogui.create_text_area()
         self.conclusion = None
-        self.summary = self.bogui.create_text_area()
+        self.summary = self.bogui.create_text_area('', 'Summary')
         self.empty_notes_error = self.bogui.create_error_message()
         self.observations = []
         self.new_analysis_view = widgets.HBox([
@@ -170,7 +170,8 @@ class Inductive:
         clear_output(wait=True)
 
         observations = "<ul>\n"
-        observations += "\n".join(["<li>" + observation + "</li>" for observation in self.observations])
+        observations += "\n".join(["<li>" + observation + "</li>"
+                                 for observation in self.observations])
         observations += "\n</ul>"
 
         observation_list = widgets.HTML(

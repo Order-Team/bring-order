@@ -81,14 +81,15 @@ class Bodi:
         """Button function to add new limitation"""
         if self.limitation_grid:
             self.limitation_grid.close()
-        self.data_limitations.append(self.bogui.create_input_field('',f'Limitation {len(self.data_limitations)+1}'))        
+        self.data_limitations.append(self.bogui.create_input_field
+                                    ('',f'Limitation {len(self.data_limitations)+1}'))
         self.display_limitations()
 
     def remove_limitation(self, _=None):
         """Button function to remove a limitation field"""
         if len(self.data_limitations) > 1:
-            # implementation 
-            self.data_limitations.pop()   
+            # implementation
+            self.data_limitations.pop()
 
     def display_limitations(self):
         """Shows text boxes and buttons for adding limitations"""
@@ -101,8 +102,8 @@ class Bodi:
         grid = GridspecLayout(rows, 1)
         for i in range(rows):
             for j in range(1):
-                grid[i, j] = self.data_limitations[i]                
-          
+                grid[i, j] = self.data_limitations[i]
+
         self.limitation_grid = widgets.AppLayout(
             header=limitations_label,
             center=grid,
@@ -113,8 +114,7 @@ class Bodi:
                 self.remove_button
             ])
         )
-        display(self.limitation_grid)        
-
+        display(self.limitation_grid)
 
     def check_limitations(self, item=''):
         """Checks that limitations have been given or commented"""
