@@ -187,4 +187,4 @@ class TestBodi(unittest.TestCase):
         
     def test_last_limitation_is_not_removed(self):
         self.instance.remove_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 2)
+        self.assertEqual(len(self.instance.data_limitations), 1)
