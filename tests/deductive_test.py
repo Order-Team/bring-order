@@ -79,5 +79,4 @@ class TestDeductive(unittest.TestCase):
         self.assertEqual(self.instance.theory_desc.value, '')
 
 
-
         
