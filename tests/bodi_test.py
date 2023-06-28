@@ -88,10 +88,8 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(text, correct)
 
     def test_format_limitations_returns_correct_string(self):
-        for n in range(2):
-            self.instance.data_limitations.append(
-                widgets.Text(f'Limitation{n}')
-            )
+        self.instance.data_limitations[0].value = 'Limitation0'
+        self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
         text = self.instance.format_limitations()
         correct = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
         self.assertEqual(text, correct)
@@ -102,9 +100,9 @@ class TestBodi(unittest.TestCase):
             placeholder=f'{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 1)
-        self.instance.add_limitation()
         self.assertEqual(len(self.instance.data_limitations), 2)
+        self.instance.add_limitation()
+        self.assertEqual(len(self.instance.data_limitations), 3)
 
     def test_run_cells_runs_the_correct_amount_of_cells(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
@@ -119,17 +117,16 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.call_check_limitation())
 
     def test_call_check_limitation_returns_true_with_no_empty_limitations(self):
-        for n in range(2):
+        self.instance.data_limitations[0].value = 'Limitation0'
+        for n in range(1,3):
             self.instance.data_limitations.append(
                 widgets.Text(f'Limitation{n}')
             )
         self.assertTrue(self.instance.call_check_limitation())
 
     def test_start_analysis_clicked_creates_markdown_cell(self):
-        for n in range(2):
-            self.instance.data_limitations.append(
-                widgets.Text(f'Limitation{n}')
-            )
+        self.instance.data_limitations[0].value = 'Limitation0'
+        self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
         text = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
         self.instance.start_analysis_clicked()
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
