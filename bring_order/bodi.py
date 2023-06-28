@@ -2,9 +2,8 @@
 Creates code cells for importing and cleaning data and markdown cell to describe the limitations
 and requirements of data. After code cells displays "ready to analyse" button. After button is 
 pressed displays text field and "ready" button. Empty text field is not accepted.'''
-from ipywidgets import widgets
+from ipywidgets import GridspecLayout, widgets
 from IPython.display import display, clear_output
-from ipywidgets import GridspecLayout
 
 
 class Bodi:
