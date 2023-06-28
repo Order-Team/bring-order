@@ -23,7 +23,7 @@ class Bodi:
         self.data_limitations = []
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
-        self.remove_button = self.bogui.create_button('Remove limitation', self.remove_limitation)
+        #self.remove_button = self.bogui.create_button('Remove limitation', self.remove_limitation)
 
     @property
     def button_list(self):
@@ -37,7 +37,8 @@ class Bodi:
             ('Delete last cell', self.delete_last_cell, 'danger'),
             ('Run cells', self.run_cells, 'primary'),
             ('Add limitation', self.add_limitation, 'primary'),
-            ('Start analysis', self.start_analysis_clicked, 'success')
+            ('Start analysis', self.start_analysis_clicked, 'success'),
+            ('Remove limitation', self.remove_limitation, 'warning')
         ]
 
         return button_list
@@ -89,6 +90,8 @@ class Bodi:
         if len(self.data_limitations) > 1:
             # implementation
             self.data_limitations.pop()
+            self.limitation_grid.close()
+            self.display_limitations()
 
     def display_limitations(self):
         """Shows text boxes and buttons for adding limitations"""
@@ -110,7 +113,7 @@ class Bodi:
                 self.buttons['Start analysis'],
                 self.empty_limitations_error,
                 self.buttons['Add limitation'],
-                self.remove_button
+                self.buttons['Remove limitation']
             ])
         )
         display(self.limitation_grid)

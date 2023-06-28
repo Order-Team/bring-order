@@ -17,7 +17,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui = Mock()
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 6)
+        self.assertEqual(len(self.instance.buttons), 7)
 
     def test_start_data_hides_current_input(self):
         self.instance.data_name.value = 'Some title'
