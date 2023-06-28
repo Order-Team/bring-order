@@ -26,7 +26,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.conclusion = None
         self.data_limitations = ['Data limitations missing']
-        self.result_description = self.bogui.create_text_area()
+        self.result_description = self.bogui.create_text_area('','Results')
 
     @property
     def button_list(self):
