@@ -17,16 +17,16 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
    await page.waitForTimeout(800);
    await newPage.getByLabel('Run').click();
-   await newPage.locator('#notebook-container div').filter({ hasText: 'In [ ]: . . .' }).locator('pre').click();
-   await newPage.getByRole('button', { name: '' }).click();
-   await newPage.getByPlaceholder('​').click();
-   await newPage.getByPlaceholder('​').fill('Test data');
+   await newPage.locator('input[type="text"]').click();
+   await newPage.locator('input[type="text"]').fill('Test data');
    await newPage.getByLabel('', { exact: true }).nth(1).click();
    await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
    await newPage.getByRole('button', { name: 'Save description' }).click();
    await newPage.getByRole('button', { name: 'Open cells' }).click();
-   await newPage.locator('#notebook-container div').filter({ hasText: 'In [ ]:xxxxxxxxxx . . .' }).locator('pre').nth(1).click();
    await newPage.getByRole('button', { name: 'Run cells' }).click();
+   expect(newPage.getByRole('button', { name: 'Start analysis' }).isVisible());
+   expect(newPage.getByRole('button', { name: 'Add limitation' }).isVisible());
+   expect(newPage.getByRole('button', { name: 'Remove limitation' }).isVisible());
  });
 
  test('import data errors', async ({ page, context }) => {
@@ -40,12 +40,10 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
   await page.waitForTimeout(800);
   await newPage.getByLabel('Run').click();
-  await newPage.locator('#notebook-container div').filter({ hasText: 'In [ ]: . . .' }).locator('pre').click();
-  await newPage.getByRole('button', { name: '' }).click();
   await newPage.getByRole('button', { name: 'Save description' }).click();
   expect(newPage.locator('You must name the data set').isVisible());
-  await newPage.getByPlaceholder('​').click();
-  await newPage.getByPlaceholder('​').fill('Test data');
+  await newPage.locator('input[type="text"]').click();
+  await newPage.locator('input[type="text"]').fill('Test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   expect(newPage.locator('You must give some description of the data').isVisible());
 });
@@ -61,10 +59,8 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
   await page.waitForTimeout(800);
   await newPage.getByLabel('Run').click();
-  await newPage.locator('#notebook-container div').filter({ hasText: 'In [ ]: . . .' }).locator('pre').click();
-  await newPage.getByRole('button', { name: '' }).click();
-  await newPage.getByPlaceholder('​').click();
-  await newPage.getByPlaceholder('​').fill('Test data');
+  await newPage.locator('input[type="text"]').click();
+  await newPage.locator('input[type="text"]').fill('Test data');
   await newPage.getByLabel('', { exact: true }).nth(1).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
@@ -74,7 +70,7 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByText('Data limitations cannot be empty').isVisible());
   await newPage.getByRole('button', { name: 'Add limitation' }).click();
-  expect(newPage.getByPlaceholder('Limitation 2').isVisible());
+  expect(newPage.getByPlaceholder('Limitation 2').isVisible);
 });
 
 test('start of inductive and deductide', async ({ page, context }) => {
@@ -88,16 +84,14 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
   await page.waitForTimeout(800);
   await newPage.getByLabel('Run').click();
-  await newPage.locator('#notebook-container div').filter({ hasText: 'In [ ]: . . .' }).locator('pre').click();
-  await newPage.getByRole('button', { name: '' }).click();
-  await newPage.getByPlaceholder('​').click();
-  await newPage.getByPlaceholder('​').fill('Test data');
+  await newPage.locator('input[type="text"]').click();
+  await newPage.locator('input[type="text"]').fill('Test data');
   await newPage.getByLabel('', { exact: true }).nth(1).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
-  await newPage.getByPlaceholder('Limitation 1').fill('Limitation');
+  await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByRole('button', { name: 'Inductive' }).isVisible());
   expect(newPage.getByRole('button', { name: 'Deductive' }).isVisible());

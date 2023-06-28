@@ -17,7 +17,7 @@ class Deductive:
         self.bogui = bogui
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
-        self.theory_desc = self.bogui.create_text_area()
+        self.theory_desc = self.bogui.create_text_area('','Theory')
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
         self.hypotheses = [
             self.bogui.create_input_field(),
@@ -26,7 +26,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.conclusion = None
         self.data_limitations = ['Data limitations missing']
-        self.result_description = self.bogui.create_text_area()
+        self.result_description = self.bogui.create_text_area('','Results')
 
     @property
     def button_list(self):
@@ -152,7 +152,7 @@ class Deductive:
 
     def __create_limitation_prompt(self):
         """Creates limitation prompt grid"""
-       
+
         hypothesis_text = self.bogui.create_message(
             f'You have set hypothesis (H1): {self.hypotheses[0].value}'
         )
@@ -161,7 +161,8 @@ class Deductive:
         )
 
         limitations = "<ul>\n"
-        limitations += "\n".join(["<li>" + limitation.value + "</li>" for limitation in self.data_limitations])
+        limitations += "\n".join(["<li>" + limitation.value + "</li>"
+                                 for limitation in self.data_limitations])
         limitations += "\n</ul>"
 
         limitation_prompt_text = widgets.HTML(
@@ -313,7 +314,8 @@ class Deductive:
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
-        grid = widgets.GridspecLayout(2, 2, justify_items='center', width='70%', align_items='center')
+        grid = widgets.GridspecLayout(2, 2, justify_items='center',
+                                     width='70%', align_items='center')
         grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(
             top_left=self.buttons['Open cells'],
@@ -325,15 +327,15 @@ class Deductive:
 
     def save_results(self):
         """Prints results as markdown and hides widgets"""
-        
+
         text = (f'## Conclusion\\n### Accepted hypothesis: {self.conclusion.value[4:]}\\n'
                 f'The hypotheses were:\\n- Hypothesis (H1): {self.hypotheses[0].value}\\n'
                 f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n')
-        
+
         if self.result_description.value:
             formatted_description = '<br />'.join(self.result_description.value.split('\n'))
             text += f'### Notes\\n {formatted_description}'
-        
+
         self.boutils.create_markdown_cells_above(1, text=text)
         clear_output(wait=True)
 

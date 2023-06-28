@@ -44,16 +44,17 @@ class BOGui:
                                            'text_color': 'red'})
         return error
 
-    def create_input_field(self, default_value=''):
+    def create_input_field(self, default_value='', placeholder=''):
         """Creates input field"""
-        input_field = widgets.Text(value=default_value)
+        input_field = widgets.Text(value=default_value, placeholder=placeholder)
         return input_field
 
     def create_text_area(self, default_value='', place_holder=''):
         """Creates text box"""
-        text_area = widgets.Textarea(value=default_value,layout={'width': '70%'}, placeholder=place_holder)
+        text_area = widgets.Textarea(value=default_value,layout={'width': '70%'},
+                                     placeholder=place_holder)
         return text_area
-    
+
     def create_label(self, value):
         """Creates label"""
         label = widgets.Label(value=value,
