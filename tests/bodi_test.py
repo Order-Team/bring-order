@@ -174,3 +174,13 @@ class TestBodi(unittest.TestCase):
         self.instance.open_cells()
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
+
+    def test_remove_limitation_removes_limitations(self):
+        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
+            value=f'{dv}',
+            placeholder=f'{ph}')
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.add_limitation()
+        self.assertEqual(len(self.instance.data_limitations), 2)
+        self.instance.remove_limitation()
+        self.assertEqual(len(self.instance.data_limitations), 1)
