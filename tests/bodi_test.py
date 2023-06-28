@@ -97,7 +97,9 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(text, correct)
 
     def test_add_limitation_adds_limitation_input_to_list(self):
-        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
+            value=f'{dv}',
+            placeholder=f'{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.add_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)
