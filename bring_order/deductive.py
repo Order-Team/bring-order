@@ -265,15 +265,22 @@ class Deductive:
         self.buttons['Delete last cell'].disabled = True
 
     def __create_conclusion_grid(self):
-        question = self.bogui.create_message(value='What happened?')
+        question = self.bogui.create_message(value= f'What happened?')
+        h1 = self.bogui.create_message(value= f'H1: {self.hypotheses[0].value}', style={'font_size': '12px'})
+        h0 = self.bogui.create_message(value= f'H0: {self.hypotheses[1].value}', style={'font_size': '12px'})
+
         conclusion_label = self.bogui.create_message(value='Accepted hypothesis:')
         self.conclusion = self.bogui.create_radiobuttons(
-            options=[f'H1: {self.hypotheses[0].value}',
-                     f'H0: {self.hypotheses[1].value}'])
+            options=[f'H1',
+                     f'H0'])
         notes_label = self.bogui.create_message(value='Describe your results here:')
 
         grid = widgets.AppLayout(
-            header=question,
+            header=widgets.VBox([
+                    question,
+                    h1,
+                    h0
+                ]),
             left_sidebar=conclusion_label,
             center=self.conclusion,
             footer=widgets.VBox([
@@ -285,9 +292,9 @@ class Deductive:
                     self.buttons['All done']
                 ])
             ]),
-            height='300px',
+       
             pane_widths=[1, 5, 0],
-            pane_heights=['20px', '40px', 1],
+            pane_heights=[1, '40px', 1],
             grid_gap='12px'
         )
 
