@@ -70,11 +70,11 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
-  await newPage.getByPlaceholder('Limitation 1').click();
+  await newPage.getByPlaceholder('​').click();
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByText('Data limitations cannot be empty').isVisible());
   await newPage.getByRole('button', { name: 'Add limitation' }).click();
-  expect(newPage.getByPlaceholder('Limitation 2').isVisible());
+  expect(newPage.getByPlaceholder('​').nth(1).isVisible());
 });
 
 test('start of inductive and deductide', async ({ page, context }) => {
@@ -96,8 +96,8 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
-  await newPage.getByPlaceholder('Limitation 1').click();
-  await newPage.getByPlaceholder('Limitation 1').fill('Limitation');
+  await newPage.getByPlaceholder('​').click();
+  await newPage.getByPlaceholder('​').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByRole('button', { name: 'Inductive' }).isVisible());
   expect(newPage.getByRole('button', { name: 'Deductive' }).isVisible());

@@ -22,8 +22,8 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
-  await newPage.getByPlaceholder('Limitation 1').click();
-  await newPage.getByPlaceholder('Limitation 1').fill('Limitation');
+  await newPage.getByPlaceholder('​').click();
+  await newPage.getByPlaceholder('​').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Inductive' }).click();
   expect(newPage.getByRole('heading', { name: 'Inductive analysis¶' }).isVisible());
@@ -32,9 +32,13 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Tests');
   await newPage.getByRole('button', { name: 'Submit observation' }).click();
   expect(newPage.getByRole('heading', { name: 'Observation 1: Tests¶' }).isVisible());
+  await newPage.getByRole('button', { name: 'Ready to summarize' }).click();
+  await newPage.getByPlaceholder('Summary', { exact: true }).click();
+  await newPage.getByPlaceholder('Summary', { exact: true }).fill('Test summary');
+  expect(newPage.getByRole('heading', { name: 'Summary: Test summary¶' }).isVisible());
 });
 
-test('inductive analysis summary error', async ({ page, context }) => {
+test('inductive analysis with errors', async ({ page, context }) => {
   // @ts-ignore
   await page.goto(testURL);
   const pagePromise = context.waitForEvent('page');
@@ -53,12 +57,16 @@ test('inductive analysis summary error', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
-  await newPage.getByPlaceholder('Limitation 1').click();
-  await newPage.getByPlaceholder('Limitation 1').fill('Limitation');
+  await newPage.getByPlaceholder('​').click();
+  await newPage.getByPlaceholder('​').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Inductive' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByRole('button', { name: 'Submit observation' }).click();
+  expect(newPage.getByText('You must write some kind of summary').isVisible());
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test observation');
+  await newPage.getByRole('button', { name: 'Submit observation' }).click();
+  await newPage.getByRole('button', { name: 'Ready to summarize' }).click();
   expect(newPage.getByText('You must write some kind of summary').isVisible());
 });
