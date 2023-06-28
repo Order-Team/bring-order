@@ -284,6 +284,7 @@ class Deductive:
                     self.buttons['All done']
                 ])
             ]),
+            height='300px',
             pane_widths=[1, 5, 0],
             pane_heights=['20px', '40px', 1],
             grid_gap='12px'
