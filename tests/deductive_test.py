@@ -73,7 +73,10 @@ class TestDeductive(unittest.TestCase):
         test_str = '# Deductive analysis: Test value\\n## Theory and insights\\nThe first claim<br />The second claim\\n## Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n## Data analysis'
         self.assertEqual(return_value, test_str)
 
-
+    def test_clear_theory_clears_theory(self):
+        self.instance.theory_desc.value = 'Theory of testing'
+        self.instance.clear_theory()
+        self.assertEqual(self.instance.theory_desc.value, '')
 
 
 
