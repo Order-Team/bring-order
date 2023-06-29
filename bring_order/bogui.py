@@ -92,6 +92,8 @@ class BOGui:
             options=options,
             description=desc,
             disabled=False,
-            font_size ="15px")
+            font_size ="15px",
+            layout={'width': 'max-content'}
+        )
 
         return radiobuttons
