@@ -33,7 +33,7 @@ class BringOrder:
     def create_deductive_button(self):
         """Creates deductive button"""
         button = self.bogui.create_button(
-            desc='Deductive',
+            desc='Test hypothesis',
             command=self.start_deductive_analysis)
 
         return button
@@ -41,7 +41,7 @@ class BringOrder:
     def create_inductive_button(self):
         """Creates inductive button"""
         button = self.bogui.create_button(
-            desc='Inductive',
+            desc='Explore data',
             command=self.start_inductive_analysis)
 
         return button

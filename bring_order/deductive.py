@@ -222,7 +222,7 @@ class Deductive:
         Returns:
             formatted_text (str)
         """
-        formatted_text = f'# Deductive analysis: {self.hypotheses[0].value}\\n'
+        formatted_text = f'# Testing hypothesis: {self.hypotheses[0].value}\\n'
         formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
         formatted_text += f'## Theory and insights\\n{formatted_theory}\\n'
         hypotheses = f'- Hypothesis (H1): {self.hypotheses[0].value}\
