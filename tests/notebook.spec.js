@@ -93,6 +93,6 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  expect(newPage.getByRole('button', { name: 'Inductive' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Deductive' }).isVisible());
+  expect(newPage.getByRole('button', { name: 'Explore data' }).isVisible());
+  expect(newPage.getByRole('button', { name: 'Test hyporthesis' }).isVisible());
 });

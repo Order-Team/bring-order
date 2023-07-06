@@ -23,7 +23,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  await newPage.getByRole('button', { name: 'Deductive' }).click();
+  await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
   expect(newPage.getByRole('heading', { name: 'Deductive analysis¶' }).isVisible());
   await newPage.getByPlaceholder('Theory').click();
   await newPage.getByPlaceholder('Theory').fill('Test theory');
@@ -57,7 +57,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     await newPage.getByPlaceholder('Limitation 1').click();
     await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
     await newPage.getByRole('button', { name: 'Start analysis' }).click();
-    await newPage.getByRole('button', { name: 'Deductive' }).click();
+    await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
     await newPage.getByRole('button', { name: 'Save' }).click();
     expect(newPage.getByText('You must describe your theory and insights').isVisible());
     expect(newPage.getByText('Hypothesis missing').isVisible());
@@ -84,7 +84,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     await newPage.getByPlaceholder('Limitation 1').click();
     await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
     await newPage.getByRole('button', { name: 'Start analysis' }).click();
-    await newPage.getByRole('button', { name: 'Deductive' }).click();
+    await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
     await newPage.getByPlaceholder('Theory').click();
     await newPage.getByPlaceholder('Theory').fill('Test theory');
     await newPage.getByLabel('', { exact: true }).nth(1).click();

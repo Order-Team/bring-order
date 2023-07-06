@@ -23,7 +23,7 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  await newPage.getByRole('button', { name: 'Inductive' }).click();
+  await newPage.getByRole('button', { name: 'Explore data' }).click();
   expect(newPage.getByRole('heading', { name: 'Inductive analysis¶' }).isVisible());
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
@@ -56,7 +56,7 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  await newPage.getByRole('button', { name: 'Inductive' }).click();
+  await newPage.getByRole('button', { name: 'Explore data' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByRole('button', { name: 'Submit observation' }).click();
@@ -87,7 +87,7 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  await newPage.getByRole('button', { name: 'Inductive' }).click();
+  await newPage.getByRole('button', { name: 'Explore data' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Tests');
