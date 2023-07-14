@@ -20,7 +20,8 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(len(self.instance.buttons), 7)
 
     def test_start_data_hides_current_input(self):
-        self.instance.data_name.value = 'Some title'
+        self.instance.title.value = 'Some title'
+        self.instance.data_name.value = 'Some data'
         self.instance.data_description.value = 'Some description'
         self.instance.start_data_import()
         self.instance.boutils.hide_current_input.assert_called()
@@ -74,17 +75,19 @@ class TestBodi(unittest.TestCase):
         self.instance.call_check_limitation.assert_called()
 
     def test_format_data_description_returns_correct_string(self):
+        self.instance.title.value = 'My title'
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.'
         text = self.instance.format_data_description()
-        correct = '# Data: My data\\n## Description\\nList of integers.'
+        correct = '# My title\\n ## Data: My data\\n ### Description: List of integers.'
         self.assertEqual(text, correct)
 
     def test_format_data_description_returns_correct_string_with_new_line(self):
+        self.instance.title.value = 'My title'
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.\nAscending order.'
         text = self.instance.format_data_description()
-        correct = '# Data: My data\\n## Description\\nList of integers.<br />Ascending order.'
+        correct = '# My title\\n ## Data: My data\\n ### Description: List of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
 
     def test_format_limitations_returns_correct_string(self):
@@ -144,26 +147,27 @@ class TestBodi(unittest.TestCase):
     def test_start_data_import_sets_error_message_if_data_name_empty(self):
         self.instance.bodi = Mock()
         self.instance.start_data_import()
-        self.instance.bodi.assert_called_with(error='You must name the data set')
+        self.instance.bodi.assert_called_with(error='Please give your study a title')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_description_empty(self):
         self.instance.bodi = Mock()
+        self.instance.title.value = "My title"
         self.instance.data_name.value = 'My data'
         self.instance.start_data_import()
-        self.instance.bodi.assert_called_with(
-            error='You must give some description of the data'
-        )
+        self.instance.bodi.assert_called_with(error='You must give some description of the data')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_creates_markdown_cell(self):
+        self.instance.title.value = 'My title'
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'The sample size is 100.'
         self.instance.start_data_import()
-        text = '# Data: My data\\n## Description\\nThe sample size is 100.'
+        text = '# My title\\n ## Data: My data\\n ### Description: The sample size is 100.'
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_start_data_import_increases_cell_count(self):
+        self.instance.title.value = 'My title'
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'The sample size is 100.'
         self.instance.start_data_import()
