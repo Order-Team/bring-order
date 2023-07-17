@@ -29,15 +29,22 @@ class TestDeductive(unittest.TestCase):
 
     def test_get_error_messages_gives_error_for_empty_hypothesis(self):
         self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[1].value = 'x = 0'
+        self.instance.hypotheses[1].value = 'Let assume x = 0'
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', 'Hypothesis missing', ''))
+        self.assertEqual(errors, ('', 'The hypothesis must contain at least one verb', ''))
 
     def test_get_error_messages_gives_error_for_empty_null_hypothesis(self):
         self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[0].value = 'x < 0'
+        self.instance.hypotheses[0].value = 'Let assume x < 0'
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', '', 'Null hypothesis missing')) 
+        self.assertEqual(errors, ('', '', 'The null hypothesis must contain at least one verb')) 
+    
+    def test_get_error_messages_gives_error_for_theory(self):
+        self.instance.theory_desc.value = 'Theory'
+        self.instance.hypotheses[0].value = "The Earth is flat"
+        self.instance.hypotheses[1].value = "The Earth is round"
+        errors = self.instance.get_error_messages()
+        self.assertEqual(errors, ('Your must describe your theory with sentence(s) that contain at least one verb', '', ''))
 
     def test_check_theory_and_hypotheses_accept_valid_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]

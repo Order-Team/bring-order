@@ -1,4 +1,5 @@
 """Deductive class"""
+import nltk
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
 
@@ -140,15 +141,18 @@ class Deductive:
         Returns:
             errors (tuple)
         """
-        empty_theory = 'You must describe your theory and insights'
-        empty_hypo = 'Hypothesis missing'
-        empty_null = 'Null hypothesis missing'
+        theory_error = 'Your must describe your theory with sentence(s) that contain at least one verb'
+        hypo_error = 'The hypothesis must contain at least one verb'
+        null_error = 'The null hypothesis must contain at least one verb'
 
-        theory_error = empty_theory if self.theory_desc.value == '' else ''
-        empty_hypo_error = empty_hypo if self.hypotheses[0].value == '' else ''
-        empty_null_error = empty_null if self.hypotheses[1].value == '' else ''
+        if self.check_text_for_verbs(self.theory_desc.value) is True:
+            theory_error = ''
+        if self.check_text_for_verbs(self.hypotheses[0].value) is True:
+            hypo_error = ''
+        if self.check_text_for_verbs(self.hypotheses[1].value) is True:
+            null_error = ''
 
-        return (theory_error, empty_hypo_error, empty_null_error)
+        return (theory_error, hypo_error, null_error)
 
     def __create_limitation_prompt(self):
         """Creates limitation prompt grid"""
@@ -368,6 +372,24 @@ class Deductive:
     def no_export(self, _=None):
         """Button function to close widgets without exporting."""
         self.boutils.delete_cell_from_current(0)
+    
+    def check_text_for_verbs(self, text):
+        '''Checks that string are not empty and contains at least one verb
+            Args:
+                text(str)
+            Return:
+                true: if sentence contain at least one verb
+                false: if value is empty or not contain verb
+        '''
+        if text == '':
+            return False
+
+        words = nltk.pos_tag(nltk.word_tokenize(text))
+        for word in words:
+            if word[1][0] == 'V':
+                return True
+
+        return False
 
     def __repr__(self):
         return ''
