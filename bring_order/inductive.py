@@ -11,6 +11,7 @@ class Inductive:
         self.start_new = start_new
         self._cell_count = 0
         self.buttons = self.bogui.init_buttons(self.button_list)
+        self.preconceptions = [self.bogui.create_input_field('', 'Preconception 1')]
         self._add_cells_int = self.bogui.create_int_text()
         self._notes = self.bogui.create_text_area()
         self.conclusion = None
@@ -31,20 +32,105 @@ class Inductive:
 
         Returns:
             list of tuples in format (description: str, command: func, style: str) """
-        button_list = [('Open cells', self._open_cells, 'warning'),
-                   ('Delete last cell', self._delete_last_cell, 'danger'),
-                   ('Clear cells', self._clear_cells, 'danger'),
-                   ('Run cells', self._run_cells, 'primary'),
-                   ('New analysis', self._start_new_analysis, 'success'),
-                   ('Ready to summarize', self._execute_ready, 'primary'),
-                   ('Submit observation', self._new_observation, 'warning'),
-                   ('Submit summary', self._submit_summary, 'success'),
-                   ('Prepare new data', self._prepare_new_data_pressed, 'success'),
-                   ('All done', self._all_done, 'success'),
-                   ('Export to pdf', self._export_to_pdf, 'success'),
-                   ('Close BringOrder', self._no_export, 'success')]
+        button_list = [
+            ('Add preconception', self._add_preconception, 'primary'),
+            ('Save preconceptions', self._save_preconceptions, 'success'),
+            ('Open cells', self._open_cells, 'warning'),
+            ('Delete last cell', self._delete_last_cell, 'danger'),
+            ('Clear cells', self._clear_cells, 'danger'),
+            ('Run cells', self._run_cells, 'primary'),
+            ('New analysis', self._start_new_analysis, 'success'),
+            ('Ready to summarize', self._execute_ready, 'primary'),
+            ('Submit observation', self._new_observation, 'warning'),
+            ('Submit summary', self._submit_summary, 'success'),
+            ('Prepare new data', self._prepare_new_data_pressed, 'success'),
+            ('All done', self._all_done, 'success'),
+            ('Export to pdf', self._export_to_pdf, 'success'),
+            ('Close BringOrder', self._no_export, 'success')]
 
         return button_list
+
+    def start_inductive_analysis(self):
+        """Starts inductive analysis"""
+
+        self.utils.create_markdown_cells_above(1, '## Data exploration')
+        display(self._create_preconception_grid())
+
+    def _add_preconception(self, _=None):
+        """Button function to add new preconception."""
+        self.preconceptions.append(
+            self.bogui.create_input_field('', f'Preconception {len(self.preconceptions) + 1}')
+        )
+
+        clear_output(wait=True)
+        display(self._create_preconception_grid())
+
+    def _check_preconceptions(self):
+        """Checks that at least one of the preconceptions has a non-empty value."""
+        for item in self.preconceptions:
+            if item.value != '':
+                return True
+
+        return False
+
+    def _format_preconceptions(self):
+        """Formats preconceptions for markdown.
+
+        Returns:
+            formatted_preconceptions (str)
+        """
+
+        formatted_preconceptions = '### Preconceptions\\n'
+        for item in self.preconceptions:
+            preconception_text = f'- {item.value}\\n'
+            formatted_preconceptions += preconception_text
+
+        formatted_preconceptions += '### Data analysis'
+        return formatted_preconceptions
+
+    def _save_preconceptions(self, _=None):
+        """Button function to save preconceptions as markdown and show cell operation buttons."""
+
+        if self._check_preconceptions():
+            # Remove empty preconceptions from the list
+            self.preconceptions = filter(
+                lambda text_input: text_input.value != '',
+                self.preconceptions
+            )
+            self.utils.create_markdown_cells_above(
+                how_many=1,
+                text=self._format_preconceptions()
+            )
+
+            clear_output(wait=True)
+            display(self._create_cell_operations())
+
+        else:
+            clear_output(wait=True)
+            display(self._create_preconception_grid(
+                error='You must name at least one preconception')
+            )
+
+    def _create_preconception_grid(self, error=''):
+        """Creates the grid with input fields and buttons to add and save preconceptions."""
+        preconceptions_label = self.bogui.create_message(
+                value='Write about your preconceptions concerning the data set:')
+
+        preconception_grid = widgets.AppLayout(
+            header=preconceptions_label,
+            center=widgets.VBox(self.preconceptions),
+            footer=widgets.VBox([
+                self.bogui.create_error_message(error),
+                widgets.HBox([
+                    self.buttons['Add preconception'],
+                    self.buttons['Save preconceptions']
+                ])
+            ]),
+            pane_heights=['30px', 1, '70px'],
+            grid_gap='12px'
+        )
+
+        return preconception_grid
 
     def _open_cells(self, _=None):
         """Open cells button function that opens the selected
@@ -124,7 +210,7 @@ class Inductive:
         Returns:
             formatted_obs (str)
         """
-        formatted_obs = f'## Observation {len(self.observations)}: '
+        formatted_obs = f'#### Observation {len(self.observations)}: '
 
         notes_list = self._notes.value.split('\n')
         first_line_list = notes_list[0].split(' ')
@@ -198,7 +284,7 @@ class Inductive:
         Returns:
             formatted_summary (str)
         """
-        formatted_summary = '## Summary: '
+        formatted_summary = '### Summary: '
 
         summary_list = self.summary.value.split('\n')
         first_line_list = summary_list[0].split(' ')
@@ -245,11 +331,6 @@ class Inductive:
         grid[1, 2] = self.buttons['Ready to summarize']
 
         return grid
-
-    def start_inductive_analysis(self):
-        """Starts inductive analysis"""
-        self.utils.create_markdown_cells_above(1, '# Data exploration')
-        display(self._create_cell_operations())
 
     def _all_done(self, _=None):
         """Button function to display the export/close phase."""
