@@ -26,7 +26,11 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Explore data' }).click();
-  expect(newPage.getByRole('heading', { name: 'Inductive analysis¶' }).isVisible());
+  expect(newPage.getByRole('heading', { name: 'Data exploration¶' }).isVisible());
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).click();
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).fill('Test preconception');
+  await newPage.getByRole('button', { name: 'Save preconceptions' }).click();
+  expect(newPage.getByRole('heading', { name: 'Preconceptions¶' }).isVisible());
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Tests');
@@ -61,6 +65,11 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Explore data' }).click();
+  await newPage.getByRole('button', { name: 'Save preconceptions' }).click();
+  expect(newPage.getByText('You must name at least one preconception').isVisible());
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).click();
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).fill('Test preconception');
+  await newPage.getByRole('button', { name: 'Save preconceptions' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByRole('button', { name: 'Submit observation' }).click();
@@ -94,6 +103,9 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Explore data' }).click();
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).click();
+  await newPage.getByPlaceholder('Preconception 1', { exact: true }).fill('Test preconception');
+  await newPage.getByRole('button', { name: 'Save preconceptions' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Tests');
