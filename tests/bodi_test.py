@@ -79,7 +79,7 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.'
         text = self.instance.format_data_description()
-        correct = '# My title\\n ## Data: My data\\n ### Description: List of integers.'
+        correct = '# My title\\n ## Data: My data\\n ### Description: \\nList of integers.'
         self.assertEqual(text, correct)
 
     def test_format_data_description_returns_correct_string_with_new_line(self):
@@ -87,14 +87,14 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.\nAscending order.'
         text = self.instance.format_data_description()
-        correct = '# My title\\n ## Data: My data\\n ### Description: List of integers.<br />Ascending order.'
+        correct = '# My title\\n ## Data: My data\\n ### Description: \\nList of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
 
     def test_format_limitations_returns_correct_string(self):
         self.instance.data_limitations[0].value = 'Limitation0'
         self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
         text = self.instance.format_limitations()
-        correct = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
+        correct = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
         self.assertEqual(text, correct)
 
     def test_add_limitation_adds_limitation_input_to_list(self):
@@ -130,7 +130,7 @@ class TestBodi(unittest.TestCase):
     def test_start_analysis_clicked_creates_markdown_cell(self):
         self.instance.data_limitations[0].value = 'Limitation0'
         self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
-        text = '## Limitations\\n- Limitation0\\n- Limitation1\\n'
+        text = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
         self.instance.start_analysis_clicked()
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
@@ -163,7 +163,7 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'The sample size is 100.'
         self.instance.start_data_import()
-        text = '# My title\\n ## Data: My data\\n ### Description: The sample size is 100.'
+        text = '# My title\\n ## Data: My data\\n ### Description: \\nThe sample size is 100.'
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_start_data_import_increases_cell_count(self):

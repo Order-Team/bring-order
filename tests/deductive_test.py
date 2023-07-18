@@ -77,7 +77,7 @@ class TestDeductive(unittest.TestCase):
         self.instance.theory_desc.value = 'The first claim\nThe second claim'
         self.maxDiff = None
         return_value = self.instance.format_hypotheses_and_theory()
-        test_str = '# Testing hypothesis: Test value\\n## Theory and insights\\nThe first claim<br />The second claim\\n## Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n## Data analysis'
+        test_str = '## Testing hypothesis: Test value\\n### Theory and insights\\nThe first claim<br />The second claim\\n### Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n### Data analysis'
         self.assertEqual(return_value, test_str)
 
     def test_clear_theory_clears_theory(self):

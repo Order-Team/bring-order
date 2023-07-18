@@ -137,7 +137,7 @@ class Bodi:
         Returns:
             formatted_limitations (str)
         """
-        formatted_limitations = '## Limitations\\n'
+        formatted_limitations = '### Limitations\\n'
         for item in self.data_limitations:
             limitation = '<br />'.join(item.value.split('\n'))
             limitation_text = f'- {limitation}\\n'
@@ -164,7 +164,7 @@ class Bodi:
         title = f'# {self.title.value}'
         dataset = f'{self.data_name.value}'
         description = '<br />'.join(self.data_description.value.split('\n'))
-        formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: {description}'
+        formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: \\n{description}'
         return formatted_text
 
     def start_data_import(self, _=None):

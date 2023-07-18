@@ -1,5 +1,5 @@
 """Deductive class"""
-import en_core_web_sm
+import spacy
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
 
@@ -226,12 +226,12 @@ class Deductive:
         Returns:
             formatted_text (str)
         """
-        formatted_text = f'# Testing hypothesis: {self.hypotheses[0].value}\\n'
+        formatted_text = f'## Testing hypothesis: {self.hypotheses[0].value}\\n'
         formatted_theory = '<br />'.join(self.theory_desc.value.split('\n'))
-        formatted_text += f'## Theory and insights\\n{formatted_theory}\\n'
+        formatted_text += f'### Theory and insights\\n{formatted_theory}\\n'
         hypotheses = f'- Hypothesis (H1): {self.hypotheses[0].value}\
         \\n- Null hypothesis (H0): {self.hypotheses[1].value}'
-        formatted_text += f'## Hypotheses\\n{hypotheses}\\n## Data analysis'
+        formatted_text += f'### Hypotheses\\n{hypotheses}\\n### Data analysis'
 
         return formatted_text
 
@@ -383,7 +383,7 @@ class Deductive:
         '''
         if text == '':
             return False
-        nlp = en_core_web_sm.load()
+        nlp = spacy.load("en_core_web_sm")
         words = nlp(text)
         for word in words:
             if word.tag_[0] == 'V':
