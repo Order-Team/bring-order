@@ -30,5 +30,17 @@ poetry run npx playwright test
 #terminate test notebook process
 kill -15 $R2D2
 
+#remove files created by robottests
+if [ -f './Untitled.ipynb' ];
+  then
+    echo "Test files removed:"
+    ls -1 ./Untitled*.ipynb
+    
+    rm ./Untitled*.ipynb
+  else
+    echo "No Untitled.ipynb files found."
+fi
+
 #remove noteout
 rm noteout
+
