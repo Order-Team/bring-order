@@ -1,5 +1,5 @@
 import unittest
-import bring_order
+from ipywidgets import widgets
 from bring_order.inductive import Inductive
 from unittest.mock import Mock, MagicMock
 from bring_order.boutils import BOUtils
@@ -12,6 +12,12 @@ class TestInductive(unittest.TestCase):
         self.instance.utils = Mock()
         self.instance.bogui = Mock()
         self.instance.bogui.create_button = Mock()
+        self.instance.bogui.create_input_field = lambda value, ph: widgets.Text(
+            value=value,
+            placeholder=ph
+        )
+        self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
+        self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         
     def test_cell_count_starts_at_0(self):
         self.assertEqual(self.instance._cell_count, 0)
@@ -135,3 +141,14 @@ class TestInductive(unittest.TestCase):
         text = self.instance._format_summary()
         correct = '### Summary: Hot day\\nHot day.<br />I would like to go swimming.'
         self.assertEqual(text, correct)
+
+    def test_preconceptions_has_one_item_after_creating_Inductive_object(self):
+        self.assertEqual(len(self.instance.preconceptions), 1)
+
+    def test_add_preconception_adds_item_to_list(self):
+        self.instance.preconceptions = [
+            widgets.Text(value='', placeholder='Preconception 1')
+        ]
+
+        self.instance._add_preconception()
+        self.assertEqual(len(self.instance.preconceptions), 2)

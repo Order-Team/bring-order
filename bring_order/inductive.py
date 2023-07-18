@@ -26,7 +26,8 @@ class Inductive:
         """Buttons for Inductive class.
 
         Returns:
-            list of tuples in format (description: str, command: func, style: str) """
+            list of tuples in format (description: str, command: func, style: str)
+        """
 
         button_list = [
             ('Add preconception', self._add_preconception, 'primary'),
@@ -47,7 +48,7 @@ class Inductive:
         return button_list
 
     def start_inductive_analysis(self):
-        """Starts inductive analysis"""
+        """Starts inductive analysis."""
 
         self.utils.create_markdown_cells_above(1, '## Data exploration')
         display(self._create_preconception_grid())
@@ -133,15 +134,14 @@ class Inductive:
         return preconception_grid
 
     def _open_cells(self, _=None):
-        """Open cells button function that opens the selected
-        number of code cells"""
+        """Open cells button function that opens the selected number of code cells."""
 
         if self._add_cells_int.value > 0:
             self._cell_count += self._add_cells_int.value
             self.utils.create_code_cells_above(self._add_cells_int.value)
 
     def _delete_last_cell(self, _=None):
-        """Delete last cell-button function"""
+        """Delete last cell button function."""
 
         if self._cell_count > 0:
             self.utils.delete_cell_above()
@@ -153,7 +153,7 @@ class Inductive:
         self.utils.clear_code_cells_above(self._cell_count)
 
     def _buttons_disabled(self, disabled):
-        """Activates/deactivates buttons
+        """Activates/deactivates buttons.
         
         Args:
             disbled (bool): True to disable, False to activate
@@ -229,7 +229,7 @@ class Inductive:
         return formatted_obs
 
     def _new_observation(self, _=None):
-        """Checks new observation, saves it, and resets cell count"""
+        """Checks new observation, saves it, and resets cell count."""
 
         if self._check_notes():
             self.observations.append(self._notes.value)
@@ -261,7 +261,7 @@ class Inductive:
         self._display_summary()
 
     def _display_summary(self, error=''):
-        """Prints all observations and asks for summary"""
+        """Prints all observations and asks for summary."""
 
         observations = "<ul>\n"
         observations += "\n".join(["<li>" + observation + "</li>"
@@ -284,7 +284,7 @@ class Inductive:
         display(grid)
 
     def _format_summary(self):
-        """Formats summary for markdown
+        """Formats summary for markdown.
         
         Returns:
             formatted_summary (str)
@@ -303,7 +303,7 @@ class Inductive:
         return formatted_summary
 
     def _submit_summary(self, _=None):
-        """Button function to submit summary"""
+        """Button function to submit summary."""
 
         if self.summary.value == '':
             self._display_summary(error='You must write some kind of summary')
@@ -315,15 +315,15 @@ class Inductive:
         self.new_analysis()
 
     def _check_notes(self):
-        """Checks that text field was filled"""
+        """Checks that text field was filled."""
 
         if self._notes.value == '':
             return False
-        
+
         return True
 
     def _create_cell_operations(self):
-        """Displays buttons for operations in inductive analysis"""
+        """Displays buttons for operations in inductive analysis."""
 
         self.buttons['Ready to summarize'].disabled = True
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
