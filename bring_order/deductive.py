@@ -1,5 +1,5 @@
 """Deductive class"""
-import nltk
+import en_core_web_sm
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
 
@@ -383,10 +383,10 @@ class Deductive:
         '''
         if text == '':
             return False
-
-        words = nltk.pos_tag(nltk.word_tokenize(text))
+        nlp = en_core_web_sm.load()
+        words = nlp(text)
         for word in words:
-            if word[1][0] == 'V':
+            if word.tag_[0] == 'V':
                 return True
 
         return False
