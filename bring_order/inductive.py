@@ -4,8 +4,10 @@ from IPython.display import display, clear_output, Javascript
 
 class Inductive:
     """Class that guides inductive analysis"""
+
     def __init__(self, bogui, boutils, start_new):
         """Class constructor."""
+
         self.bogui = bogui
         self.utils = boutils
         self.start_new = start_new
@@ -18,13 +20,6 @@ class Inductive:
         self.summary = self.bogui.create_text_area('', 'Summary')
         self.empty_notes_error = self.bogui.create_error_message()
         self.observations = []
-        self.new_analysis_view = widgets.HBox([
-            self.buttons['New analysis'],
-            self.buttons['Prepare new data'],
-            self.buttons['All done']]
-        )
-        self.export_view = widgets.HBox([self.buttons['Export to pdf'],
-                                         self.buttons['Close BringOrder']])
 
     @property
     def button_list(self):
@@ -32,6 +27,7 @@ class Inductive:
 
         Returns:
             list of tuples in format (description: str, command: func, style: str) """
+
         button_list = [
             ('Add preconception', self._add_preconception, 'primary'),
             ('Save preconceptions', self._save_preconceptions, 'success'),
@@ -58,6 +54,7 @@ class Inductive:
 
     def _add_preconception(self, _=None):
         """Button function to add new preconception."""
+
         self.preconceptions.append(
             self.bogui.create_input_field('', f'Preconception {len(self.preconceptions) + 1}')
         )
@@ -67,6 +64,7 @@ class Inductive:
 
     def _check_preconceptions(self):
         """Checks that at least one of the preconceptions has a non-empty value."""
+
         for item in self.preconceptions:
             if item.value != '':
                 return True
@@ -91,28 +89,30 @@ class Inductive:
     def _save_preconceptions(self, _=None):
         """Button function to save preconceptions as markdown and show cell operation buttons."""
 
+        clear_output(wait=True)
+
         if self._check_preconceptions():
             # Remove empty preconceptions from the list
             self.preconceptions = filter(
                 lambda text_input: text_input.value != '',
                 self.preconceptions
             )
+
             self.utils.create_markdown_cells_above(
                 how_many=1,
                 text=self._format_preconceptions()
             )
 
-            clear_output(wait=True)
             display(self._create_cell_operations())
 
         else:
-            clear_output(wait=True)
             display(self._create_preconception_grid(
                 error='You must name at least one preconception')
             )
 
     def _create_preconception_grid(self, error=''):
         """Creates the grid with input fields and buttons to add and save preconceptions."""
+
         preconceptions_label = self.bogui.create_message(
                 value='Write about your preconceptions concerning the data set:')
 
@@ -135,18 +135,21 @@ class Inductive:
     def _open_cells(self, _=None):
         """Open cells button function that opens the selected
         number of code cells"""
+
         if self._add_cells_int.value > 0:
             self._cell_count += self._add_cells_int.value
             self.utils.create_code_cells_above(self._add_cells_int.value)
 
     def _delete_last_cell(self, _=None):
         """Delete last cell-button function"""
+
         if self._cell_count > 0:
             self.utils.delete_cell_above()
             self._cell_count -= 1
 
     def _clear_cells(self, _=None):
         """Clears all code cells above."""
+
         self.utils.clear_code_cells_above(self._cell_count)
 
     def _buttons_disabled(self, disabled):
@@ -163,6 +166,7 @@ class Inductive:
 
     def _run_cells(self, _=None):
         """Executes cells above and displays text area for observations of analysis."""
+
         if self._cell_count == 0:
             return
 
@@ -191,6 +195,7 @@ class Inductive:
         Returns:
             first_words (str)
         """
+
         first_words = f'{word_list[0]}'
 
         for word in word_list[1:5]:
@@ -210,6 +215,7 @@ class Inductive:
         Returns:
             formatted_obs (str)
         """
+
         formatted_obs = f'#### Observation {len(self.observations)}: '
 
         notes_list = self._notes.value.split('\n')
@@ -224,6 +230,7 @@ class Inductive:
 
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count"""
+
         if self._check_notes():
             self.observations.append(self._notes.value)
             text = self._format_observation()
@@ -238,22 +245,23 @@ class Inductive:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
     def _start_new_analysis(self, _=None):
-        """Starts new bringorder object with old data"""
+        """Starts new analysis with old data and the same BringOrder object."""
+
         clear_output(wait=True)
         self.start_new()
 
     def _prepare_new_data_pressed(self, _=None):
-        '''Starts new analysis with importing new data'''
+        """Starts new analysis with importing new data, creates new BringOrder object."""
+
         self.utils.execute_cell_from_current(0, 'BringOrder()')
 
     def _execute_ready(self, _=None):
-        """Executes code cells after Ready to summarize button is clicked."""
-        clear_output(wait=True)
+        """Button function for Ready to summarize button."""
+
         self._display_summary()
 
     def _display_summary(self, error=''):
         """Prints all observations and asks for summary"""
-        clear_output(wait=True)
 
         observations = "<ul>\n"
         observations += "\n".join(["<li>" + observation + "</li>"
@@ -263,11 +271,6 @@ class Inductive:
         observation_list = widgets.HTML(
             '</br>'+'<h4>All your observations from the data:</h4>'+observations)
 
-        # observation_string = '\n'.join((f"Observation {i+1}: {observation}\n") for i, observation
-        #          in enumerate(self.observations))
-        # text = f'All your observations from the data:\n\n{observation_string}'
-        # print(text)
-
         summary_label = self.bogui.create_label('What do these observations mean?')
         error_message = self.bogui.create_error_message(value=error)
         grid = widgets.VBox([
@@ -276,6 +279,8 @@ class Inductive:
             error_message,
             self.buttons['Submit summary']
         ])
+
+        clear_output(wait=True)
         display(grid)
 
     def _format_summary(self):
@@ -284,6 +289,7 @@ class Inductive:
         Returns:
             formatted_summary (str)
         """
+
         formatted_summary = '### Summary: '
 
         summary_list = self.summary.value.split('\n')
@@ -298,6 +304,7 @@ class Inductive:
 
     def _submit_summary(self, _=None):
         """Button function to submit summary"""
+
         if self.summary.value == '':
             self._display_summary(error='You must write some kind of summary')
             return
@@ -309,12 +316,15 @@ class Inductive:
 
     def _check_notes(self):
         """Checks that text field was filled"""
+
         if self._notes.value == '':
             return False
+        
         return True
 
     def _create_cell_operations(self):
         """Displays buttons for operations in inductive analysis"""
+
         self.buttons['Ready to summarize'].disabled = True
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
@@ -334,24 +344,40 @@ class Inductive:
 
     def _all_done(self, _=None):
         """Button function to display the export/close phase."""
+
         #self.boutils.delete_cell_from_current(1)
-        self.new_analysis_view.close()
-        display(self.export_view)
+
+        grid = widgets.HBox([
+            self.buttons['Export to pdf'],
+            self.buttons['Close BringOrder']
+        ])
+
+        clear_output(wait=True)
+        display(grid)
 
     def _export_to_pdf(self, _=None):
         """Button function to export the notebook to pdf."""
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
-        self.export_view.close()
+
+        clear_output(wait=True)
         display(Javascript('print()'))
         self.utils.delete_cell_from_current(0)
 
     def _no_export(self, _=None):
         """Button function to close widgets without exporting."""
+
         self.utils.delete_cell_from_current(0)
 
     def new_analysis(self):
         """Display buttons to start a new analysis or prepare new data for analysis"""
-        display(self.new_analysis_view)
+
+        grid = widgets.HBox([
+            self.buttons['New analysis'],
+            self.buttons['Prepare new data'],
+            self.buttons['All done']
+        ])
+
+        display(grid)
 
     def __repr__(self):
         return ''
