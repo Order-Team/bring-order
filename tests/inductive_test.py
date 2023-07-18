@@ -18,6 +18,7 @@ class TestInductive(unittest.TestCase):
         )
         self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
+        self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
         
     def test_cell_count_starts_at_0(self):
         self.assertEqual(self.instance._cell_count, 0)
@@ -152,3 +153,111 @@ class TestInductive(unittest.TestCase):
 
         self.instance._add_preconception()
         self.assertEqual(len(self.instance.preconceptions), 2)
+
+    def test_start_inductive_analysis_creates_markdown_cell(self):
+        self.instance.start_inductive_analysis()
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1, '## Data exploration')
+
+    def test_check_preconceptions_returns_false_when_no_preconceptios_are_written(self):
+        self.assertFalse(self.instance._check_preconceptions())
+
+    def test_check_preconceptions_returns_true_with_at_least_one_non_empty_value(self):
+        self.instance.preconceptions = [
+            widgets.Text(value='Test preconception', placeholder='Preconception 1'),
+            widgets.Text(value='', placeholder='Preconception 2')
+        ]
+        self.assertTrue(self.instance._check_preconceptions())
+
+    def test_format_preconceptions_returns_correct_string(self):
+        self.instance.preconceptions = [
+            widgets.Text(value='Dogs like treats', placeholder='Preconception 1'),
+            widgets.Text(value='Chicken is the most popular flavor', placeholder='Preconception 2')
+        ]
+        text = self.instance._format_preconceptions()
+        correct = '### Preconceptions\\n- Dogs like treats\\n- Chicken is the most popular flavor\\n### Data analysis'
+        self.assertEqual(text, correct)
+
+    def test_save_preconceptions_shows_error_if_no_preconceptions_are_written(self):
+        self.instance._create_preconception_grid = Mock()
+        self.instance._save_preconceptions()
+        self.instance._create_preconception_grid.assert_called_with(error='You must name at least one preconception')
+        self.instance.utils.create_markdown_cells_above.assert_not_called()
+
+    def test_save_preconceptions_filters_empty_input_fields(self):
+        self.instance.preconceptions = [
+            widgets.Text(value='Dogs like treats', placeholder='Preconception 1'),
+            widgets.Text(value='', placeholder='Preconception 2'),
+            widgets.Text(value='Chicken is the most popular flavor', placeholder='Preconception 3'),
+            widgets.Text(value='', placeholder='Preconception 4')
+        ]
+        self.instance._save_preconceptions()
+        self.assertEqual(len(self.instance.preconceptions), 2)
+        self.assertEqual(self.instance.preconceptions[0].value, 'Dogs like treats')
+        self.assertEqual(self.instance.preconceptions[1].value, 'Chicken is the most popular flavor')
+
+    def test_save_preconceptions_creates_markdown_cell(self):
+        self.instance.preconceptions[0].value = 'Dogs like treats'
+        text = '### Preconceptions\\n- Dogs like treats\\n### Data analysis'
+        self.instance._save_preconceptions()
+        self.instance.utils.create_markdown_cells_above.assert_called_with(
+            how_many=1,
+            text=text)
+        
+    def test_save_preconceptions_calls_create_cell_operations(self):
+        self.instance._create_cell_operations = Mock()
+        self.instance.preconceptions[0].value = 'Dogs like treats'
+        self.instance._save_preconceptions()
+        self.instance._create_cell_operations.assert_called()
+
+    def test_open_cells_does_not_open_negative_amount_of_cells(self):
+        self.instance._cell_count = 3
+        self.instance._add_cells_int.value = -2
+        self.instance._open_cells()  
+        self.assertEqual(self.instance._cell_count, 3)  
+        self.instance.utils.create_code_cells_above.assert_not_called()
+
+    def test_clear_cells_clears_correct_amount_of_cells(self):
+        self.instance._cell_count = 3
+        self.instance._clear_cells()
+        self.instance.utils.clear_code_cells_above.assert_called_with(3)
+
+    def test_run_cells_does_not_run_zero_cells(self):
+        self.instance._run_cells()
+        self.instance.utils.run_cells_above.assert_not_called()
+
+    def test_run_cells_runs_correct_amount_of_cells(self):
+        self.instance._cell_count = 3
+        self.instance._run_cells()
+        self.instance.utils.run_cells_above.assert_called_with(3)
+
+    def test_run_cells_disables_buttons(self):
+        self.instance._buttons_disabled = Mock()
+        self.instance._cell_count = 1
+        self.instance._run_cells()
+        self.instance._buttons_disabled.assert_called_with(True)
+
+    def test_run_cells_creates_conclusion_grid(self):
+        self.instance._cell_count = 1
+        self.instance._run_cells()
+        self.assertIsNotNone(self.instance.conclusion)
+
+    def test_start_new_analysis_calls_start_new(self):
+        self.instance._start_new_analysis()
+        self.instance.start_new.assert_called()
+
+    def test_submit_summary_shows_error_with_empty_summary(self):
+        self.instance._display_summary = Mock()
+        self.instance._submit_summary()
+        self.instance._display_summary.assert_called_with(error='You must write some kind of summary')
+
+    def test_submit_summary_creates_markdown_cell(self):
+        self.instance.summary.value = 'They lived happily ever after.'
+        text = '### Summary: They lived happily ever after\\nThey lived happily ever after.'
+        self.instance._submit_summary()
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1, text=text)
+
+    def test_submit_summary_calls_new_analysis(self):
+        self.instance._new_analysis = Mock()
+        self.instance.summary.value = 'They lived happily ever after.'
+        self.instance._submit_summary()
+        self.instance._new_analysis.assert_called()

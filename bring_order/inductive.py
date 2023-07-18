@@ -94,10 +94,10 @@ class Inductive:
 
         if self._check_preconceptions():
             # Remove empty preconceptions from the list
-            self.preconceptions = filter(
+            self.preconceptions = list(filter(
                 lambda text_input: text_input.value != '',
                 self.preconceptions
-            )
+            ))
 
             self.utils.create_markdown_cells_above(
                 how_many=1,
@@ -167,7 +167,7 @@ class Inductive:
     def _run_cells(self, _=None):
         """Executes cells above and displays text area for observations of analysis."""
 
-        if self._cell_count == 0:
+        if self._cell_count <= 0:
             return
 
         self.utils.run_cells_above(self._cell_count)
@@ -312,7 +312,7 @@ class Inductive:
         text = self._format_summary()
         self.utils.create_markdown_cells_above(1, text=text)
         clear_output(wait=False)
-        self.new_analysis()
+        self._new_analysis()
 
     def _check_notes(self):
         """Checks that text field was filled."""
@@ -368,7 +368,7 @@ class Inductive:
 
         self.utils.delete_cell_from_current(0)
 
-    def new_analysis(self):
+    def _new_analysis(self):
         """Display buttons to start a new analysis or prepare new data for analysis"""
 
         grid = widgets.HBox([
