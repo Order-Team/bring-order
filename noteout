@@ -1,0 +1,125 @@
+[I 05:11:08.733 NotebookApp] The port 8888 is already in use, trying another port.
+[I 05:11:08.735 NotebookApp] Serving notebooks from local directory: /home/aleksi/kurssit/ohtuprojekti/bring-order
+[I 05:11:08.735 NotebookApp] Jupyter Notebook 6.5.4 is running at:
+[I 05:11:08.735 NotebookApp] http://localhost:8889/?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248
+[I 05:11:08.735 NotebookApp]  or http://127.0.0.1:8889/?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248
+[I 05:11:08.735 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 05:11:08.738 NotebookApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/aleksi/.local/share/jupyter/runtime/nbserver-14462-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8889/?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248
+     or http://127.0.0.1:8889/?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248
+[I 05:11:15.166 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.760000ms
+[I 05:11:15.636 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.800000ms
+[I 05:11:15.640 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 2.890000ms
+[I 05:11:15.660 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 2.530000ms
+[I 05:11:16.447 NotebookApp] Creating new notebook in 
+[I 05:11:16.540 NotebookApp] Creating new notebook in 
+[I 05:11:16.558 NotebookApp] Creating new notebook in 
+[I 05:11:17.900 NotebookApp] Creating new notebook in 
+[I 05:11:18.995 NotebookApp] Kernel started: cf249632-1e58-4cef-ae03-30806cad9aef, name: python3
+[I 05:11:19.055 NotebookApp] Kernel started: 34ff22fa-3041-488d-acb1-d8986f027fda, name: python3
+[I 05:11:19.082 NotebookApp] Kernel started: 5f69cb65-3f3e-4a5d-8487-767aa11c0e16, name: python3
+[I 05:11:19.162 NotebookApp] Kernel started: 17785491-bbcc-42d4-a670-d791bbd995f1, name: python3
+[I 05:11:44.754 NotebookApp] Starting buffering for 17785491-bbcc-42d4-a670-d791bbd995f1:dce8adba9f9947aba74de60773b8d53b
+[I 05:11:44.761 NotebookApp] Starting buffering for cf249632-1e58-4cef-ae03-30806cad9aef:334b5c8b089a40f28e26eec7776d3623
+[I 05:11:44.788 NotebookApp] Starting buffering for 34ff22fa-3041-488d-acb1-d8986f027fda:b27091a671f3489d8ac878fae6844059
+[I 05:11:44.799 NotebookApp] Starting buffering for 5f69cb65-3f3e-4a5d-8487-767aa11c0e16:a1d4a882f4dc4f2fb7ebe1cc033aeadd
+[I 05:11:46.092 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.520000ms
+[I 05:11:46.141 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.640000ms
+[I 05:11:46.200 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 5.060000ms
+[I 05:11:46.217 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 1.580000ms
+[I 05:11:46.900 NotebookApp] Creating new notebook in 
+[I 05:11:46.925 NotebookApp] Creating new notebook in 
+[I 05:11:47.368 NotebookApp] Creating new notebook in 
+[I 05:11:47.382 NotebookApp] Creating new notebook in 
+[I 05:11:49.125 NotebookApp] Kernel started: fbc384e7-d6af-4c26-b280-933ed2db75aa, name: python3
+[I 05:11:49.190 NotebookApp] Kernel started: 21ae222e-38b1-4efb-9bdc-709645b1345b, name: python3
+[I 05:11:49.253 NotebookApp] Kernel started: f6de605f-5158-4835-8a69-a49ca0924906, name: python3
+[I 05:11:49.291 NotebookApp] Kernel started: ac6c7694-5389-4b78-833e-653ebd388d79, name: python3
+[E 05:11:52.621 NotebookApp] Uncaught exception GET /api/kernels/ac6c7694-5389-4b78-833e-653ebd388d79/channels?session_id=649c555a039c46f088bd6c68e72bddd9 (127.0.0.1)
+    HTTPServerRequest(protocol='http', host='127.0.0.1:8889', method='GET', uri='/api/kernels/ac6c7694-5389-4b78-833e-653ebd388d79/channels?session_id=649c555a039c46f088bd6c68e72bddd9', version='HTTP/1.1', remote_ip='127.0.0.1')
+    Traceback (most recent call last):
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/web.py", line 1786, in _execute
+        result = await result
+      File "/usr/lib/python3.8/asyncio/tasks.py", line 349, in __wakeup
+        future.result()
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/gen.py", line 780, in run
+        yielded = self.gen.throw(exc)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/notebook/services/kernels/handlers.py", line 377, in get
+        yield super().get(kernel_id=kernel_id)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/gen.py", line 767, in run
+        value = future.result()
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/gen.py", line 780, in run
+        yielded = self.gen.throw(exc)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/notebook/base/zmqhandlers.py", line 295, in get
+        yield maybe_future(res)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/gen.py", line 767, in run
+        value = future.result()
+      File "/usr/lib/python3.8/asyncio/futures.py", line 178, in result
+        raise self._exception
+      File "/usr/lib/python3.8/asyncio/tasks.py", line 280, in __step
+        result = coro.send(None)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 272, in get
+        await self.ws_connection.accept_connection(self)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 862, in accept_connection
+        await self._accept_connection(handler)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 945, in _accept_connection
+        await self._receive_frame_loop()
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1101, in _receive_frame_loop
+        await self._receive_frame()
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1190, in _receive_frame
+        handled_future = self._handle_message(opcode, data)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1229, in _handle_message
+        self.close(self.close_code)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1258, in close
+        self._write_frame(True, 0x8, close_data)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1056, in _write_frame
+        return self.stream.write(frame)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/iostream.py", line 533, in write
+        self._write_buffer.append(data)
+      File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/iostream.py", line 157, in append
+        b += data  # type: ignore
+    BufferError: Existing exports of data: object cannot be re-sized
+[W 05:11:52.622 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.631 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.632 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.632 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.633 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.634 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.635 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.636 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.636 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.637 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.638 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.639 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.640 NotebookApp] zmq message arrived on closed channel
+[W 05:11:52.640 NotebookApp] zmq message arrived on closed channel
+[I 05:11:52.760 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.720000ms
+[I 05:11:53.164 NotebookApp] Creating new notebook in 
+Task exception was never retrieved
+future: <Task finished name='Task-1883' coro=<WebSocketProtocol13.write_message.<locals>.wrapper() done, defined at /home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py:1085> exception=WebSocketClosedError()>
+Traceback (most recent call last):
+  File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1087, in wrapper
+    await fut
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/tasks.py", line 280, in __step
+    result = coro.send(None)
+  File "/home/aleksi/.cache/pypoetry/virtualenvs/bring-order-E5xNdjUM-py3.8/lib/python3.8/site-packages/tornado/websocket.py", line 1089, in wrapper
+    raise WebSocketClosedError()
+tornado.websocket.WebSocketClosedError
+[I 05:11:53.929 NotebookApp] Kernel started: 0a49e832-6508-4da6-8e88-ff6eba80c897, name: python3
+[I 05:12:15.736 NotebookApp] Starting buffering for f6de605f-5158-4835-8a69-a49ca0924906:fee10d8a7d5846aa877c83da5fe02dde
+[I 05:12:15.743 NotebookApp] Starting buffering for 21ae222e-38b1-4efb-9bdc-709645b1345b:a7b8cd00ebf44a9086732bcf0163c024
+[I 05:12:15.757 NotebookApp] Starting buffering for fbc384e7-d6af-4c26-b280-933ed2db75aa:245c190940f446b98673d0f37117c925
+[I 05:12:16.663 NotebookApp] 302 GET /?token=57e7f189ac7c8121d3ed51779423b776ed9a7cb0a9451248 (127.0.0.1) 0.520000ms
+[I 05:12:17.038 NotebookApp] Creating new notebook in 
+[I 05:12:17.807 NotebookApp] Kernel started: ac127382-b148-46c0-ad62-e80314a6037c, name: python3
+[I 05:12:22.668 NotebookApp] Starting buffering for 0a49e832-6508-4da6-8e88-ff6eba80c897:6ef0aa281c2b4049b840cdf8927667d8
+[I 05:12:37.878 NotebookApp] Starting buffering for ac127382-b148-46c0-ad62-e80314a6037c:193a40adba67450d8c20fb347477c746

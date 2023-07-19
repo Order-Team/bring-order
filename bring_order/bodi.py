@@ -4,6 +4,7 @@ and requirements of data. After code cells displays "ready to analyse" button. A
 pressed displays text field and "ready" button. Empty text field is not accepted.'''
 from ipywidgets import widgets
 from IPython.display import display, clear_output
+from pandas import read_csv
 
 
 class Bodi:
@@ -24,6 +25,7 @@ class Bodi:
         self.data_limitations = [self.bogui.create_input_field('', 'Limitation 1')]
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
+        self.file_chooser = self.bogui.create_file_chooser()
 
     @property
     def button_list(self):
@@ -54,7 +56,7 @@ class Bodi:
             self.buttons['Open cells'],
             self.buttons['Run cells'],
             self.buttons['Delete last cell']
-        ])
+            ])
 
         return grid
 
@@ -166,6 +168,9 @@ class Bodi:
         description = '<br />'.join(self.data_description.value.split('\n'))
         formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: \\n{description}'
         return formatted_text
+    
+    def fc_callback(self):
+                display(self.import_grid)
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
@@ -179,10 +184,22 @@ class Bodi:
         else:
             self.boutils.hide_current_input()
             clear_output(wait=True)
-            display(self.import_grid)
+
+            def fc_callback():           
+                self.file_chooser.title = self.file_chooser.selected_filename
+                if self.file_chooser.selected.endswith('.csv'):
+                    data_frame = read_csv(self.file_chooser.selected)
+                else:
+                    print('Unknown file type, please import manually')
+                display(self.import_grid)
+
+            self.file_chooser.register_callback(fc_callback)
+            self.file_chooser.title = 'Choose a data file'
+            display(self.file_chooser)
 
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
+    
 
     def bodi(self, error=''):
         """Main function"""

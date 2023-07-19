@@ -1,5 +1,7 @@
 """Methods for creating widgets"""
 from ipywidgets import widgets
+from ipyfilechooser import FileChooser
+
 
 class BOGui:
     """General methods for creating widgets"""
@@ -97,3 +99,8 @@ class BOGui:
         )
 
         return radiobuttons
+    
+    def create_file_chooser(self):
+        file_chooser = FileChooser()
+
+        return file_chooser
