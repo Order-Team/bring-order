@@ -199,7 +199,21 @@ class Bodi:
 
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
-    
+
+    def check_numerical_data(self, pd_dataframe):
+        """Extract numerical data from pandas dataframe
+        and checks properties of data(is normally distributed).
+
+        args:
+            pandas dataframe
+
+        returns:
+            dictionary: {index : bool}
+        """
+        #call for function(s) to check data property
+        #d = is_normally_distributed(data)
+
+        return {data1: True, data2: False}
 
     def bodi(self, error=''):
         """Main function"""
