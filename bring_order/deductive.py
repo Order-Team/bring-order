@@ -34,21 +34,25 @@ class Deductive:
         """Buttons for deductive class.
 
         Returns:
-            list of tuples in format (description: str, command: func, style: str)"""
-        button_list = [('Open cells', self.open_cells, 'primary'),
-                       ('Delete last cell', self.delete_last_cell, 'danger'),
-                       ('Save', self.check_theory_and_hypotheses, 'success'),
-                       ('Clear hypotheses', self.clear_hypotheses, 'warning'),
-                       ('Yes', self.save_theory_and_hypotheses, 'success'),
-                       ('No', self.bad_hypotheses, 'warning'),
-                       ('Run cells', self.run_cells, 'warning'),
-                       ('Clear cells', self.clear_cells, 'danger'),
-                       ('New analysis', self.start_new_analysis, 'success'),
-                       ('Prepare new data', self.start_analysis_with_new_data, 'success'),
-                       ('All done', self.all_done, 'success'),
-                       ('Export to pdf', self.export_to_pdf, 'success'),
-                       ('Close BringOrder', self.no_export, 'success'),
-                       ('Clear theory', self.clear_theory, 'warning')]
+            list of tuples in format (tag: str, description: str, command: func, style: str)
+        """
+
+        button_list = [
+            ('open', 'Open cells', self.open_cells, 'primary'),
+            ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
+            ('save', 'Save', self.check_theory_and_hypotheses, 'success'),
+            ('clear_hypo', 'Clear hypotheses', self.clear_hypotheses, 'warning'),
+            ('yes', 'Yes', self.save_theory_and_hypotheses, 'success'),
+            ('no', 'No', self.bad_hypotheses, 'warning'),
+            ('run', 'Run cells', self.run_cells, 'warning'),
+            ('clear', 'Clear cells', self.clear_cells, 'danger'),
+            ('new', 'New analysis', self.start_new_analysis, 'success'),
+            ('prepare', 'Prepare new data', self.start_analysis_with_new_data, 'success'),
+            ('done', 'All done', self.all_done, 'success'),
+            ('export', 'Export to pdf', self.export_to_pdf, 'success'),
+            ('close', 'Close BringOrder', self.no_export, 'success'),
+            ('clear_theory', 'Clear theory', self.clear_theory, 'warning')
+        ]
 
         return button_list
 
@@ -74,9 +78,9 @@ class Deductive:
                     self.hypotheses[1],
                     self.bogui.create_error_message(empty_null_error)
                 ]),
-                self.buttons['Clear hypotheses']
+                self.buttons['clear_hypo']
             ]),
-            footer = self.buttons['Save'],
+            footer = self.buttons['save'],
             pane_widths = [1, 6, 0],
             grid_gap = '18px'
         )
@@ -94,7 +98,7 @@ class Deductive:
             center=widgets.VBox([
                 self.theory_desc,
                 self.bogui.create_error_message(error),
-                self.buttons['Clear theory']
+                self.buttons['clear_theory']
             ]),
             pane_widths=[1, 6, 0],
             grid_gap='12px'
@@ -177,7 +181,7 @@ class Deductive:
             hypothesis_text,
             null_text,
             limitation_prompt_text,
-            widgets.HBox([self.buttons['Yes'], self.buttons['No']])
+            widgets.HBox([self.buttons['yes'], self.buttons['no']])
         ])
 
         return limitation_prompt
@@ -264,9 +268,9 @@ class Deductive:
 
     def deactivate_cell_operations(self):
         """Deactivates buttons after runnig code block"""
-        self.buttons['Open cells'].disabled = True
-        self.buttons['Clear cells'].disabled = True
-        self.buttons['Delete last cell'].disabled = True
+        self.buttons['open'].disabled = True
+        self.buttons['clear'].disabled = True
+        self.buttons['delete'].disabled = True
 
     def __create_conclusion_grid(self):
         question = self.bogui.create_message(value='What happened?')
@@ -285,9 +289,9 @@ class Deductive:
                 notes_label,
                 self.result_description,
                 widgets.HBox([
-                    self.buttons['New analysis'],
-                    self.buttons['Prepare new data'],
-                    self.buttons['All done']
+                    self.buttons['new'],
+                    self.buttons['prepare'],
+                    self.buttons['done']
                 ])
             ]),
             pane_widths=['150px', 1, 0],
@@ -322,10 +326,10 @@ class Deductive:
                                      width='70%', align_items='center')
         grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(
-            top_left=self.buttons['Open cells'],
-            bottom_left=self.buttons['Run cells'],
-            top_right=self.buttons['Delete last cell'],
-            bottom_right=self.buttons['Clear cells'])
+            top_left=self.buttons['open'],
+            bottom_left=self.buttons['run'],
+            top_right=self.buttons['delete'],
+            bottom_right=self.buttons['clear'])
 
         return grid
 
@@ -357,8 +361,8 @@ class Deductive:
         """Button function to save results when ready."""
         self.save_results()
         export_view = widgets.HBox([
-            self.buttons['Export to pdf'],
-            self.buttons['Close BringOrder']
+            self.buttons['export'],
+            self.buttons['close']
         ])
         display(export_view)
 

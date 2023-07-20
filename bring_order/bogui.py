@@ -28,9 +28,11 @@ class BOGui:
         """
         button_list = {}
         for button in buttons:
-            new_button = self.create_button(desc=button[0],
-                                                  command=button[1],
-                                                  style=button[2])
+            new_button = self.create_button(
+                desc=button[1],
+                command=button[2],
+                style=button[3]
+            )
             button_list[button[0]] = new_button
         return button_list
 
