@@ -101,8 +101,9 @@ class BOGui:
         )
 
         return radiobuttons
-    
+
     def create_file_chooser(self):
+        """Creates a FileChooser object"""
         file_chooser = FileChooser()
 
         return file_chooser

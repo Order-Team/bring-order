@@ -184,7 +184,7 @@ class Bodi:
             self.boutils.hide_current_input()
             clear_output(wait=True)
 
-            def fc_callback():           
+            def fc_callback():
                 self.file_chooser.title = self.file_chooser.selected_filename
                 if self.file_chooser.selected.endswith('.csv'):
                     data_frame = read_csv(self.file_chooser.selected)
@@ -240,7 +240,7 @@ class Bodi:
                     self.title,
                     self.data_name,
                     self.data_description
-            ]),            
+            ]),
             footer=widgets.HBox([
                 self.buttons['save'],
                 error_message,

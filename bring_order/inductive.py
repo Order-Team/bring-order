@@ -233,7 +233,7 @@ class Inductive:
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count."""
 
-        if self._check_value_not_empty(self._notes):
+        if self._check_value_not_empty(self._notes.value):
             self.observations.append(self._notes.value)
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)

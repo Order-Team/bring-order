@@ -44,7 +44,7 @@ class TestDeductive(unittest.TestCase):
         self.instance.hypotheses[0].value = "The Earth is flat"
         self.instance.hypotheses[1].value = "The Earth is round"
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('Your must describe your theory with sentence(s) that contain at least one verb', '', ''))
+        self.assertEqual(errors, ('The theory must contain at least one verb', '', ''))
 
     def test_check_theory_and_hypotheses_accept_valid_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]

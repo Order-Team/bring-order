@@ -145,7 +145,7 @@ class Deductive:
         Returns:
             errors (tuple)
         """
-        theory_error = 'Your must describe your theory with sentence(s) that contain at least one verb'
+        theory_error = 'The theory must contain at least one verb'
         hypo_error = 'The hypothesis must contain at least one verb'
         null_error = 'The null hypothesis must contain at least one verb'
 
@@ -376,7 +376,7 @@ class Deductive:
     def no_export(self, _=None):
         """Button function to close widgets without exporting."""
         self.boutils.delete_cell_from_current(0)
-    
+
     def check_text_for_verbs(self, text):
         '''Checks that string are not empty and contains at least one verb
             Args:
