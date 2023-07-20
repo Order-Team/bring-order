@@ -170,9 +170,6 @@ class Bodi:
         description = '<br />'.join(self.data_description.value.split('\n'))
         formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: \\n{description}'
         return formatted_text
-    
-    def fc_callback(self):
-                display(self.import_grid)
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
@@ -192,12 +189,16 @@ class Bodi:
                 if self.file_chooser.selected.endswith('.csv'):
                     data_frame = read_csv(self.file_chooser.selected)
                 else:
-                    print('Unknown file type, please import manually')
-                display(self.import_grid)
+                    self.file_chooser.title = 'Unknown file type, please import manually'
+                self.import_grid.layout.visibility = 'visible'
 
             self.file_chooser.register_callback(fc_callback)
             self.file_chooser.title = 'Choose a data file'
-            display(self.file_chooser)
+            self.import_grid.layout.visibility = 'hidden'
+            display(widgets.VBox([
+                self.file_chooser,
+                self.import_grid
+                ]))
 
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
