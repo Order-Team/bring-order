@@ -43,7 +43,9 @@ class Inductive:
             ('Prepare new data', self._prepare_new_data_pressed, 'success'),
             ('All done', self._all_done, 'success'),
             ('Export to pdf', self._export_to_pdf, 'success'),
-            ('Close BringOrder', self._no_export, 'success')]
+            ('Close BringOrder', self._no_export, 'success'),
+            ('Lock evaluation', self._lock_evaluation_pressed, 'success')
+            ]
 
         return button_list
 
@@ -231,7 +233,7 @@ class Inductive:
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count."""
 
-        if self._check_notes():
+        if self._check_value_not_empty(self._notes):
             self.observations.append(self._notes.value)
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)
@@ -305,19 +307,67 @@ class Inductive:
     def _submit_summary(self, _=None):
         """Button function to submit summary."""
 
-        if self.summary.value == '':
+        if not self._check_value_not_empty(self.summary.value):
             self._display_summary(error='You must write some kind of summary')
             return
 
         text = self._format_summary()
         self.utils.create_markdown_cells_above(1, text=text)
+        self._evaluation_of_analysis()
+
+    def _evaluation_of_analysis(self, _=None):
+        self.buttons['Submit summary'].disabled = True
         clear_output(wait=False)
+        grid = widgets.AppLayout(
+            header = self.bogui.create_message(
+                        'Evaluate how confident you are that analysis meet preconceptions?'),
+            center = widgets.IntSlider(value=50, min=0, max=100, step=5,
+                                        description='', disabled=False,
+                                        continuous_update=False,
+                                        orientation='horizontal',
+                                        readout=True, readout_format='d'
+                                        ),
+            right_sidebar = self.buttons['Lock evaluation'],
+            footer = None
+            )
+        display(grid)
+
+    def _lock_evaluation_pressed(self, _=None):
+        clear_output(wait=False)
+        label = self.bogui.create_message('Did the analysis meet preconceptions?')
+        checkboxes = [widgets.Checkbox(
+                        description=prec.value, value=False,) for prec in self.preconceptions]
+        output = widgets.VBox(checkboxes)
+        display(label, output)
+        grid = widgets.AppLayout(
+            header = self.bogui.create_message('Overall how satisfied you are in the analysis?'),
+            center = widgets.SelectionSlider(
+                options=['Very dissatisfied','Dissatisfied','Neutral','Satisfied','Very satisfied'],
+                value = 'Neutral',
+                description='',
+                disabled=False, continuous_update=False,
+                orientation='horizontal', readout=True
+            ),
+            footer = None)
+        display(grid)
         self._new_analysis()
 
-    def _check_notes(self):
-        """Checks that text field was filled."""
+    def _checkbox_preconceptions(self):
+        clear_output(wait=False)
+        checkboxes = [widgets.Checkbox(
+                            description=prec.value, value=False,) for prec in self.preconceptions]
+        output = widgets.VBox(children=checkboxes)
+        display(output)
+        self._new_analysis()
 
-        if self._notes.value == '':
+    def _check_value_not_empty(self, value):
+        """Checks that text field was filled.
+            Args: string
+            Returns:
+                True: if string not empty
+                False: if string is empty
+        """
+        if value == '':
             return False
 
         return True

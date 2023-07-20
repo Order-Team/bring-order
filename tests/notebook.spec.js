@@ -24,6 +24,9 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.getByLabel('', { exact: true }).nth(2).click();
    await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
    await newPage.getByRole('button', { name: 'Save description' }).click();
+   await newPage.getByRole('button', { name: 'Select' }).click();
+   await newPage.getByRole('listbox').selectOption('README.md');
+   await newPage.getByRole('button', { name: 'Select' }).click();
    await newPage.getByRole('button', { name: 'Open cells' }).click();
    await newPage.getByRole('button', { name: 'Run cells' }).click();
    expect(newPage.getByRole('heading', { name: 'Test study¶' }).isVisible());
@@ -74,6 +77,9 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
+  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('listbox').selectOption('README.md');
+  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
@@ -101,6 +107,9 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
+  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('listbox').selectOption('README.md');
+  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
