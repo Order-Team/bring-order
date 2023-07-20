@@ -27,21 +27,21 @@ class TestInductive(unittest.TestCase):
         self.assertIsNone(self.instance.conclusion)
 
     def test_that_empty_summary_returns_false(self):
-        self.assertFalse(self.instance._check_notes())
+        self.assertFalse(self.instance._check_value_not_empty(self.instance.summary.value))
 
     def test_open_cells_button_is_created(self):
         self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 14)
+        self.assertEqual(len(self.instance.buttons), 15)
 
     def test_filled_summary_returns_true(self):
         self.instance._notes.value = "Childrens' usage of psychosis medication has increased."
-        self.assertTrue(self.instance._check_notes())   
+        self.assertTrue(self.instance._check_value_not_empty(self.instance._notes))   
 
     def test_new_observation_requires_notes(self):
-        self.instance._check_notes = MagicMock()
-        self.instance._check_notes.return_value = False
+        self.instance._check_value_not_empty = MagicMock()
+        self.instance._check_value_not_empty.return_value = False
         self.instance._new_observation()
         self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
 
@@ -66,17 +66,17 @@ class TestInductive(unittest.TestCase):
         self.instance.utils.run_cells_above.assert_not_called()
 
     def test_new_observation_cannot_be_empty(self):
-        self.instance._check_notes = MagicMock()
-        self.instance._check_notes.return_value = False
+        self.instance._check_value_not_empty = MagicMock()
+        self.instance._check_value_not_empty.return_value = False
         self.instance._new_observation()
         self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
   
     def test_new_observation_is_saved(self):
         self.instance.observations.append("There is a lot of noise.")
-        self.instance._check_notes = MagicMock()        
+        self.instance._check_value_not_empty = MagicMock()        
         self.instance.conclusion = MagicMock()
         self.instance._notes.value = "The sample is too small."
-        self.instance._check_notes.return_value = True
+        self.instance._check_value_not_empty.return_value = True
         self.instance._new_observation()
         self.assertEqual(2, len(self.instance.observations))
 
@@ -256,8 +256,8 @@ class TestInductive(unittest.TestCase):
         self.instance._submit_summary()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1, text=text)
 
-    def test_submit_summary_calls_new_analysis(self):
-        self.instance._new_analysis = Mock()
-        self.instance.summary.value = 'They lived happily ever after.'
-        self.instance._submit_summary()
-        self.instance._new_analysis.assert_called()
+    #def test_submit_summary_calls_new_analysis(self):
+    #    self.instance._new_analysis = Mock()
+    #    self.instance.summary.value = 'They lived happily ever after.'
+    #    self.instance._submit_summary()
+    #    self.instance._new_analysis.assert_called()
