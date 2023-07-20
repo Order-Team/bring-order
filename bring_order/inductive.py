@@ -26,26 +26,26 @@ class Inductive:
         """Buttons for Inductive class.
 
         Returns:
-            list of tuples in format (description: str, command: func, style: str)
+            list of tuples in format (tag: str, description: str, command: func, style: str)
         """
 
         button_list = [
-            ('Add preconception', self._add_preconception, 'primary'),
-            ('Save preconceptions', self._save_preconceptions, 'success'),
-            ('Open cells', self._open_cells, 'warning'),
-            ('Delete last cell', self._delete_last_cell, 'danger'),
-            ('Clear cells', self._clear_cells, 'danger'),
-            ('Run cells', self._run_cells, 'primary'),
-            ('New analysis', self._start_new_analysis, 'success'),
-            ('Ready to summarize', self._execute_ready, 'primary'),
-            ('Submit observation', self._new_observation, 'warning'),
-            ('Submit summary', self._submit_summary, 'success'),
-            ('Prepare new data', self._prepare_new_data_pressed, 'success'),
-            ('All done', self._all_done, 'success'),
-            ('Export to pdf', self._export_to_pdf, 'success'),
-            ('Close BringOrder', self._no_export, 'success'),
-            ('Lock evaluation', self._lock_evaluation_pressed, 'success')
-            ]
+            ('add', 'Add preconception', self._add_preconception, 'primary'),
+            ('save', 'Save preconceptions', self._save_preconceptions, 'success'),
+            ('open', 'Open cells', self._open_cells, 'warning'),
+            ('delete', 'Delete last cell', self._delete_last_cell, 'danger'),
+            ('clear', 'Clear cells', self._clear_cells, 'danger'),
+            ('run', 'Run cells', self._run_cells, 'primary'),
+            ('new', 'New analysis', self._start_new_analysis, 'success'),
+            ('ready', 'Ready to summarize', self._execute_ready, 'primary'),
+            ('submit_obs', 'Submit observation', self._new_observation, 'warning'),
+            ('submit_sum', 'Submit summary', self._submit_summary, 'success'),
+            ('prepare', 'Prepare new data', self._prepare_new_data_pressed, 'success'),
+            ('done', 'All done', self._all_done, 'success'),
+            ('export', 'Export to pdf', self._export_to_pdf, 'success'),
+            ('close', 'Close BringOrder', self._no_export, 'success'),
+            ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success')
+        ]
 
         return button_list
 
@@ -125,8 +125,8 @@ class Inductive:
             footer=widgets.VBox([
                 self.bogui.create_error_message(error),
                 widgets.HBox([
-                    self.buttons['Add preconception'],
-                    self.buttons['Save preconceptions']
+                    self.buttons['add'],
+                    self.buttons['save']
                 ])
             ]),
             pane_heights=['30px', 1, '70px'],
@@ -161,10 +161,10 @@ class Inductive:
             disbled (bool): True to disable, False to activate
         """
 
-        self.buttons['Open cells'].disabled = disabled
-        self.buttons['Clear cells'].disabled = disabled
-        self.buttons['Delete last cell'].disabled = disabled
-        self.buttons['Ready to summarize'].disabled = disabled
+        self.buttons['open'].disabled = disabled
+        self.buttons['clear'].disabled = disabled
+        self.buttons['delete'].disabled = disabled
+        self.buttons['ready'].disabled = disabled
 
     def _run_cells(self, _=None):
         """Executes cells above and displays text area for observations of analysis."""
@@ -182,7 +182,7 @@ class Inductive:
         self.conclusion = widgets.VBox([
             widgets.HBox([notes_label, self._notes]),
             self.empty_notes_error,
-            self.buttons['Submit observation']
+            self.buttons['submit_obs']
         ])
 
         display(self.conclusion)
@@ -279,7 +279,7 @@ class Inductive:
             observation_list,
             widgets.HBox([summary_label, self.summary]),
             error_message,
-            self.buttons['Submit summary']
+            self.buttons['submit_sum']
         ])
 
         clear_output(wait=True)
@@ -316,7 +316,7 @@ class Inductive:
         self._evaluation_of_analysis()
 
     def _evaluation_of_analysis(self, _=None):
-        self.buttons['Submit summary'].disabled = True
+        self.buttons['submit_sum'].disabled = True
         clear_output(wait=False)
         grid = widgets.AppLayout(
             header = self.bogui.create_message(
@@ -327,7 +327,7 @@ class Inductive:
                                         orientation='horizontal',
                                         readout=True, readout_format='d'
                                         ),
-            right_sidebar = self.buttons['Lock evaluation'],
+            right_sidebar = self.buttons['lock'],
             footer = None
             )
         display(grid)
@@ -375,20 +375,20 @@ class Inductive:
     def _create_cell_operations(self):
         """Displays buttons for operations in inductive analysis."""
 
-        self.buttons['Ready to summarize'].disabled = True
+        self.buttons['ready'].disabled = True
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
         cell_buttons = widgets.TwoByTwoLayout(
-            top_left=self.buttons['Open cells'],
-            bottom_left=self.buttons['Run cells'],
-            top_right=self.buttons['Delete last cell'],
-            bottom_right=self.buttons['Clear cells']
+            top_left=self.buttons['open'],
+            bottom_left=self.buttons['run'],
+            top_right=self.buttons['delete'],
+            bottom_right=self.buttons['clear']
         )
 
         grid = widgets.GridspecLayout(2, 3, height='auto', width='100%')
         grid[0, 0] = widgets.HBox([cell_number_label, self._add_cells_int])
         grid[:, 1] = cell_buttons
-        grid[1, 2] = self.buttons['Ready to summarize']
+        grid[1, 2] = self.buttons['ready']
 
         return grid
 
@@ -398,8 +398,8 @@ class Inductive:
         #self.boutils.delete_cell_from_current(1)
 
         grid = widgets.HBox([
-            self.buttons['Export to pdf'],
-            self.buttons['Close BringOrder']
+            self.buttons['export'],
+            self.buttons['close']
         ])
 
         clear_output(wait=True)
@@ -422,9 +422,9 @@ class Inductive:
         """Display buttons to start a new analysis or prepare new data for analysis"""
 
         grid = widgets.HBox([
-            self.buttons['New analysis'],
-            self.buttons['Prepare new data'],
-            self.buttons['All done']
+            self.buttons['new'],
+            self.buttons['prepare'],
+            self.buttons['done']
         ])
 
         display(grid)

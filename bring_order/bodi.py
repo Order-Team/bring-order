@@ -32,15 +32,17 @@ class Bodi:
         """Buttons for Bodi class.
 
         Returns:
-            list of tuples in format (description: str, command: func, style: str) """
+            list of tuples in format (tag: str, description: str, command: func, style: str)
+        """
+
         button_list = [
-            ('Save description', self.start_data_import, 'success'),
-            ('Open cells', self.open_cells, 'warning'),
-            ('Delete last cell', self.delete_last_cell, 'danger'),
-            ('Run cells', self.run_cells, 'primary'),
-            ('Add limitation', self.add_limitation, 'primary'),
-            ('Start analysis', self.start_analysis_clicked, 'success'),
-            ('Remove limitation', self.remove_limitation, 'warning')
+            ('save', 'Save description', self.start_data_import, 'success'),
+            ('open', 'Open cells', self.open_cells, 'warning'),
+            ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
+            ('run', 'Run cells', self.run_cells, 'primary'),
+            ('add', 'Add limitation', self.add_limitation, 'primary'),
+            ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
+            ('remove', 'Remove limitation', self.remove_limitation, 'warning')
         ]
 
         return button_list
@@ -53,9 +55,9 @@ class Bodi:
         grid = widgets.HBox([
             cell_number_label,
             self.add_cells_int,
-            self.buttons['Open cells'],
-            self.buttons['Run cells'],
-            self.buttons['Delete last cell']
+            self.buttons['open'],
+            self.buttons['run'],
+            self.buttons['delete']
             ])
 
         return grid
@@ -110,9 +112,9 @@ class Bodi:
             footer=widgets.VBox([
                 self.empty_limitations_error,
                 widgets.HBox([
-                    self.buttons['Start analysis'],
-                    self.buttons['Add limitation'],
-                    self.buttons['Remove limitation']
+                    self.buttons['start'],
+                    self.buttons['add'],
+                    self.buttons['remove']
                 ])
             ]),
             pane_heights=['30px', 1, '70px'],
@@ -239,7 +241,7 @@ class Bodi:
                     self.data_description
             ]),            
             footer=widgets.HBox([
-                self.buttons['Save description'],
+                self.buttons['save'],
                 error_message,
             ]),
             pane_widths=[1, 5, 0],

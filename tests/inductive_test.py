@@ -30,7 +30,7 @@ class TestInductive(unittest.TestCase):
         self.assertFalse(self.instance._check_value_not_empty(self.instance.summary.value))
 
     def test_open_cells_button_is_created(self):
-        self.assertEqual(self.instance.buttons['Open cells'].description, 'Open cells')
+        self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
         self.assertEqual(len(self.instance.buttons), 15)
