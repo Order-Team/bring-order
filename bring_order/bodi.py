@@ -102,7 +102,8 @@ class Bodi:
     def display_limitations(self):
         """Shows text boxes and buttons for adding limitations"""
         limitations_label = self.bogui.create_message(
-                value='Identify limitations to the data: what kind of questions cannot be answered with it?')
+                value='Identify limitations to the data: what kind of\
+                questions cannot be answered with it?')
 
         limitation_grid = widgets.VBox(self.data_limitations)
 
@@ -203,20 +204,56 @@ class Bodi:
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
 
-    def check_numerical_data(self, pd_dataframe):
+    def check_numerical_data(self, df):
         """Extract numerical data from pandas dataframe
         and checks properties of data(is normally distributed).
 
         args:
-            pandas dataframe
+            df: pandas dataframe
 
         returns:
-            dictionary: {index : bool}
+            checked_indexes: dictionary
         """
-        #call for function(s) to check data property
-        #d = is_normally_distributed(data)
+        checked_indexes = {}
+        num_data = {}
+        num_indexes = df.select_dtypes(include="number")
+        str_indexes = df.select_dtypes(include=["object", "string"])
 
-        return {data1: True, data2: False}
+        for index in num_indexes.columns:
+            lst = list(num_indexes[index].dropna())
+            num_data[index] = lst
+
+        #loop trough dtypes marked as strings or objects.
+        for index in str_indexes.columns:
+            lst = list(str_indexes[index].dropna())
+            numerical = True
+            # loop to check that all values are numerical.
+            for item in range(len(lst)):
+                if lst[item].lstrip('-').replace('.','',1).isdigit() is False:
+                    numerical = False
+                    break
+                #change sring value to float.
+                lst[item] = float(lst[item])
+            if numerical:
+                num_data[index] = lst
+
+        for item in num_data:
+            #call for function(s) to check data property
+            ndistributed = self._is_normally_distributed(num_data[item])
+            checked_indexes[item] = ndistributed
+
+        return checked_indexes
+
+    def _is_normally_distributed(self, values: list):
+        """Check if values in the given list are normally distributed.
+
+        args:
+            values: list of values
+
+        returns:
+            boolean
+        """
+        return True
 
     def bodi(self, error=''):
         """Main function"""

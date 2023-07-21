@@ -5,6 +5,7 @@ from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
 from IPython import display
+from pandas import DataFrame
 
 class TestBodi(unittest.TestCase):
 
@@ -192,3 +193,13 @@ class TestBodi(unittest.TestCase):
     def test_last_limitation_is_not_removed(self):
         self.instance.remove_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)
+
+    def test_numerical_data_is_normally_distributed(self):
+        data = {
+            "bignumbers": [345, 346, 347],
+            "smallnumbers": [5, 6, 7]
+        }
+        df = DataFrame(data)
+        result = self.instance.check_numerical_data(df)
+        self.assertEqual(result['smallnumbers'], True)
+        self.assertEqual(result['bignumbers'], True)

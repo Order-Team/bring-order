@@ -15,7 +15,7 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.waitForLoadState();
    expect(newPage.getByRole('link', { name: 'Jupyter Notebook' }).isEnabled());
    await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-   await page.waitForTimeout(800);
+   await page.waitForTimeout(1500);
    await newPage.getByLabel('Run').click();
    await newPage.getByLabel('', { exact: true }).first().click();
    await newPage.getByLabel('', { exact: true }).first().fill('Test study');
