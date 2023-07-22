@@ -22,35 +22,35 @@ class TestDeductive(unittest.TestCase):
         self.assertFalse(testValue)
 
     def test_check_theory_and_hypotheses_returns_false_with_empty_null_hypothesis(self):
-        self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[0].value = 'x < 0'
+        self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
+        self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
         testValue = self.instance.check_theory_and_hypotheses()
         self.assertFalse(testValue)
 
     def test_get_error_messages_gives_error_for_empty_hypothesis(self):
-        self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[1].value = 'Let assume x = 0'
+        self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
+        self.instance.hypotheses[1].value = 'The quick brown fox jumps over the lazy dog'
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', 'The hypothesis must contain at least one verb', ''))
+        self.assertEqual(errors, ('', 'The hypothesis must contain at least a subject, a predicate and an object.', ''))
 
     def test_get_error_messages_gives_error_for_empty_null_hypothesis(self):
-        self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[0].value = 'Let assume x < 0'
+        self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
+        self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', '', 'The null hypothesis must contain at least one verb')) 
+        self.assertEqual(errors, ('', '', 'The null hypothesis must contain at least a subject, a predicate and an object.')) 
     
     def test_get_error_messages_gives_error_for_theory(self):
         self.instance.theory_desc.value = 'Theory'
-        self.instance.hypotheses[0].value = "The Earth is flat"
-        self.instance.hypotheses[1].value = "The Earth is round"
+        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('The theory must contain at least one verb', '', ''))
+        self.assertEqual(errors, ('The theory must contain at least a subject, a predicate and an object.', '', ''))
 
     def test_check_theory_and_hypotheses_accept_valid_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]
-        self.instance.theory_desc.value = 'Theory starts here...'
-        self.instance.hypotheses[0].value = "The Earth is flat"    
-        self.instance.hypotheses[1].value = "The Earth is round"
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog" 
+        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"    
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         testValue = self.instance.check_theory_and_hypotheses()
         self.assertTrue(testValue)
     

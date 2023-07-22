@@ -140,23 +140,31 @@ class Deductive:
         return focused
 
     def get_error_messages(self):
-        """Returns error messages for empty theory, hypothesis, and null hypothesis
+        """Calls functions that validate that both theory, hypothesis, and null hypothesis includes a subject, a predicate and an object. Returns error messages based on nlp validation.
         
         Returns:
             errors (tuple)
         """
-        theory_error = 'The theory must contain at least one verb'
-        hypo_error = 'The hypothesis must contain at least one verb'
-        null_error = 'The null hypothesis must contain at least one verb'
+        theory_error = 'The theory must contain at least a subject, a predicate and an object.'
+        hypo_error = 'The hypothesis must contain at least a subject, a predicate and an object.'
+        null_error = 'The null hypothesis must contain at least a subject, a predicate and an object.'
 
-        if self.check_text_for_verbs(self.theory_desc.value) is True:
+        subject = 'nsubj'
+        predicate = 'V'
+        object = 'pobj'
+    
+   
+        if self.nlp(self.theory_desc.value, subject) and self.nlp_predicate(self.theory_desc.value, predicate) and self.nlp(self.theory_desc.value, object):
             theory_error = ''
-        if self.check_text_for_verbs(self.hypotheses[0].value) is True:
+        if self.nlp(self.hypotheses[0].value, subject) and self.nlp_predicate(self.hypotheses[0].value, predicate) and self.nlp(self.hypotheses[0].value, object):
             hypo_error = ''
-        if self.check_text_for_verbs(self.hypotheses[1].value) is True:
+        if self.nlp(self.hypotheses[1].value, subject) and self.nlp_predicate(self.hypotheses[1].value, predicate) and self.nlp(self.hypotheses[1].value, object):
             null_error = ''
 
         return (theory_error, hypo_error, null_error)
+
+
+
 
     def __create_limitation_prompt(self):
         """Creates limitation prompt grid"""
@@ -377,7 +385,7 @@ class Deductive:
         """Button function to close widgets without exporting."""
         self.boutils.delete_cell_from_current(0)
 
-    def check_text_for_verbs(self, text):
+    def nlp_verb(self, text, sentence_element):
         '''Checks that string are not empty and contains at least one verb
             Args:
                 text(str)
@@ -389,10 +397,43 @@ class Deductive:
             return False
         nlp = spacy.load("en_core_web_sm")
         words = nlp(text)
-        for word in words:
-            if word.tag_[0] == 'V':
-                return True
-
+        if any(word.tag_[0] == sentence_element for word in words):
+            return True
+        
+        return False
+    
+    def nlp_predicate(self, text, sentence_element):
+        '''Checks that string are not empty and contains at least one predicate
+            Args:
+                text(str)
+            Return:
+                true: if sentence contain at least one verb
+                false: if value is empty or not contain verb
+        '''
+        if text == '':
+            return False
+        nlp = spacy.load("en_core_web_sm")
+        words = nlp(text)
+        if any(word.tag_[0] == sentence_element for word in words):
+            return True
+        
+        return False
+    
+    def nlp(self, text, sentence_element):
+        '''Checks that string are not empty and contains at least one of the desired sentence elements
+            Args:
+                text(str)
+            Return:
+                true: if sentence contain at least one verb
+                false: if value is empty or not contain verb
+        '''
+        if text == '':
+            return False
+        nlp = spacy.load("en_core_web_sm")
+        words = nlp(text)
+        if any(word.dep_ == sentence_element for word in words):
+            return True
+        
         return False
 
     def __repr__(self):
