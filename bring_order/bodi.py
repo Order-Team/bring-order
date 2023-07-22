@@ -1,7 +1,4 @@
-'''Bring Order Data Import (and preparation). 
-Creates code cells for importing and cleaning data and markdown cell to describe the limitations
-and requirements of data. After code cells displays "ready to analyse" button. After button is 
-pressed displays text field and "ready" button. Empty text field is not accepted.'''
+'''Bring Order Data Import and preparation. '''
 from ipywidgets import widgets
 from IPython.display import display, clear_output
 from pandas import read_csv
@@ -189,6 +186,15 @@ class Bodi:
                 self.file_chooser.title = self.file_chooser.selected_filename
                 if self.file_chooser.selected.endswith('.csv'):
                     data_frame = read_csv(self.file_chooser.selected)
+                    n_distributed = self.check_numerical_data(data_frame)
+                    values_ok = []
+                    for key, val in n_distributed.items():
+                        if not val:
+                            values_ok.append(key)
+                    if len(values_ok) > 0:
+                        indexes = ', '.join(values_ok)
+                        self.file_chooser.title = f'Attention! Following data in index(es):\
+                                                {indexes} are not normally distributed.'
                 else:
                     self.file_chooser.title = 'Unknown file type, please import manually'
                 self.import_grid.layout.visibility = 'visible'
