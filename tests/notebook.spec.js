@@ -15,7 +15,7 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.waitForLoadState();
    expect(newPage.getByRole('link', { name: 'Jupyter Notebook' }).isEnabled());
    await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-   await page.waitForTimeout(1500);
+   await page.waitForTimeout(1200);
    await newPage.getByLabel('Run').click();
    await newPage.getByLabel('', { exact: true }).first().click();
    await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -46,7 +46,7 @@ test('import data without errors', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1000);
   await newPage.getByLabel('Run').click();
   await newPage.getByRole('button', { name: 'Save description' }).click();
   expect(newPage.locator('Please give your study a title').isVisible());
@@ -68,7 +68,7 @@ test('data limitations errors', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1200);
   await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -98,7 +98,7 @@ test('start of inductive and deductide', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1000);
   await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
