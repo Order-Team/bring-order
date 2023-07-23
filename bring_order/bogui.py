@@ -41,13 +41,13 @@ class BOGui:
         message = widgets.HTML(value=value, style=style)
         return message
 
-    def create_error_message(self, value=''):
+    def create_error_message(self, value='', color='red'):
         """Creates HTML, color: red"""
         error = self.create_message(value=value,
                                     style={'font_size': '12px',
-                                           'text_color': 'red'})
+                                           'text_color': color})
         return error
-
+    
     def create_input_field(self, default_value='', placeholder=''):
         """Creates input field"""
         input_field = widgets.Text(value=default_value, placeholder=placeholder)

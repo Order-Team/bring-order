@@ -40,7 +40,8 @@ class Deductive:
         button_list = [
             ('open', 'Open cells', self.open_cells, 'primary'),
             ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
-            ('save', 'Save', self.check_theory_and_hypotheses, 'success'),
+            ('save', 'Save and continue', self.submit_theory_and_hypotheses, 'success'),
+            ('validate', 'Validate input', self.validate_theory_and_hypotheses, 'primary'),
             ('clear_hypo', 'Clear hypotheses', self.clear_hypotheses, 'warning'),
             ('yes', 'Yes', self.save_theory_and_hypotheses, 'success'),
             ('no', 'No', self.bad_hypotheses, 'warning'),
@@ -56,7 +57,7 @@ class Deductive:
 
         return button_list
 
-    def __create_hypotheses_grid(self, empty_hypo_error='', empty_null_error=''):
+    def __create_hypotheses_grid(self, hypo_error='', null_error='', hypo_error_color='red', null_error_color='red'):
         """Creates the view for setting hypotheses
         
         Args:
@@ -72,22 +73,24 @@ class Deductive:
             center = widgets.VBox([
                 widgets.HBox([
                     self.hypotheses[0],
-                    self.bogui.create_error_message(empty_hypo_error)
+                    self.bogui.create_error_message(hypo_error, hypo_error_color)
+                    
                 ]),
                 widgets.HBox([
                     self.hypotheses[1],
-                    self.bogui.create_error_message(empty_null_error)
+                    self.bogui.create_error_message(null_error, null_error_color)
+                    
                 ]),
                 self.buttons['clear_hypo']
             ]),
-            footer = self.buttons['save'],
+            footer = widgets.HBox([self.buttons['validate'], self.buttons['save']]),
             pane_widths = [1, 6, 0],
             grid_gap = '18px'
         )
 
         return grid
 
-    def __create_theory_grid(self, error=''):
+    def __create_theory_grid(self, error='', color='red'):
         """Creates the view for summarizing theory
         
         Args:
@@ -97,7 +100,7 @@ class Deductive:
             header=self.bogui.create_message('Describe the theory and insights:'),
             center=widgets.VBox([
                 self.theory_desc,
-                self.bogui.create_error_message(error),
+                self.bogui.create_error_message(error, color),
                 self.buttons['clear_theory']
             ]),
             pane_widths=[1, 6, 0],
@@ -140,30 +143,46 @@ class Deductive:
         return focused
 
     def get_error_messages(self):
-        """Calls functions that validate that both theory, hypothesis, and null hypothesis includes a subject, a predicate and an object. Returns error messages based on nlp validation.
-        
-        Returns:
-            errors (tuple)
-        """
-        theory_error = 'The theory must contain at least a subject, a predicate and an object.'
-        hypo_error = 'The hypothesis must contain at least a subject, a predicate and an object.'
-        null_error = 'The null hypothesis must contain at least a subject, a predicate and an object.'
 
-        subject = 'nsubj'
-        predicate = 'V'
-        object = 'pobj'
-    
-   
-        if self.nlp(self.theory_desc.value, subject) and self.nlp_predicate(self.theory_desc.value, predicate) and self.nlp(self.theory_desc.value, object):
+        theory_error = 'The theory must be at least 8 characters and not contain special characters'
+        hypo_error= 'The hypothesis must be at least 8 characters and not contain special characters.'
+        null_error = 'The null hypothesis must be at least 8 characters and not contain special characters.'
+
+        if self.is_min_length(self.theory_desc.value) and self.is_not_al_num(self.theory_desc.value):
             theory_error = ''
-        if self.nlp(self.hypotheses[0].value, subject) and self.nlp_predicate(self.hypotheses[0].value, predicate) and self.nlp(self.hypotheses[0].value, object):
+        if self.is_min_length(self.hypotheses[0].value) and self.is_not_al_num(self.hypotheses[0].value):
             hypo_error = ''
-        if self.nlp(self.hypotheses[1].value, subject) and self.nlp_predicate(self.hypotheses[1].value, predicate) and self.nlp(self.hypotheses[1].value, object):
+        if self.is_min_length(self.hypotheses[1].value) and self.is_not_al_num(self.hypotheses[1].value):
             null_error = ''
 
         return (theory_error, hypo_error, null_error)
 
 
+    def get_warning_messages(self):
+        """Calls functions that validate that both theory, hypothesis, and null hypothesis includes a subject, a predicate and an object. Returns error messages based on nlp validation.
+        
+        Returns:
+            errors (tuple)
+        """
+        theory_warning = 'Warning! The theory does not fill criteria of including a subject, a predicate and an object.'
+        hypo_warning = 'Warning! The hypothesis does not fill criteria of including a subject, a predicate and an object.'
+        null_warning = 'Warning! The null hypothesis does not fill criteria of including a subject, a predicate and an object.'
+
+        subject = 'nsubj'
+        subject_passive = 'nsubjpass'
+        predicate = 'V'
+        object = 'pobj'
+        direct_object = 'dobj'
+    
+
+        if self.nlp(self.theory_desc.value, subject, subject_passive) and self.nlp_predicate(self.theory_desc.value, predicate) and self.nlp(self.theory_desc.value, object, direct_object):
+            theory_warning = ''
+        if self.nlp(self.hypotheses[0].value, subject, subject_passive ) and self.nlp_predicate(self.hypotheses[0].value, predicate) and self.nlp(self.hypotheses[0].value, object, direct_object):
+            hypo_warning = ''
+        if self.nlp(self.hypotheses[1].value, subject, subject_passive) and self.nlp_predicate(self.hypotheses[1].value, predicate) and self.nlp(self.hypotheses[1].value, object, direct_object):
+            null_warning = ''
+
+        return (theory_warning, hypo_warning, null_warning)
 
 
     def __create_limitation_prompt(self):
@@ -194,7 +213,28 @@ class Deductive:
 
         return limitation_prompt
 
-    def check_theory_and_hypotheses(self, _=None):
+
+    def implement_error_messages(self, error, warning):
+
+        if error:
+            return (error, 'red')
+        elif warning:
+            return (warning, 'orange')
+        else:
+            return ('','red')
+
+    def submit_theory_and_hypotheses(self, _=None):
+        """Calls check theory and hypothesis - function with paramenter False indicating Save -button is clicked
+        """
+        self.check_theory_and_hypotheses(False)
+
+    def validate_theory_and_hypotheses(self, _=None):
+        """Calls check theory and hypothesis - function with paramenter False indicating Validate input -button is clicked
+        """
+        self.check_theory_and_hypotheses(True)
+
+
+    def check_theory_and_hypotheses(self, isValidate):
         """Checks theory and hypotheses and displays the prompt for
         the check against data limitations
         
@@ -203,20 +243,37 @@ class Deductive:
         """
 
         # Set error messages
-        theory_error, empty_hypo_error, empty_null_error = self.get_error_messages()
-        theory_grid = self.__create_theory_grid(theory_error)
-        hypotheses_grid = self.__create_hypotheses_grid(empty_hypo_error, empty_null_error)
 
-        # Show error messages if any of the required values are empty
-        if len(theory_error + empty_hypo_error + empty_null_error) > 0:
-            clear_output(wait=True)
-            display(theory_grid)
-            display(hypotheses_grid)
-            self.focus_first_empty([self.theory_desc] + self.hypotheses)
+        empty_theory_error, empty_hypo_error, empty_null_error = self.get_error_messages()
+        theory_warning, hypo_warning, null_warning = self.get_warning_messages()
 
-            return False
+        theory_error, theory_error_color = self.implement_error_messages(empty_theory_error, theory_warning)
+        hypo_error, hypo_error_color = self.implement_error_messages(empty_hypo_error, hypo_warning)
+        null_error, null_error_color = self.implement_error_messages(empty_null_error, null_warning)
+     
+        theory_grid = self.__create_theory_grid(theory_error, theory_error_color)
+        hypotheses_grid = self.__create_hypotheses_grid(hypo_error, null_error, hypo_error_color, null_error_color)
 
-        # Show limitation prompt if all values are ok
+        isShowLimitationPrompt = True
+
+        # If errors exist in any of the fields
+        if len(empty_theory_error + empty_hypo_error + empty_null_error) > 0:
+            isShowLimitationPrompt=False
+        
+        # If Validate - button is clicked and warnings exist
+        elif isValidate:
+            if len(theory_warning + hypo_warning + null_warning ) > 0:
+                isShowLimitationPrompt=False
+
+        # Show errors or/and warnings     
+        if not isShowLimitationPrompt:       
+                clear_output(wait=True)
+                display(theory_grid)
+                display(hypotheses_grid)
+                self.focus_first_empty([self.theory_desc] + self.hypotheses)
+                return False
+
+        # Show limitation prompt - all values are ok
         limitation_prompt = self.__create_limitation_prompt()
         clear_output(wait=True)
         display(limitation_prompt)
@@ -385,33 +442,32 @@ class Deductive:
         """Button function to close widgets without exporting."""
         self.boutils.delete_cell_from_current(0)
 
-    def nlp_verb(self, text, sentence_element):
-        '''Checks that string are not empty and contains at least one verb
-            Args:
-                text(str)
-            Return:
-                true: if sentence contain at least one verb
-                false: if value is empty or not contain verb
-        '''
-        if text == '':
+
+    def is_min_length(self, text):
+        if not text:
             return False
-        nlp = spacy.load("en_core_web_sm")
-        words = nlp(text)
-        if any(word.tag_[0] == sentence_element for word in words):
-            return True
-        
-        return False
+        text.replace(" ", "")
+        if len(text) < 8:
+            return False
+        return True
+    
+    def is_not_al_num(self, text):
+        if not text:
+            return False
+        special_characters = "!@#$%^&*()-+?_=,<>/"
+        if any(c in special_characters for c in text):
+            return False
+        return True
+
     
     def nlp_predicate(self, text, sentence_element):
-        '''Checks that string are not empty and contains at least one predicate
+        '''Checks that string contains at least one predicate
             Args:
                 text(str)
             Return:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        if text == '':
-            return False
         nlp = spacy.load("en_core_web_sm")
         words = nlp(text)
         if any(word.tag_[0] == sentence_element for word in words):
@@ -419,19 +475,17 @@ class Deductive:
         
         return False
     
-    def nlp(self, text, sentence_element):
-        '''Checks that string are not empty and contains at least one of the desired sentence elements
+    def nlp(self, text, sentence_element1, sentence_element2):
+        '''Checks that string contains at least one of the desired sentence elements
             Args:
                 text(str)
             Return:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        if text == '':
-            return False
         nlp = spacy.load("en_core_web_sm")
         words = nlp(text)
-        if any(word.dep_ == sentence_element for word in words):
+        if any(word.dep_ == sentence_element1 or sentence_element2 for word in words):
             return True
         
         return False
