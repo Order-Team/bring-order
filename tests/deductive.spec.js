@@ -36,7 +36,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Test hypothesis');
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Test null hypothesis');
-  await newPage.getByRole('button', { name: 'Save' }).click();
+  await newPage.getByRole('button', { name: 'Validate input' }).click();
   expect(newPage.getByText('Do the hypotheses fit within the limitations of the data set?').isVisible());
   expect(newPage.getByText('You have set hypothesis (H1): Test hypothesis').isVisible());
   expect(newPage.getByText('You have set hypothesis (H0): Test null hypothesis').isVisible());
@@ -68,10 +68,11 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
     await newPage.getByRole('button', { name: 'Start analysis' }).click();
     await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
-    await newPage.getByRole('button', { name: 'Save' }).click();
-    expect(newPage.getByText('Your must describe your theory with sentence(s) that contain at least one verb').isVisible());
-    expect(newPage.getByText('The hypothesis must contain at least one verb').isVisible());
-    expect(newPage.getByText('The null hypothesis must contain at least one verb').isVisible());
+    await newPage.getByRole('button', { name: 'Save and continue' }).click();
+    expect(newPage.getByText('The theory must be at least 8 characters and not contain special characters').isVisible());
+    expect(newPage.getByText('The hypothesis must be at least 8 characters and not contain special characters').isVisible());
+    expect(newPage.getByText('The null hypothesis must be at least 8 characters and not contain special characters').isVisible());
+    expect(newPage.getByRole('button', { name: 'Save and continue' }).isEnabled());
   });
 
   test('deductive analysis all done shows export buttons', async ({ page, context }) => {
@@ -106,13 +107,13 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     await newPage.getByLabel('', { exact: true }).nth(1).fill('Everyone wants to move to Turku');
     await newPage.getByLabel('', { exact: true }).nth(2).click();
     await newPage.getByLabel('', { exact: true }).nth(2).fill('Everyone wants to move to Turku');
-    await newPage.getByRole('button', { name: 'Save' }).click();
+    await newPage.getByRole('button', { name: 'Validate input' }).click();
     await newPage.getByRole('button', { name: 'Yes' }).click();
     await newPage.getByRole('button', { name: 'Run cells' }).click();
     await newPage.getByPlaceholder('Results').click();
     await newPage.getByPlaceholder('Results').fill('Test results');
     await newPage.getByRole('button', { name: 'All done' }).click();
-    expect(newPage.getByRole('button', { name: 'Export to pdf' }).isVisible());
-    expect(newPage.getByRole('button', { name: 'Close BringOrder' }).isVisible());
+    expect(newPage.getByRole('button', { name: 'Export to pdf' }).isEnabled());
+    expect(newPage.getByRole('button', { name: 'Close BringOrder' }).isEnabled());
     await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
   });

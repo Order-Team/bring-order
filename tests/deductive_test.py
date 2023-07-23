@@ -41,42 +41,42 @@ class TestDeductive(unittest.TestCase):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'True/False'
         self.instance.hypotheses[1].value = 'The quick brown fox jumps over the lazy dog'
-        errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', 'The hypothesis must be at least 8 characters and not contain special characters.', ''))
+        errors = self.instance._get_error_messages()
+        self.assertEqual(errors, ('', 'The hypothesis must be at least 8 characters and not contain special characters', ''))
 
     def test_get_error_messages_gives_error_for_invalid_null_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
-        self.instance.hypotheses[1].value = 'ABCABCABC123123!!!'
-        errors = self.instance.get_error_messages()
-        self.assertEqual(errors, ('', '', 'The null hypothesis must be at least 8 characters and not contain special characters.')) 
+        self.instance.hypotheses[1].value = 'ABCABCABC123123@@@'
+        errors = self.instance._get_error_messages()
+        self.assertEqual(errors, ('', '', 'The null hypothesis must be at least 8 characters and not contain special characters')) 
     
     def test_get_error_messages_gives_error_for_theory(self):
         self.instance.theory_desc.value = 'Theory'
         self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
-        errors = self.instance.get_error_messages()
+        errors = self.instance._get_error_messages()
         self.assertEqual(errors, ('The theory must be at least 8 characters and not contain special characters', '', ''))
     
     def test_get_warning_messages_gives_warning_for_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'over the lazy dog'
         self.instance.hypotheses[1].value = 'The quick brown fox jumps over the lazy dog'
-        errors = self.instance.get_warning_messages()
+        errors = self.instance._get_warning_messages()
         self.assertEqual(errors, ('', 'Warning! The hypothesis does not fill criteria of including a subject, a predicate and an object.', ''))
 
     def test_get_warning_messages_gives_warning_for_null_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[1].value = "The quick brown fox"
-        errors = self.instance.get_warning_messages()
+        errors = self.instance._get_warning_messages()
         self.assertEqual(errors, ('', '', 'Warning! The null hypothesis does not fill criteria of including a subject, a predicate and an object.')) 
     
     def test_get_warning_messages_gives_warning_for_theory(self):
         self.instance.theory_desc.value = 'Theory theory theory'
         self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
-        errors = self.instance.get_warning_messages()
+        errors = self.instance._get_warning_messages()
         self.assertEqual(errors, ('Warning! The theory does not fill criteria of including a subject, a predicate and an object.', '', ''))
 
 
@@ -111,7 +111,7 @@ class TestDeductive(unittest.TestCase):
         self.instance.hypotheses[1].value = 'Null test value'
         self.instance.theory_desc.value = 'The first claim\nThe second claim'
         self.maxDiff = None
-        return_value = self.instance.format_hypotheses_and_theory()
+        return_value = self.instance._format_hypotheses_and_theory()
         test_str = '## Testing hypothesis: Test value\\n### Theory and insights\\nThe first claim<br />The second claim\\n### Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n### Data analysis'
         self.assertEqual(return_value, test_str)
 
