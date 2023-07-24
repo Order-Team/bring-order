@@ -2,14 +2,15 @@
 from ipywidgets import widgets
 from IPython.display import display, clear_output
 from pandas import read_csv
+from jupyter_ui_poll import ui_events
+import time
 
 
 class Bodi:
     '''Creates code cells for importing data and markdown cell(s) to describe data limitations'''
-    def __init__(self, boutils, bogui, start_analysis):
+    def __init__(self, boutils, bogui, next_step):
         """Class constructor
         """
-        self.start_analysis = start_analysis
         self.boutils = boutils
         self.bogui = bogui
         self.cell_count = 0
@@ -23,6 +24,7 @@ class Bodi:
         self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
         self.file_chooser = self.bogui.create_file_chooser()
+        self.next_step = next_step
 
     @property
     def button_list(self):
@@ -153,7 +155,7 @@ class Bodi:
             text = self.format_limitations()
             self.boutils.create_markdown_cells_above(1, text=text)
             clear_output(wait=True)
-            self.start_analysis()
+            self.next_step[0] = 'start_analysis'
         else:
             self.empty_limitations_error.value = 'Data limitations cannot be empty'
 
@@ -238,7 +240,7 @@ class Bodi:
                 if lst[item].lstrip('-').replace('.','',1).isdigit() is False:
                     numerical = False
                     break
-                #change sring value to float.
+                #change string value to float.
                 lst[item] = float(lst[item])
             if numerical:
                 num_data[index] = lst
