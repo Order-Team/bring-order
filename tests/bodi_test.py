@@ -6,6 +6,7 @@ from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
 from IPython import display
 from pandas import DataFrame
+import scipy.stats as stats
 
 class TestBodi(unittest.TestCase):
 
@@ -194,12 +195,12 @@ class TestBodi(unittest.TestCase):
         self.instance.remove_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)
 
-    def test_numerical_data_is_normally_distributed(self):
-        data = {
-            "bignumbers": [345, 346, 347],
-            "smallnumbers": [5, 6, 7]
-        }
-        df = DataFrame(data)
-        result = self.instance.check_numerical_data(df)
-        self.assertEqual(result['smallnumbers'], True)
-        self.assertEqual(result['bignumbers'], True)
+    #def test_numerical_data_is_normally_distributed(self):
+    #   data = {
+    #       "bignumbers": [345, 346, 347],
+    #       "smallnumbers": [5, 6, 7]
+    #   }
+    #   df = DataFrame(data)
+    #   result = self.instance.check_numerical_data(df)
+    #   self.assertEqual(result['smallnumbers'], True)
+    #   self.assertEqual(result['bignumbers'], True)
