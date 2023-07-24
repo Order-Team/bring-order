@@ -28,6 +28,7 @@ class Deductive:
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.result_description = self.bogui.create_text_area('','Results')
+        self.nlp = spacy.load("en_core_web_sm")
 
     @property
     def button_list(self):
@@ -147,9 +148,12 @@ class Deductive:
 
     def _get_error_messages(self):
 
-        theory_error = 'The theory must be at least 8 characters and not contain special characters'
-        hypo_error= 'The hypothesis must be at least 8 characters and not contain special characters'
-        null_error = 'The null hypothesis must be at least 8 characters and not contain special characters'
+        theory_error = 'The theory must be at least 8 characters and\
+             not contain special characters'
+        hypo_error= 'The hypothesis must be at least 8 characters and\
+             not contain special characters'
+        null_error = 'The null hypothesis must be at least 8 characters and\
+             not contain special characters'
 
         if self._is_min_length(self.theory_desc.value)\
             and self._is_not_al_num(self.theory_desc.value):
@@ -171,9 +175,12 @@ class Deductive:
         Returns:
             errors (tuple)
         """
-        theory_warning = 'Warning! The theory does not fill criteria of including a subject, a predicate and an object.'
-        hypo_warning = 'Warning! The hypothesis does not fill criteria of including a subject, a predicate and an object.'
-        null_warning = 'Warning! The null hypothesis does not fill criteria of including a subject, a predicate and an object.'
+        theory_warning = 'Warning! The theory does not fill criteria of\
+             including a subject, a predicate and an object.'
+        hypo_warning = 'Warning! The hypothesis does not fill criteria of\
+             including a subject, a predicate and an object.'
+        null_warning = 'Warning! The null hypothesis does not fill criteria of\
+             including a subject, a predicate and an object.'
 
         subject = 'nsubj'
         subject_passive = 'nsubjpass'
@@ -478,8 +485,8 @@ class Deductive:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        nlp = spacy.load("en_core_web_sm")
-        words = nlp(text)
+        #nlp = spacy.load("en_core_web_sm")
+        words = self.nlp(text)
         if any(word.tag_[0] == sentence_element for word in words):
             return True
 
@@ -493,8 +500,8 @@ class Deductive:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        nlp = spacy.load("en_core_web_sm")
-        words = nlp(text)
+        #nlp = spacy.load("en_core_web_sm")
+        words = self.nlp(text)
         if any(word.dep_ == sentence_element1 or sentence_element2 for word in words):
             return True
 

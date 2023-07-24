@@ -47,7 +47,7 @@ class BOGui:
                                     style={'font_size': '12px',
                                            'text_color': color})
         return error
-    
+
     def create_input_field(self, default_value='', placeholder=''):
         """Creates input field"""
         input_field = widgets.Text(value=default_value, placeholder=placeholder)

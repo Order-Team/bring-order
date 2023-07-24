@@ -57,7 +57,7 @@ class Bodi:
             self.buttons['open'],
             self.buttons['run'],
             self.buttons['delete']
-            ])        
+            ])
         return grid
 
 
@@ -213,7 +213,7 @@ class Bodi:
 
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
-            
+
 
     def check_numerical_data(self, df):
         """Extract numerical data from pandas dataframe
@@ -252,7 +252,7 @@ class Bodi:
             #call for function(s) to check data property
             ndistributed = self._is_normally_distributed(num_data[item])
             checked_indexes[item] = ndistributed
-            
+
         self.chi_square_test()
         return checked_indexes
 
@@ -304,7 +304,7 @@ class Bodi:
             self.title.focus()
 
 
-    def chi_square_test(self):    
+    def chi_square_test(self):
         question = self.bogui.create_message('Do you want to check for variable independence?')
         yes_button = self.bogui.create_button('Yes', self.select_variables)
         chi_test_grid = widgets.AppLayout(header=question,
@@ -314,38 +314,38 @@ class Bodi:
             ]),
             footer=None)
         display(chi_test_grid)
-      
+
     def select_variables(self, _=None):
         if len(self.dataframe) > 0:
             variables = self.dataframe.columns.to_list()
             style = {'description_width': 'initial'}
             explanatory = widgets.Dropdown(
                 options=variables,
-                description= 'Explanatory variable', 
+                description= 'Explanatory variable',
                 style=style
-            )        
+            )
             dependent = widgets.Dropdown(
                 options=variables,
                 description='Dependent variable',
                 style=style
-            ) 
+            )
             def check_variable_independence(_=None):
                 if len(self.dataframe) > 2:
                     exp = explanatory.value
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab) 
-                    return result           
-            chi_test__button = self.bogui.create_button('Check for independence', check_variable_independence) 
-            variable_grid = widgets.AppLayout(header=self.bogui.create_message('Select variables from your data'),
+                    result = stats.chi2_contingency(crosstab)
+                    return result
+            chi_test__button = self.bogui.create_button('Check for independence',
+                                                    check_variable_independence)
+            variable_grid = widgets.AppLayout(header=
+                                self.bogui.create_message('Select variables from your data'),
                 left_sidebar=None,
                 center=widgets.VBox([
                     explanatory,
                     dependent
                 ]),
                 footer=chi_test__button)
-            display(variable_grid) 
+            display(variable_grid)
         else:
-            self.bogui.create_message('Please import a csv file first')  
-
-
+            self.bogui.create_message('Please import a csv file first')
