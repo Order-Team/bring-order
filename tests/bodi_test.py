@@ -5,7 +5,7 @@ from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
 from IPython import display
-from pandas import DataFrame
+import pandas as pd
 import scipy.stats as stats
 
 class TestBodi(unittest.TestCase):
@@ -200,7 +200,7 @@ class TestBodi(unittest.TestCase):
     #       "bignumbers": [345, 346, 347],
     #       "smallnumbers": [5, 6, 7]
     #   }
-    #   df = DataFrame(data)
+    #   df = pd.DataFrame(data)
     #   result = self.instance.check_numerical_data(df)
     #   self.assertEqual(result['smallnumbers'], True)
     #   self.assertEqual(result['bignumbers'], True)

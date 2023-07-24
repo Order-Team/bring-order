@@ -2,7 +2,7 @@
 from ipywidgets import widgets
 from IPython.display import display, clear_output
 import pandas as pd
-import scipy.stats as stats
+from scipy import stats
 
 
 class Bodi:
@@ -303,13 +303,14 @@ class Bodi:
         else:
             self.title.focus()
 
+
     def chi_square_test(self):    
         question = self.bogui.create_message('Do you want to check for variable independence?')
-        yesButton = self.bogui.create_button('Yes', self.select_variables)
+        yes_button = self.bogui.create_button('Yes', self.select_variables)
         chi_test_grid = widgets.AppLayout(header=question,
             left_sidebar=None,
             center=widgets.HBox([
-                yesButton,
+                yes_button,
             ]),
             footer=None)
         display(chi_test_grid)
@@ -334,7 +335,7 @@ class Bodi:
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
                     result = stats.chi2_contingency(crosstab) 
-                    print(result.statistic, result.pvalue)             
+                    return result           
             chi_test__button = self.bogui.create_button('Check for independence', check_variable_independence) 
             variable_grid = widgets.AppLayout(header=self.bogui.create_message('Select variables from your data'),
                 left_sidebar=None,
