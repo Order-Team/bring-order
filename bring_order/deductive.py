@@ -472,20 +472,20 @@ class Deductive:
     def _is_not_al_num(self, text):
         if not text:
             return False
-        special_characters = "[{]}@#^\*()+_=<>/"
+        special_characters = "[{]}@#^\\*()+_=<>/"
         if any(c in special_characters for c in text):
             return False
         return True
 
     def _nlp_predicate(self, text, sentence_element):
-        '''Checks that string contains at least one predicate
+        '''Checks that string contains at least one predicate.
+
             Args:
                 text(str)
             Return:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        #nlp = spacy.load("en_core_web_sm")
         words = self.nlp(text)
         if any(word.tag_[0] == sentence_element for word in words):
             return True
@@ -493,14 +493,14 @@ class Deductive:
         return False
 
     def _nlp(self, text, sentence_element1, sentence_element2):
-        '''Checks that string contains at least one of the desired sentence elements
+        '''Checks that string contains at least one of the desired sentence elements.
+
             Args:
                 text(str)
             Return:
                 true: if sentence contain at least one verb
                 false: if value is empty or not contain verb
         '''
-        #nlp = spacy.load("en_core_web_sm")
         words = self.nlp(text)
         if any(word.dep_ == sentence_element1 or sentence_element2 for word in words):
             return True
