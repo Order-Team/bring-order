@@ -52,6 +52,23 @@ class TestDeductive(unittest.TestCase):
         self.assertEqual(errors, ('The theory must be at least 8 characters and\
              not contain special characters', '', ''))
     
+    def test_get_error_messages_gives_error_for_empty_value(self):
+        self.instance.theory_desc.value = ""
+        self.instance.hypotheses[0].value = ""
+        self.instance.hypotheses[1].value = ""
+        errors = self.instance._get_error_messages()
+        self.assertEqual(errors, ('The theory must be at least 8 characters and\
+             not contain special characters', 'The hypothesis must be at least 8 characters and\
+             not contain special characters', 'The null hypothesis must be at least 8 characters and\
+             not contain special characters'))
+    
+    def test_get_error_messages_gives_no_error_for_right_values(self):
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
+        errors = self.instance._get_error_messages()
+        self.assertEqual(errors, ('', '', ''))
+    
     def test_get_warning_messages_gives_warning_for_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'over the lazy dog'
@@ -76,7 +93,6 @@ class TestDeductive(unittest.TestCase):
         self.assertEqual(errors, ('Warning! The theory does not fill criteria of\
              including a subject, a predicate and an object.', '', ''))
 
-
     def test_check_theory_and_hypotheses_accept_valid_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]
         self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog" 
@@ -84,7 +100,14 @@ class TestDeductive(unittest.TestCase):
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         testValue = self.instance.check_theory_and_hypotheses(True)
         self.assertTrue(testValue)
-    
+
+    def test_check_theory_and_hypotheses_not_accept_wrong_inputs(self):
+        self.instance.data_limitations = [widgets.Text('Limitation1')]
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog" 
+        self.instance.hypotheses[0].value = "The quick brown"    
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
+        testValue = self.instance.check_theory_and_hypotheses(True)
+        self.assertFalse(testValue)    
 
     def test_hypothesis_fields_can_be_cleared(self):
         self.instance.hypotheses[0].value = "Roses are red"

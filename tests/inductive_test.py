@@ -256,8 +256,13 @@ class TestInductive(unittest.TestCase):
         self.instance._submit_summary()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1, text=text)
 
-    #def test_submit_summary_calls_new_analysis(self):
-    #    self.instance._new_analysis = Mock()
-    #    self.instance.summary.value = 'They lived happily ever after.'
-    #    self.instance._submit_summary()
-    #    self.instance._new_analysis.assert_called()
+    def test_submit_summary_calls_new_analysis(self):
+        self.instance._evaluation_of_analysis = Mock()
+        self.instance.summary.value = 'They lived happily ever after.'
+        self.instance._submit_summary()
+        self.instance._evaluation_of_analysis.assert_called()
+
+    def test_lock_evaluation_calls_new_analysis(self):
+        self.instance._new_analysis = Mock()
+        self.instance._lock_evaluation_pressed()
+        self.instance._new_analysis.assert_called()

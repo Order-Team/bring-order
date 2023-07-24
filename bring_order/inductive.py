@@ -358,7 +358,6 @@ class Inductive:
                             description=prec.value, value=False,) for prec in self.preconceptions]
         output = widgets.VBox(children=checkboxes)
         display(output)
-        self._new_analysis()
 
     def _check_value_not_empty(self, value):
         """Checks that text field was filled.
