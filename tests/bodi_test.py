@@ -195,12 +195,15 @@ class TestBodi(unittest.TestCase):
         self.instance.remove_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)
 
-    #def test_numerical_data_is_normally_distributed(self):
-    #   data = {
-    #       "bignumbers": [345, 346, 347],
-    #       "smallnumbers": [5, 6, 7]
-    #   }
-    #   df = pd.DataFrame(data)
-    #   result = self.instance.check_numerical_data(df)
-    #   self.assertEqual(result['smallnumbers'], True)
-    #   self.assertEqual(result['bignumbers'], True)
+    def test_normally_distributed_data_returns_true(self):
+        numbers = [345, 346, 347, 500, 200, 400, 100]
+        result = self.instance._is_normally_distributed(numbers)
+        self.assertTrue(result)
+
+    def test_not_normally_distributed_data_returns_false(self): 
+        numbers = [1, 2, 3, 4, 666, 44, 1, 1, 2, 3, 2, 2, 667, 101]
+        result = self.instance._is_normally_distributed(numbers)
+        self.assertFalse(result)    
+
+
+

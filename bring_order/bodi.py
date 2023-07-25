@@ -256,16 +256,22 @@ class Bodi:
         self.chi_square_test()
         return checked_indexes
 
-    def _is_normally_distributed(self, values: list):
+    def _is_normally_distributed(self, list):
         """Check if values in the given list are normally distributed.
-
         args:
             values: list of values
 
         returns:
             boolean
         """
-        return True
+        #list_data = pd.DataFrame(list)
+        result = stats.shapiro(list)
+        if len(result) >= 2:
+            if result[1] > 0.05:
+                return True
+            else:
+                return False
+            
 
     def bodi(self, error=''):
         """Main function"""
@@ -277,8 +283,8 @@ class Bodi:
         error_message = self.bogui.create_error_message(error)
 
         grid = widgets.AppLayout(
-            header=question,
-            left_sidebar=widgets.VBox([
+            header = question,
+            left_sideba = widgets.VBox([
                 title_label,
                 data_name_label,
                 description_label
@@ -288,7 +294,7 @@ class Bodi:
                     self.data_name,
                     self.data_description
             ]),
-            footer=widgets.HBox([
+            footer = widgets.HBox([
                 self.buttons['save'],
                 error_message,
             ]),
@@ -303,49 +309,55 @@ class Bodi:
         else:
             self.title.focus()
 
-
     def chi_square_test(self):
+        """Creates option for chi square testing"""
         question = self.bogui.create_message('Do you want to check for variable independence?')
         yes_button = self.bogui.create_button('Yes', self.select_variables)
-        chi_test_grid = widgets.AppLayout(header=question,
-            left_sidebar=None,
-            center=widgets.HBox([
+        chi_test_grid = widgets.AppLayout(header = question,
+            left_sidebar = None,
+            center = widgets.HBox([
                 yes_button,
             ]),
-            footer=None)
+            footer = None)
         display(chi_test_grid)
 
     def select_variables(self, _=None):
+        """Creates dropdowns for selecting two variables from imported data and performs 
+        a chi-square test of independence between them"""
         if len(self.dataframe) > 0:
             variables = self.dataframe.columns.to_list()
             style = {'description_width': 'initial'}
             explanatory = widgets.Dropdown(
-                options=variables,
-                description= 'Explanatory variable',
-                style=style
+                options = variables,
+                description = 'Explanatory variable',
+                style = style
             )
             dependent = widgets.Dropdown(
-                options=variables,
-                description='Dependent variable',
-                style=style
+                options = variables,
+                description ='Dependent variable',
+                style = style
             )
             def check_variable_independence(_=None):
-                if len(self.dataframe) > 2:
+                if len(self.dataframe) >= 2:
                     exp = explanatory.value
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab)
-                    return result
-            chi_test__button = self.bogui.create_button('Check for independence',
-                                                    check_variable_independence)
-            variable_grid = widgets.AppLayout(header=
-                                self.bogui.create_message('Select variables from your data'),
-                left_sidebar=None,
-                center=widgets.VBox([
+                    result = stats.chi2_contingency(crosstab)       
+                    if len(result) >= 2:
+                        message = self.bogui.create_message(
+                            "The test statistic is {} and the p-value value is {}".format(result[0], result[1]))
+                        result_view = widgets.VBox([message])          
+                        display(result_view)
+                    else:
+                        display("Error")   
+            chi_test__button = self.bogui.create_button('Check', check_variable_independence)
+            variable_grid = widgets.AppLayout(header = self.bogui.create_message('Select variables from your data'),
+                left_sidebar = None,
+                center = widgets.VBox([
                     explanatory,
                     dependent
                 ]),
-                footer=chi_test__button)
+                footer = chi_test__button)
             display(variable_grid)
         else:
             self.bogui.create_message('Please import a csv file first')
