@@ -256,7 +256,7 @@ class Bodi:
         self.chi_square_test()
         return checked_indexes
 
-    def _is_normally_distributed(self, list):
+    def _is_normally_distributed(self, list_data):
         """Check if values in the given list are normally distributed.
         args:
             values: list of values
@@ -265,13 +265,13 @@ class Bodi:
             boolean
         """
         #list_data = pd.DataFrame(list)
-        result = stats.shapiro(list)
+        result = stats.shapiro(list_data)
         if len(result) >= 2:
             if result[1] > 0.05:
                 return True
-            else:
-                return False
-            
+            return False
+        return False
+
 
     def bodi(self, error=''):
         """Main function"""
@@ -342,16 +342,18 @@ class Bodi:
                     exp = explanatory.value
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab)       
+                    result = stats.chi2_contingency(crosstab)
                     if len(result) >= 2:
                         message = self.bogui.create_message(
-                            "The test statistic is {} and the p-value value is {}".format(result[0], result[1]))
-                        result_view = widgets.VBox([message])          
+                            f"The test statistic is {result[0]:.6f} and\
+                                 the p-value value is {result[1]:.6f}")
+                        result_view = widgets.VBox([message])
                         display(result_view)
                     else:
-                        display("Error")   
+                        display("Error")
             chi_test__button = self.bogui.create_button('Check', check_variable_independence)
-            variable_grid = widgets.AppLayout(header = self.bogui.create_message('Select variables from your data'),
+            variable_grid = widgets.AppLayout(
+                header = self.bogui.create_message('Select variables from your data'),
                 left_sidebar = None,
                 center = widgets.VBox([
                     explanatory,

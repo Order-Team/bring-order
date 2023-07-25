@@ -147,5 +147,7 @@ test('import csv data', async ({ page, context }) => {
   expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
   await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('class');
   await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('sepalwidth');
-  expect(newPage.getByRole('button', { name: 'Check for independence' }).isEnabled());
+  expect(newPage.getByRole('button', { name: 'Check' }).isEnabled());
+  await newPage.getByRole('button', { name: 'Check' }).click();
+  expect(newPage.getByText('The test statistic is 88.364469 and the p-value value is 0.000083').isVisible());
 });
