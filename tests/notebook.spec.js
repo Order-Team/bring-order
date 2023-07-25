@@ -15,7 +15,7 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.waitForLoadState();
    expect(newPage.getByRole('link', { name: 'Jupyter Notebook' }).isEnabled());
    await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-   await page.waitForTimeout(1200);
+   await page.waitForTimeout(1500);
    await newPage.getByLabel('Run').click();
    await newPage.getByLabel('', { exact: true }).first().click();
    await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -46,7 +46,7 @@ test('import data without errors', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
   await newPage.getByRole('button', { name: 'Save description' }).click();
   expect(newPage.locator('Please give your study a title').isVisible());
@@ -68,7 +68,7 @@ test('data limitations errors', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -98,7 +98,7 @@ test('start of inductive and deductide', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -116,4 +116,36 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByRole('button', { name: 'Explore data' }).isVisible());
   expect(newPage.getByRole('button', { name: 'Test hyporthesis' }).isVisible());
+});
+
+test('import csv data', async ({ page, context }) => {
+  // @ts-ignore
+  await page.goto(testURL);
+  const pagePromise = context.waitForEvent('page');
+  await page.click('#new-dropdown-button');
+  await page.click('#kernel-python3');
+  const newPage = await pagePromise;
+  await newPage.waitForLoadState();
+  await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
+  await page.waitForTimeout(1500);
+  await newPage.getByLabel('Run').click();
+  await newPage.getByLabel('', { exact: true }).first().click();
+  await newPage.getByLabel('', { exact: true }).first().fill('Test iris study');
+  await newPage.getByLabel('', { exact: true }).nth(1).click();
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test iris data');
+  await newPage.getByLabel('', { exact: true }).nth(2).click();
+  await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test iris data');
+  await newPage.getByRole('button', { name: 'Save description' }).click();
+  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('listbox').selectOption('📁 tests');
+  await newPage.getByRole('listbox').selectOption('test_iris.csv');
+  await newPage.getByRole('button', { name: 'Select' }).click();  
+  expect(newPage.getByText('Do you want to check for variable independence?').isVisible());
+  expect(newPage.getByRole('button', { name: 'Yes' }).isEnabled());
+  await newPage.getByRole('button', { name: 'Yes' }).click();
+  expect(newPage.getByRole('combobox', { name: 'Explanatory variable' }).isVisible());
+  expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
+  await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('class');
+  await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('sepalwidth');
+  expect(newPage.getByRole('button', { name: 'Check for independence' }).isEnabled());
 });

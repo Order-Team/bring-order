@@ -12,7 +12,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -51,7 +51,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
     await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1500);
     await newPage.getByLabel('Run').click();
     await newPage.getByLabel('', { exact: true }).first().click();
     await newPage.getByLabel('', { exact: true }).first().fill('Test study');
@@ -84,7 +84,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
     await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1500);
     await newPage.getByLabel('Run').click();
     await newPage.getByLabel('', { exact: true }).first().click();
     await newPage.getByLabel('', { exact: true }).first().fill('Test study');
