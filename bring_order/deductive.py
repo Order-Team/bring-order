@@ -5,7 +5,7 @@ from IPython.display import display, Javascript, clear_output
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, bogui, boutils, start_new):
+    def __init__(self, bogui, boutils, next_step):
         """Class constructor
         
         Args:
@@ -13,8 +13,8 @@ class Deductive:
             boutils (BOUtils)
             start_new (function): Function to start new analysis with same data
         """
+        self.next_step = next_step
         self.cell_count = 0
-        self.start_new = start_new
         self.bogui = bogui
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
@@ -433,12 +433,14 @@ class Deductive:
     def start_new_analysis(self, _=None):
         """Button function to save results and star new analysis"""
         self.save_results()
-        self.start_new()
+        self.next_step[0] = 'start_analysis'
+        #self.start_new()
 
     def start_analysis_with_new_data(self, _=None):
         """Button function to start over with new data"""
         self.save_results()
-        self.boutils.execute_cell_from_current(1, 'BringOrder()')
+        self.next_step[0] = 'new_data'
+        #self.boutils.execute_cell_from_current(1, 'BringOrder()')
 
     def all_done(self, _=None):
         """Button function to save results when ready."""
@@ -454,11 +456,13 @@ class Deductive:
         #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
         clear_output(wait=False)
         display(Javascript('print()'))
-        self.boutils.delete_cell_from_current(0)
+        self.next_step[0] = 'exit'
+        #self.boutils.delete_cell_from_current(0)
 
     def no_export(self, _=None):
         """Button function to close widgets without exporting."""
-        self.boutils.delete_cell_from_current(0)
+        self.next_step[0] = 'exit'
+        #self.boutils.delete_cell_from_current(0)
 
 
     def _is_min_length(self, text):
