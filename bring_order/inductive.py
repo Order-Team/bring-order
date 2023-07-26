@@ -11,7 +11,6 @@ class Inductive:
         self.bogui = bogui
         self.utils = boutils
         self.next_step = next_step
-        #self.start_new = start_new
         self._cell_count = 0
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.preconceptions = [self.bogui.create_input_field('', 'Preconception 1')]
@@ -37,15 +36,11 @@ class Inductive:
             ('delete', 'Delete last cell', self._delete_last_cell, 'danger'),
             ('clear', 'Clear cells', self._clear_cells, 'danger'),
             ('run', 'Run cells', self._run_cells, 'primary'),
-            ('new', 'New analysis', self._start_new_analysis, 'success'),
             ('ready', 'Ready to summarize', self._execute_ready, 'primary'),
             ('submit_obs', 'Submit observation', self._new_observation, 'warning'),
             ('submit_sum', 'Submit summary', self._submit_summary, 'success'),
-            ('prepare', 'Prepare new data', self._prepare_new_data_pressed, 'success'),
-            ('done', 'All done', self._all_done, 'success'),
-            ('export', 'Export to pdf', self._export_to_pdf, 'success'),
-            ('close', 'Close BringOrder', self._no_export, 'success'),
-            ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success')
+            ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success'),
+            ('save_results', 'Save', self._save_results, 'success')
         ]
 
         return button_list
@@ -247,19 +242,6 @@ class Inductive:
         else:
             self.empty_notes_error.value = 'Observation field can not be empty'
 
-    def _start_new_analysis(self, _=None):
-        """Starts new analysis with old data and the same BringOrder object."""
-
-        clear_output(wait=True)
-        self.next_step[0] = 'start_analysis'
-        #self.start_new()
-
-    def _prepare_new_data_pressed(self, _=None):
-        """Starts new analysis with importing new data, creates new BringOrder object."""
-
-        self.next_step[0] = 'new_data'
-        #self.utils.execute_cell_from_current(0, 'BringOrder()')
-
     def _execute_ready(self, _=None):
         """Button function for Ready to summarize button."""
 
@@ -353,7 +335,11 @@ class Inductive:
             ),
             footer = None)
         display(grid)
-        self._new_analysis()
+        display(self.buttons['save_results'])
+    
+    def _save_results(self, _=None):
+        clear_output(wait=True)
+        self.next_step[0] = 'analysis_done'
 
     def _checkbox_preconceptions(self):
         clear_output(wait=False)
@@ -392,45 +378,6 @@ class Inductive:
         grid[1, 2] = self.buttons['ready']
 
         return grid
-
-    def _all_done(self, _=None):
-        """Button function to display the export/close phase."""
-
-        #self.boutils.delete_cell_from_current(1)
-
-        grid = widgets.HBox([
-            self.buttons['export'],
-            self.buttons['close']
-        ])
-
-        clear_output(wait=True)
-        display(grid)
-
-    def _export_to_pdf(self, _=None):
-        """Button function to export the notebook to pdf."""
-        #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
-
-        clear_output(wait=True)
-        display(Javascript('print()'))
-        self.next_step[0] = 'exit'
-        #self.utils.delete_cell_from_current(0)
-
-    def _no_export(self, _=None):
-        """Button function to close widgets without exporting."""
-
-        self.next_step[0] = 'exit'
-        #self.utils.delete_cell_from_current(0)
-
-    def _new_analysis(self):
-        """Display buttons to start a new analysis or prepare new data for analysis"""
-
-        grid = widgets.HBox([
-            self.buttons['new'],
-            self.buttons['prepare'],
-            self.buttons['done']
-        ])
-
-        display(grid)
 
     def __repr__(self):
         return ''

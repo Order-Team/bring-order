@@ -15,6 +15,7 @@ from bodi import Bodi
 from boutils import BOUtils
 from deductive import Deductive
 from inductive import Inductive
+from next_analysis import NextAnalysis
 
 
 class BringOrder:
@@ -30,6 +31,10 @@ class BringOrder:
         # next_step is passed on to classes and used to track
         # which ui module to run next.
         self.next_step = [None]
+        self.next_analysis = NextAnalysis(
+            self.bogui,
+            self.boutils,
+            self.next_step)
         self.bodi = Bodi(
             self.boutils,
             self.bogui,
@@ -91,6 +96,9 @@ class BringOrder:
                 next = self.get_next(self.start_deductive_analysis)
             elif next == 'inductive_analysis':
                 next = self.get_next(self.start_inductive_analysis)
+            # New analysis/export to pdf-view:
+            if next == 'analysis_done':
+                next = self.get_next(self.next_analysis.new_analysis_view)
         # Close:
         if next == 'exit':
             self.boutils.delete_cell_from_current(0)

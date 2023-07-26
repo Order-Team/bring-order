@@ -4,8 +4,7 @@ from IPython.display import display, clear_output
 import pandas as pd
 from scipy import stats
 from pandas import read_csv
-from jupyter_ui_poll import ui_events
-import time
+
 
 
 class Bodi:
