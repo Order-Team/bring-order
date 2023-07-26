@@ -8,8 +8,7 @@ from scipy import stats
 class Bodi:
     '''Creates code cells for importing data and markdown cell(s) to describe data limitations'''
     def __init__(self, boutils, bogui, start_analysis):
-        """Class constructor
-        """
+        """Class constructor"""
         self.start_analysis = start_analysis
         self.boutils = boutils
         self.bogui = bogui
@@ -122,8 +121,6 @@ class Bodi:
         )
         display(self.limitation_grid)
 
-
-
     def check_limitations(self, item=''):
         """Checks that limitations have been given or commented"""
         if item == '':
@@ -214,21 +211,20 @@ class Bodi:
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.cell_count += 1
 
-
-    def check_numerical_data(self, df):
+    def check_numerical_data(self, dataframe):
         """Extract numerical data from pandas dataframe
         and checks properties of data(is normally distributed).
 
         args:
-            df: pandas dataframe
+            dataframe: pandas dataframe
 
         returns:
             checked_indexes: dictionary
         """
         checked_indexes = {}
         num_data = {}
-        num_indexes = df.select_dtypes(include="number")
-        str_indexes = df.select_dtypes(include=["object", "string"])
+        num_indexes = dataframe.select_dtypes(include="number")
+        str_indexes = dataframe.select_dtypes(include=["object", "string"])
 
         for index in num_indexes.columns:
             lst = list(num_indexes[index].dropna())
@@ -239,12 +235,12 @@ class Bodi:
             lst = list(str_indexes[index].dropna())
             numerical = True
             # loop to check that all values are numerical.
-            for item in range(len(lst)):
-                if lst[item].lstrip('-').replace('.','',1).isdigit() is False:
+            for idx, item in enumerate(lst):
+                if item.lstrip('-').replace('.','',1).isdigit() is False:
                     numerical = False
                     break
                 #change sring value to float.
-                lst[item] = float(lst[item])
+                lst[idx] = float(item)
             if numerical:
                 num_data[index] = lst
 
@@ -256,14 +252,14 @@ class Bodi:
         self.chi_square_test()
         return checked_indexes
 
-    def _is_normally_distributed(self, list):
+    def _is_normally_distributed(self, list_):
         """Check if values in the given list are normally distributed.
         args:
             values: list of values
         returns:
             boolean
         """
-        result = stats.shapiro(list)
+        result = stats.shapiro(list_)
         if len(result) >= 2:
             if result[1] > 0.05:
                 return True
@@ -281,7 +277,7 @@ class Bodi:
 
         grid = widgets.AppLayout(
             header = question,
-            left_sideba = widgets.VBox([
+            left_sidebar = widgets.VBox([
                 title_label,
                 data_name_label,
                 description_label
@@ -325,7 +321,7 @@ class Bodi:
             categorical = self.dataframe.select_dtypes(exclude='number')
             variables = categorical.columns.values
             style = {'description_width': 'initial'}
-            if len(variables) >= 2:            
+            if len(variables) >= 2:
                 explanatory = widgets.Dropdown(
                     options = variables,
                     description = 'Explanatory variable',
@@ -337,22 +333,23 @@ class Bodi:
                     style = style
                 )
             else:
-                message = self.bogui.create_message('There are not enough catogirical variables in your data')
-                display(message) 
+                message = self.bogui.create_message('There are not enough\
+                    categorical variables in your data')
+                display(message)
             def check_variable_independence(_=None):
                 if len(self.dataframe) >= 2:
                     exp = explanatory.value
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab)       
+                    result = stats.chi2_contingency(crosstab)
                     if len(result) >= 2:
                         message = self.bogui.create_message(
                             f"The test statistic is {result[0]:.6f} and\
                                 the p-value value is {result[1]:.6f}")
-                        result_view = widgets.VBox([message])          
-                        display(result_view)    
+                        result_view = widgets.VBox([message])
+                        display(result_view)
                     else:
-                        display("Error")   
+                        display("Error")
             chi_test__button = self.bogui.create_button('Check', check_variable_independence)
             variable_grid = widgets.AppLayout(
                 header = self.bogui.create_message('Select variables from your data'),
