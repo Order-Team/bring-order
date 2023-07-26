@@ -102,6 +102,15 @@ class BOGui:
 
         return radiobuttons
 
+    def create_checkbox(self, desc):
+        '''Create checkbox'''
+        checkbox = widgets.Checkbox(
+            value=False, description=desc,
+            disabled=False, indent=False
+        )
+
+        return checkbox
+
     def create_file_chooser(self):
         """Creates a FileChooser object"""
         file_chooser = FileChooser()

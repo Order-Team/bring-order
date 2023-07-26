@@ -354,8 +354,7 @@ class Inductive:
 
     def _checkbox_preconceptions(self):
         clear_output(wait=False)
-        checkboxes = [widgets.Checkbox(
-                            description=prec.value, value=False,) for prec in self.preconceptions]
+        checkboxes = [self.bogui.create_checkbox(prec) for prec in self.preconceptions]
         output = widgets.VBox(children=checkboxes)
         display(output)
 
