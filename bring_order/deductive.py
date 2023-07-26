@@ -2,6 +2,8 @@
 import spacy
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
+from jupyter_ui_poll import ui_events
+import time
 
 class Deductive:
     """Class that guides deductive analysis"""
@@ -13,8 +15,9 @@ class Deductive:
             boutils (BOUtils)
             start_new (function): Function to start new analysis with same data
         """
-        self.next_step = next_step
         self.cell_count = 0
+        self.next_step = next_step
+        #self.start_new = start_new
         self.bogui = bogui
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
