@@ -256,22 +256,19 @@ class Bodi:
         self.chi_square_test()
         return checked_indexes
 
-    def _is_normally_distributed(self, list_data):
+    def _is_normally_distributed(self, list):
         """Check if values in the given list are normally distributed.
         args:
             values: list of values
-
         returns:
             boolean
         """
-        #list_data = pd.DataFrame(list)
-        result = stats.shapiro(list_data)
+        result = stats.shapiro(list)
         if len(result) >= 2:
             if result[1] > 0.05:
                 return True
             return False
         return False
-
 
     def bodi(self, error=''):
         """Main function"""
@@ -325,32 +322,37 @@ class Bodi:
         """Creates dropdowns for selecting two variables from imported data and performs 
         a chi-square test of independence between them"""
         if len(self.dataframe) > 0:
-            variables = self.dataframe.columns.to_list()
+            categorical = self.dataframe.select_dtypes(exclude='number')
+            variables = categorical.columns.values
             style = {'description_width': 'initial'}
-            explanatory = widgets.Dropdown(
-                options = variables,
-                description = 'Explanatory variable',
-                style = style
-            )
-            dependent = widgets.Dropdown(
-                options = variables,
-                description ='Dependent variable',
-                style = style
-            )
+            if len(variables) >= 2:            
+                explanatory = widgets.Dropdown(
+                    options = variables,
+                    description = 'Explanatory variable',
+                    style = style
+                )
+                dependent = widgets.Dropdown(
+                    options = variables,
+                    description ='Dependent variable',
+                    style = style
+                )
+            else:
+                message = self.bogui.create_message('There are not enough catogirical variables in your data')
+                display(message) 
             def check_variable_independence(_=None):
                 if len(self.dataframe) >= 2:
                     exp = explanatory.value
                     dep = dependent.value
                     crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab)
+                    result = stats.chi2_contingency(crosstab)       
                     if len(result) >= 2:
                         message = self.bogui.create_message(
                             f"The test statistic is {result[0]:.6f} and\
-                                 the p-value value is {result[1]:.6f}")
-                        result_view = widgets.VBox([message])
-                        display(result_view)
+                                the p-value value is {result[1]:.6f}")
+                        result_view = widgets.VBox([message])          
+                        display(result_view)    
                     else:
-                        display("Error")
+                        display("Error")   
             chi_test__button = self.bogui.create_button('Check', check_variable_independence)
             variable_grid = widgets.AppLayout(
                 header = self.bogui.create_message('Select variables from your data'),
@@ -362,4 +364,5 @@ class Bodi:
                 footer = chi_test__button)
             display(variable_grid)
         else:
-            self.bogui.create_message('Please import a csv file first')
+            message = self.bogui.create_message('Please import a csv file first')
+            display(message)

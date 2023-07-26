@@ -205,5 +205,13 @@ class TestBodi(unittest.TestCase):
         result = self.instance._is_normally_distributed(numbers)
         self.assertFalse(result)    
 
+    def test_cannot_test_independence_without_imported_data(self):
+        self.instance.select_variables()
+        self.instance.bogui.create_message.assert_called_with('Please import a csv file first')   
+
+
+
+        
+
 
 
