@@ -345,19 +345,18 @@ class Bodi:
                 footer=None)
                 display(variable_grid)
                 def check_variable_independence(_=None):
-                    if len(self.dataframe) >= 2:
-                        exp = explanatory.value
-                        dep = dependent.value
-                        crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                        result = stats.chi2_contingency(crosstab)
-                        if len(result) >= 2:
-                            message = self.bogui.create_message(
-                                f"The test statistic is {result[0]:.6f} and\
-                                    the p-value value is {result[1]:.6f}")
-                            result_view = widgets.VBox([message])
-                            display(result_view)
-                        else:
-                            display("Error")         
+                    exp = explanatory.value
+                    dep = dependent.value
+                    crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
+                    result = stats.chi2_contingency(crosstab)
+                    if len(result) >= 2:
+                        message = self.bogui.create_message(
+                            f"The test statistic is {result[0]:.6f} and\
+                                the p-value value is {result[1]:.6f}")
+                        result_view = widgets.VBox([message])
+                        display(result_view)
+                    else:
+                        display("Error")         
                 chi_test__button = self.bogui.create_button('Check', check_variable_independence)
                 display(chi_test__button)
             else:

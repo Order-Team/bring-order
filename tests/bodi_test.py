@@ -215,6 +215,15 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message.assert_called_with(
             'There are not enough categorical variables in your data') 
 
+    def test_importing_data_prompts_for_testing_independence_of_varibales(self):
+        loans_data = pd.read_csv("tests/loansData.csv")
+        self.instance.chi_square_test = MagicMock()
+        self.instance.dataframe = loans_data        
+        self.instance.check_numerical_data(loans_data)
+        self.instance.chi_square_test.assert_called()
+
+
+
 
 
 
