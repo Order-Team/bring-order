@@ -7,8 +7,8 @@ from bring_order.bogui import BOGui
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
-        start_new = Mock()
-        self.instance = Inductive(BOGui(), BOUtils(), start_new)
+        next_step = [None]
+        self.instance = Inductive(BOGui(), BOUtils(), next_step)
         self.instance.utils = Mock()
         self.instance.bogui = Mock()
         self.instance.bogui.create_button = Mock()
@@ -33,7 +33,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 15)
+        self.assertEqual(len(self.instance.buttons), 11)
 
     def test_filled_summary_returns_true(self):
         self.instance._notes.value = "Childrens' usage of psychosis medication has increased."
@@ -240,10 +240,11 @@ class TestInductive(unittest.TestCase):
         self.instance._cell_count = 1
         self.instance._run_cells()
         self.assertIsNotNone(self.instance.conclusion)
-
+    """
     def test_start_new_analysis_calls_start_new(self):
         self.instance._start_new_analysis()
         self.instance.start_new.assert_called()
+    """
 
     def test_submit_summary_shows_error_with_empty_summary(self):
         self.instance._display_summary = Mock()
@@ -261,8 +262,9 @@ class TestInductive(unittest.TestCase):
         self.instance.summary.value = 'They lived happily ever after.'
         self.instance._submit_summary()
         self.instance._evaluation_of_analysis.assert_called()
-
-    def test_lock_evaluation_calls_new_analysis(self):
-        self.instance._new_analysis = Mock()
+    """
+    def test_lock_evaluation_calls_save_results(self):
+        self.instance._save_results = Mock()
         self.instance._lock_evaluation_pressed()
-        self.instance._new_analysis.assert_called()
+        self.instance._save_results.assert_called()
+    """

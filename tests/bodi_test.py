@@ -11,10 +11,9 @@ import scipy.stats as stats
 class TestBodi(unittest.TestCase):
 
     def setUp(self):
-        def start_analysis():
-            pass
+        next_step = [None]
 
-        self.instance = Bodi(BOUtils(), BOGui(), start_analysis=start_analysis)
+        self.instance = Bodi(BOUtils(), BOGui(), next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
 
