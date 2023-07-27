@@ -320,7 +320,7 @@ class Bodi:
     def select_variables(self, _=None):
         """Creates dropdowns for selecting two variables from imported data and performs 
         a chi-square test of independence between them"""
-        if len(self.dataframe) > 0:
+        if len(self.dataframe) >= 2:
             categorical = self.dataframe.select_dtypes(exclude='number')
             variables = categorical.columns.values
             style = {'description_width': 'initial'}
@@ -335,34 +335,36 @@ class Bodi:
                     description ='Dependent variable',
                     style = style
                 )
-            else:
-                message = self.bogui.create_message('There are not enough\
-                    categorical variables in your data')
-                display(message)
-            def check_variable_independence(_=None):
-                if len(self.dataframe) >= 2:
-                    exp = explanatory.value
-                    dep = dependent.value
-                    crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
-                    result = stats.chi2_contingency(crosstab)
-                    if len(result) >= 2:
-                        message = self.bogui.create_message(
-                            f"The test statistic is {result[0]:.6f} and\
-                                the p-value value is {result[1]:.6f}")
-                        result_view = widgets.VBox([message])
-                        display(result_view)
-                    else:
-                        display("Error")
-            chi_test__button = self.bogui.create_button('Check', check_variable_independence)
-            variable_grid = widgets.AppLayout(
-                header = self.bogui.create_message('Select variables from your data'),
+                variable_grid = widgets.AppLayout(
+                header = self.bogui.create_message('Select variables from your data'),                
                 left_sidebar = None,
                 center = widgets.VBox([
                     explanatory,
                     dependent
                 ]),
-                footer = chi_test__button)
-            display(variable_grid)
+                footer=None)
+                display(variable_grid)
+                def check_variable_independence(_=None):
+                    if len(self.dataframe) >= 2:
+                        exp = explanatory.value
+                        dep = dependent.value
+                        crosstab = pd.crosstab(self.dataframe[exp], self.dataframe[dep])
+                        result = stats.chi2_contingency(crosstab)
+                        if len(result) >= 2:
+                            message = self.bogui.create_message(
+                                f"The test statistic is {result[0]:.6f} and\
+                                    the p-value value is {result[1]:.6f}")
+                            result_view = widgets.VBox([message])
+                            display(result_view)
+                        else:
+                            display("Error")         
+                chi_test__button = self.bogui.create_button('Check', check_variable_independence)
+                display(chi_test__button)
+            else:
+                message = self.bogui.create_message(
+                    'There are not enough categorical variables in your data')
+                display(message)
+
         else:
             message = self.bogui.create_message('Please import a csv file first')
             display(message)
