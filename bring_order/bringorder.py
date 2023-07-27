@@ -4,7 +4,6 @@ import sys
 import time
 from ipywidgets import widgets
 from IPython.display import display
-import pandas as pd
 from jupyter_ui_poll import ui_events
 
 wd = os.getcwd()
@@ -83,24 +82,24 @@ class BringOrder:
         # The different ui functions are run through a helper function
         # that returns the name of the next function to be executed.
         # First, the data import function:
-        next = self.get_next(self.bodi.bodi)
+        next_step = self.get_next(self.bodi.bodi)
         # Main analysis loop:
-        while next == 'start_analysis':
-            next = self.get_next(self.start_analysis)
+        while next_step == 'start_analysis':
+            next_step = self.get_next(self.start_analysis)
             # Branching to deductive/inductive:
-            if next == 'deductive_analysis':
-                next = self.get_next(self.start_deductive_analysis)
-            elif next == 'inductive_analysis':
-                next = self.get_next(self.start_inductive_analysis)
+            if next_step == 'deductive_analysis':
+                next_step = self.get_next(self.start_deductive_analysis)
+            elif next_step == 'inductive_analysis':
+                next_step = self.get_next(self.start_inductive_analysis)
             # New analysis/export to pdf-view:
-            if next == 'analysis_done':
-                next = self.get_next(self.next_analysis.new_analysis_view)
+            if next_step == 'analysis_done':
+                next_step = self.get_next(self.next_analysis.new_analysis_view)
         # Close:
-        if next == 'exit':
+        if next_step == 'exit':
             self.boutils.delete_cell_from_current(0)
         # Import new data set:
-        elif next == 'new_data':
-            self.boutils.execute_cell_from_current(1, 'BringOrder()')
+        elif next_step == 'new_data':
+            self.boutils.execute_cell_from_current(0, 'BringOrder()')
 
     def get_next(self, function):
         """Runs a function, pauses execution until next_step is updated and then returns it.
@@ -108,15 +107,15 @@ class BringOrder:
         Args:
             function: a function to be executed
         Returns:
-            next: name of the function to be executed after this"""
+            next_step: name of the function to be executed after this"""
         function()
         with ui_events() as ui_poll:
             while self.next_step[0] is None:
                 ui_poll(10)
                 time.sleep(0.1)
-        next = str(self.next_step[0])
+        next_step = str(self.next_step[0])
         self.next_step[0] = None
-        return next
+        return next_step
 
     def start_analysis(self):
         """Starts analysis phase"""
