@@ -26,8 +26,7 @@ class BringOrder:
         self.bogui = BOGui()
         self.deductive = None
         self.inductive = None
-        self.deductive_button = None
-        self.inductive_button = None
+        self.buttons = {}
         # next_step is passed on to classes and used to track
         # which ui module to run next.
         self.next_step = [None]
@@ -41,32 +40,29 @@ class BringOrder:
             self.next_step)
         self.bring_order()
 
-    def create_deductive_button(self):
-        """Creates deductive button"""
-        next_step = self.next_step
-        def command(self):
-            next_step[0] = 'deductive_analysis'
-        button = self.bogui.create_button(
-            desc='Test hypothesis',
-            command=command)
 
-        return button
+    @property
+    def button_list(self):
+        """Buttons for Bodi class.
 
-    def create_inductive_button(self):
-        """Creates inductive button"""
-        next_step = self.next_step
-        def command(self):
-            next_step[0] = 'inductive_analysis'
-        button = self.bogui.create_button(
-            desc='Explore data',
-            command=command)
+        Returns:
+            list of tuples in format (tag: str, description: str, command: func, style: str)
+        """
+        button_list = [('deductive', 'Test hypothesis', self._deductive, 'success'),
+                       ('inductive', 'Explore data', self._inductive, 'success')]
 
-        return button
+        return button_list
+
+    def _deductive(self, _=None):
+        self.next_step[0] = 'deductive_analysis'
+
+    def _inductive(self, _=None):
+        self.next_step[0] = 'inductive_analysis'
 
     def close_buttons(self):
         """Hides buttons"""
-        self.deductive_button.close()
-        self.inductive_button.close()
+        self.buttons['deductive'].close()
+        self.buttons['inductive'].close()
 
     def start_deductive_analysis(self, _=None):
         """Starts deductive analysis"""
@@ -91,7 +87,7 @@ class BringOrder:
         # Main analysis loop:
         while next == 'start_analysis':
             next = self.get_next(self.start_analysis)
-            # Branching to deductive/inductive:    
+            # Branching to deductive/inductive:
             if next == 'deductive_analysis':
                 next = self.get_next(self.start_deductive_analysis)
             elif next == 'inductive_analysis':
@@ -115,7 +111,7 @@ class BringOrder:
             next: name of the function to be executed after this"""
         function()
         with ui_events() as ui_poll:
-            while self.next_step[0] == None:
+            while self.next_step[0] is None:
                 ui_poll(10)
                 time.sleep(0.1)
         next = str(self.next_step[0])
@@ -134,10 +130,9 @@ class BringOrder:
             self.boutils,
             self.next_step
         )
-        self.deductive_button = self.create_deductive_button()
-        self.inductive_button = self.create_inductive_button()
-        display(widgets.HBox([self.deductive_button, self.inductive_button]))
+
+        self.buttons = self.bogui.init_buttons(self.button_list)
+        display(widgets.HBox([self.buttons['deductive'], self.buttons['inductive']]))
 
     def __repr__(self):
         return ''
-    
