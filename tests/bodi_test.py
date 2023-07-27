@@ -208,6 +208,14 @@ class TestBodi(unittest.TestCase):
         self.instance.select_variables()
         self.instance.bogui.create_message.assert_called_with('Please import a csv file first')   
 
+    def test_cannot_test_independence_with_one_categorical_variable(self):
+        iris_data = pd.read_csv("tests/test_iris.csv")
+        self.instance.dataframe = iris_data
+        self.instance.select_variables()
+        self.instance.bogui.create_message.assert_called_with(
+            'There are not enough categorical variables in your data') 
+
+
 
 
         
