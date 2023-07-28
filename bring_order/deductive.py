@@ -1,5 +1,6 @@
 """Deductive class"""
 import spacy
+import os
 #import en_core_web_sm
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
@@ -29,7 +30,10 @@ class Deductive:
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.result_description = self.bogui.create_text_area('','Results')
-        self.nlp = spacy.load('en_core_web_sm')
+        wd = os.getcwd()
+        cache_dir=os.getenv("cache_dir", wd)
+        model_path="en_core_web_sm/en_core_web_sm-3.6.0"
+        self.nlp = spacy.load(os.path.join(cache_dir,model_path))
 
     @property
     def button_list(self):
