@@ -1,6 +1,6 @@
 """Deductive class"""
 import spacy
-import en_core_web_sm
+#import en_core_web_sm
 from ipywidgets import widgets
 from IPython.display import display, Javascript, clear_output
 

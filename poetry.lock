@@ -697,6 +697,24 @@ files = [
 ]
 
 [[package]]
+name = "en-core-web-sm"
+version = "3.6.0"
+description = "English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "en_core_web_sm-3.6.0-py3-none-any.whl", hash = "sha256:83276fc78a70045627144786b52e1f2728ad5e29e5e43916ec37ea9c26a11212"},
+]
+
+[package.dependencies]
+spacy = ">=3.6.0,<3.7.0"
+
+[package.source]
+type = "url"
+url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0-py3-none-any.whl"
+
+[[package]]
 name = "en-core-web-sm-mirror"
 version = "2.2.5"
 description = "English multi-task CNN trained on OntoNotes. Assigns context-specific token vectors, POS tags, dependency parse and named entities."
@@ -3820,4 +3838,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "66a3b54d09d6966f7d06bc6849d0268debabd9f30b19b626ecc0717ed22402b2"
+content-hash = "908f05063bd60c70dc1cdd747a0ba83b3459bc57882ee2eb2ea61b8eee00a4dd"
