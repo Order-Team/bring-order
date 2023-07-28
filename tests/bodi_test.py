@@ -11,10 +11,9 @@ import scipy.stats as stats
 class TestBodi(unittest.TestCase):
 
     def setUp(self):
-        def start_analysis():
-            pass
+        next_step = [None]
 
-        self.instance = Bodi(BOUtils(), BOGui(), start_analysis=start_analysis)
+        self.instance = Bodi(BOUtils(), BOGui(), next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
 
@@ -204,6 +203,31 @@ class TestBodi(unittest.TestCase):
         numbers = [1, 2, 3, 4, 666, 44, 1, 1, 2, 3, 2, 2, 667, 101]
         result = self.instance._is_normally_distributed(numbers)
         self.assertFalse(result)    
+
+    def test_cannot_test_independence_without_imported_data(self):
+        self.instance.select_variables()
+        self.instance.bogui.create_message.assert_called_with('Please import a csv file first')   
+
+    def test_cannot_test_independence_with_one_categorical_variable(self):
+        iris_data = pd.read_csv("tests/test_iris.csv")
+        self.instance.dataframe = iris_data
+        self.instance.select_variables()
+        self.instance.bogui.create_message.assert_called_with(
+            'There are not enough categorical variables in your data') 
+
+    def test_importing_data_prompts_for_testing_independence_of_varibales(self):
+        loans_data = pd.read_csv("tests/loansData.csv")
+        self.instance.chi_square_test = MagicMock()
+        self.instance.dataframe = loans_data        
+        self.instance.check_numerical_data(loans_data)
+        self.instance.chi_square_test.assert_called()
+
+
+
+
+
+
+        
 
 
 

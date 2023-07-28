@@ -5,16 +5,16 @@ from IPython.display import display, Javascript, clear_output
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, bogui, boutils, start_new):
+    def __init__(self, bogui, boutils, next_step):
         """Class constructor
         
         Args:
             bogui (BOGui)
             boutils (BOUtils)
-            start_new (function): Function to start new analysis with same data
+            next_step ([]): State variable that tracks the next step for the program 
         """
         self.cell_count = 0
-        self.start_new = start_new
+        self.next_step = next_step
         self.bogui = bogui
         self.boutils = boutils
         self.buttons = self.bogui.init_buttons(self.button_list)
@@ -48,12 +48,8 @@ class Deductive:
             ('no', 'No', self.bad_hypotheses, 'warning'),
             ('run', 'Run cells', self.run_cells, 'warning'),
             ('clear', 'Clear cells', self.clear_cells, 'danger'),
-            ('new', 'New analysis', self.start_new_analysis, 'success'),
-            ('prepare', 'Prepare new data', self.start_analysis_with_new_data, 'success'),
-            ('done', 'All done', self.all_done, 'success'),
-            ('export', 'Export to pdf', self.export_to_pdf, 'success'),
-            ('close', 'Close BringOrder', self.no_export, 'success'),
-            ('clear_theory', 'Clear theory', self.clear_theory, 'warning')
+            ('clear_theory', 'Clear theory', self.clear_theory, 'warning'),
+            ('save_results', 'Save', self.save_results, 'success')
         ]
 
         return button_list
@@ -371,11 +367,7 @@ class Deductive:
             footer=widgets.VBox([
                 notes_label,
                 self.result_description,
-                widgets.HBox([
-                    self.buttons['new'],
-                    self.buttons['prepare'],
-                    self.buttons['done']
-                ])
+                self.buttons['save_results']
             ]),
             pane_widths=['150px', 1, 0],
             pane_heights=['20px', '40px', 1],
@@ -416,9 +408,9 @@ class Deductive:
 
         return grid
 
-    def save_results(self):
+    def save_results(self, _=None):
         """Prints results as markdown and hides widgets"""
-
+        clear_output(wait=True)
         text = (f'## Conclusion\\n### Accepted hypothesis: {self.conclusion.value[4:]}\\n'
                 f'The hypotheses were:\\n- Hypothesis (H1): {self.hypotheses[0].value}\\n'
                 f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n')
@@ -428,38 +420,7 @@ class Deductive:
             text += f'### Notes\\n {formatted_description}'
 
         self.boutils.create_markdown_cells_above(1, text=text)
-        clear_output(wait=True)
-
-    def start_new_analysis(self, _=None):
-        """Button function to save results and star new analysis"""
-        self.save_results()
-        self.start_new()
-
-    def start_analysis_with_new_data(self, _=None):
-        """Button function to start over with new data"""
-        self.save_results()
-        self.boutils.execute_cell_from_current(1, 'BringOrder()')
-
-    def all_done(self, _=None):
-        """Button function to save results when ready."""
-        self.save_results()
-        export_view = widgets.HBox([
-            self.buttons['export'],
-            self.buttons['close']
-        ])
-        display(export_view)
-
-    def export_to_pdf(self, _=None):
-        """Button function to export the notebook to pdf."""
-        #os.system('jupyter nbconvert Untitled.ipynb --to pdf')
-        clear_output(wait=False)
-        display(Javascript('print()'))
-        self.boutils.delete_cell_from_current(0)
-
-    def no_export(self, _=None):
-        """Button function to close widgets without exporting."""
-        self.boutils.delete_cell_from_current(0)
-
+        self.next_step[0] = 'analysis_done'
 
     def _is_min_length(self, text):
         if not text:

@@ -24,6 +24,7 @@ test('import data without errors', async ({ page, context }) => {
    await newPage.getByLabel('', { exact: true }).nth(2).click();
    await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
    await newPage.getByRole('button', { name: 'Save description' }).click();
+   await page.waitForTimeout(500);
    await newPage.getByRole('button', { name: 'Select' }).click();
    await newPage.getByRole('listbox').selectOption('README.md');
    await newPage.getByRole('button', { name: 'Select' }).click();
@@ -77,6 +78,7 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
+  await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('README.md');
   await newPage.getByRole('button', { name: 'Select' }).click();
@@ -107,6 +109,7 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
+  await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('README.md');
   await newPage.getByRole('button', { name: 'Select' }).click();
@@ -118,7 +121,43 @@ test('start of inductive and deductide', async ({ page, context }) => {
   expect(newPage.getByRole('button', { name: 'Test hyporthesis' }).isVisible());
 });
 
-test('import csv data', async ({ page, context }) => {
+test('import csv data with variable independence testing', async ({ page, context }) => {
+  // @ts-ignore
+  await page.goto(testURL);
+  const pagePromise = context.waitForEvent('page');
+  await page.click('#new-dropdown-button');
+  await page.click('#kernel-python3');
+  const newPage = await pagePromise;
+  await newPage.waitForLoadState();
+  await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
+  await page.waitForTimeout(1500);
+  await newPage.getByLabel('Run').click();
+  await newPage.getByLabel('', { exact: true }).first().click();
+  await newPage.getByLabel('', { exact: true }).first().fill('Test loan study');
+  await newPage.getByLabel('', { exact: true }).nth(1).click();
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test loan data');
+  await newPage.getByLabel('', { exact: true }).nth(2).click();
+  await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test loan data');
+  await newPage.getByRole('button', { name: 'Save description' }).click();
+  await page.waitForTimeout(500);
+  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('listbox').selectOption('📁 tests');
+  await newPage.getByRole('listbox').selectOption('loansData.csv');
+  await newPage.getByRole('button', { name: 'Select' }).click();  
+  expect(newPage.getByText('Do you want to check for variable independence?').isVisible());
+  expect(newPage.getByRole('button', { name: 'Yes' }).isEnabled());
+  await newPage.getByRole('button', { name: 'Yes' }).click();
+  expect(newPage.getByText('Attention! Following data in index(es): Amount.Requested').isVisible());
+  expect(newPage.getByRole('combobox', { name: 'Explanatory variable' }).isVisible());
+  expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
+  await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('Loan.Purpose');
+  await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('Loan.Length');
+  expect(newPage.getByRole('button', { name: 'Check' }).isEnabled());
+  await newPage.getByRole('button', { name: 'Check' }).click();
+  expect(newPage.getByText('The test statistic is 44.406040 and the p-value value is 0.000026').isVisible());
+});
+
+test('import csv data without variable independence testing', async ({ page, context }) => {
   // @ts-ignore
   await page.goto(testURL);
   const pagePromise = context.waitForEvent('page');
@@ -136,18 +175,11 @@ test('import csv data', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test iris data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
+  await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('test_iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();  
-  expect(newPage.getByText('Do you want to check for variable independence?').isVisible());
-  expect(newPage.getByRole('button', { name: 'Yes' }).isEnabled());
   await newPage.getByRole('button', { name: 'Yes' }).click();
-  expect(newPage.getByRole('combobox', { name: 'Explanatory variable' }).isVisible());
-  expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
-  await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('class');
-  await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('sepalwidth');
-  expect(newPage.getByRole('button', { name: 'Check' }).isEnabled());
-  await newPage.getByRole('button', { name: 'Check' }).click();
-  expect(newPage.getByText('The test statistic is 88.364469 and the p-value value is 0.000083').isVisible());
+  expect(newPage.getByText('There are not enough categorical variables in your data').isVisible());
 });
