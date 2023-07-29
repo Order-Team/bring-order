@@ -336,7 +336,7 @@ class Bodi:
                     style = style
                 )
                 variable_grid = widgets.AppLayout(
-                header = self.bogui.create_message('Select variables from your data'),                
+                header = self.bogui.create_message('Select variables from your data'),
                 left_sidebar = None,
                 center = widgets.VBox([
                     explanatory,
@@ -356,7 +356,7 @@ class Bodi:
                         result_view = widgets.VBox([message])
                         display(result_view)
                     else:
-                        display("Error")         
+                        display("Error")
                 chi_test__button = self.bogui.create_button('Check', check_variable_independence)
                 display(chi_test__button)
             else:

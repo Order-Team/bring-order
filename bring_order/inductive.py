@@ -20,6 +20,7 @@ class Inductive:
         self.summary = self.bogui.create_text_area('', 'Summary')
         self.empty_notes_error = self.bogui.create_error_message()
         self.observations = []
+        self.__checkbox_preconceptions = []
 
     @property
     def button_list(self):
@@ -305,7 +306,7 @@ class Inductive:
         clear_output(wait=False)
         grid = widgets.AppLayout(
             header = self.bogui.create_message(
-                        'Evaluate how confident you are that analysis meet preconceptions?'),
+                        'Evaluate how did this analysis met preconceptions?'),
             center = widgets.IntSlider(value=50, min=0, max=100, step=5,
                                         description='', disabled=False,
                                         continuous_update=False,
@@ -319,13 +320,15 @@ class Inductive:
 
     def _lock_evaluation_pressed(self, _=None):
         clear_output(wait=False)
-        label = self.bogui.create_message('Did the analysis meet preconceptions?')
-        checkboxes = [widgets.Checkbox(
-                        description=prec.value, value=False,) for prec in self.preconceptions]
-        output = widgets.VBox(checkboxes)
+        label = self.bogui.create_message('Which of the preconceptions\
+                                         was supported by this analysis?')
+        self.__checkbox_preconceptions = [
+                self.bogui.create_checkbox(prec.value) for prec in self.preconceptions
+                ]
+        output = widgets.VBox(self.__checkbox_preconceptions)
         display(label, output)
         grid = widgets.AppLayout(
-            header = self.bogui.create_message('Overall how satisfied you are in the analysis?'),
+            header = self.bogui.create_message('Overall how satisfied you are in this analysis?'),
             center = widgets.SelectionSlider(
                 options=['Very dissatisfied','Dissatisfied','Neutral','Satisfied','Very satisfied'],
                 value = 'Neutral',
@@ -336,9 +339,20 @@ class Inductive:
             footer = None)
         display(grid)
         display(self.buttons['save_results'])
-    
+
     def _save_results(self, _=None):
         clear_output(wait=True)
+        formated_text = '### Evaluation of the analysis \\n #### Your\
+                         analysis does not support these preconceptions: \\n'
+        for preconception in self.__checkbox_preconceptions:
+            if preconception.value is False and preconception.description != '':
+                text = f'- {preconception.description}\\n'
+                formated_text += text
+        if formated_text == '### Evaluation of the analysis \\n #### Your\
+                         analysis does not support these preconceptions: \\n':
+            formated_text = '### Evaluation of the analysis \\n #### The\
+                             analysis seems to have found what you thought it would.'
+        self.utils.create_markdown_cells_above(how_many=1, text=formated_text)
         self.next_step[0] = 'analysis_done'
 
     def _checkbox_preconceptions(self):
