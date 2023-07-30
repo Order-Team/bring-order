@@ -27,7 +27,7 @@ class TestInductive(unittest.TestCase):
         self.assertIsNone(self.instance.conclusion)
 
     def test_that_empty_summary_returns_false(self):
-        self.assertFalse(self.instance._check_value_not_empty(self.instance.summary.value))
+        self.assertFalse(self.instance._check_value_not_empty(self.instance.fields[2].value))
 
     def test_open_cells_button_is_created(self):
         self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
@@ -36,14 +36,14 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(len(self.instance.buttons), 11)
 
     def test_filled_summary_returns_true(self):
-        self.instance._notes.value = "Childrens' usage of psychosis medication has increased."
-        self.assertTrue(self.instance._check_value_not_empty(self.instance._notes))   
+        self.instance.fields[1].value = "Childrens' usage of psychosis medication has increased."
+        self.assertTrue(self.instance._check_value_not_empty(self.instance.fields[1]))   
 
     def test_new_observation_requires_notes(self):
         self.instance._check_value_not_empty = MagicMock()
         self.instance._check_value_not_empty.return_value = False
         self.instance._new_observation()
-        self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
+        self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
 
     def test_cell_count_cannot_be_less_than_zero(self):
         self.instance._delete_last_cell()
@@ -56,7 +56,7 @@ class TestInductive(unittest.TestCase):
 
     def test_open_cells_increases_cell_count_correctly(self):
         self.instance._cell_count = 3
-        self.instance._add_cells_int.value = 3
+        self.instance.fields[0].value = 3
         self.instance._open_cells()  
         self.assertEqual(6, self.instance._cell_count)  
         self.instance.utils.create_code_cells_above.assert_called()
@@ -69,16 +69,16 @@ class TestInductive(unittest.TestCase):
         self.instance._check_value_not_empty = MagicMock()
         self.instance._check_value_not_empty.return_value = False
         self.instance._new_observation()
-        self.assertEqual(self.instance.empty_notes_error.value, 'Observation field can not be empty')
+        self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
   
     def test_new_observation_is_saved(self):
-        self.instance.observations.append("There is a lot of noise.")
+        self.instance.lists[1].append("There is a lot of noise.")
         self.instance._check_value_not_empty = MagicMock()        
         self.instance.conclusion = MagicMock()
-        self.instance._notes.value = "The sample is too small."
+        self.instance.fields[1].value = "The sample is too small."
         self.instance._check_value_not_empty.return_value = True
         self.instance._new_observation()
-        self.assertEqual(2, len(self.instance.observations))
+        self.assertEqual(2, len(self.instance.lists[1]))
 
     def test_get_first_words_returns_correct_string_with_short_list(self):
         words = ['Short', 'list']
@@ -107,16 +107,16 @@ class TestInductive(unittest.TestCase):
 
     def test_format_observation_returns_correct_string(self):
         obs = 'The day is sunny.'
-        self.instance._notes.value = obs
-        self.instance.observations.append(obs)
+        self.instance.fields[1].value = obs
+        self.instance.lists[1].append(obs)
         text = self.instance._format_observation()
         correct = '#### Observation 1: The day is sunny\\nThe day is sunny.'
         self.assertEqual(text, correct)
 
     def test_format_observation_returns_correct_string_with_line_breaks(self):
         obs = 'The day is sunny.\nYesterday was sunny, too.'
-        self.instance._notes.value = obs
-        self.instance.observations.append(obs)
+        self.instance.fields[1].value = obs
+        self.instance.lists[1].append(obs)
         text = self.instance._format_observation()
         correct = '#### Observation 1: The day is sunny\\nThe day is sunny.<br />Yesterday was sunny, too.'
         self.assertEqual(text, correct)
@@ -124,35 +124,35 @@ class TestInductive(unittest.TestCase):
     def test_format_observation_returns_correct_observation_number_in_string(self):
         obs1 = 'The day is sunny.'
         obs2 = 'Dogs are sleeping.'
-        self.instance.observations.append(obs1)
-        self.instance.observations.append(obs2)
-        self.instance._notes.value = obs2
+        self.instance.lists[1].append(obs1)
+        self.instance.lists[1].append(obs2)
+        self.instance.fields[1].value = obs2
         text = self.instance._format_observation()
         correct = '#### Observation 2: Dogs are sleeping\\nDogs are sleeping.'
         self.assertEqual(text, correct)
 
     def test_format_summary_returns_correct_string(self):
-        self.instance.summary.value = "It's been a nice warm summer day today."
+        self.instance.fields[2].value = "It's been a nice warm summer day today."
         text = self.instance._format_summary()
         correct = "### Summary: It's been a nice warm...\\nIt's been a nice warm summer day today."
         self.assertEqual(text, correct)
 
     def test_format_summary_returns_correct_string_with_line_breaks(self):
-        self.instance.summary.value = 'Hot day.\nI would like to go swimming.'
+        self.instance.fields[2].value = 'Hot day.\nI would like to go swimming.'
         text = self.instance._format_summary()
         correct = '### Summary: Hot day\\nHot day.<br />I would like to go swimming.'
         self.assertEqual(text, correct)
 
     def test_preconceptions_has_one_item_after_creating_Inductive_object(self):
-        self.assertEqual(len(self.instance.preconceptions), 1)
+        self.assertEqual(len(self.instance.lists[0]), 1)
 
     def test_add_preconception_adds_item_to_list(self):
-        self.instance.preconceptions = [
+        self.instance.lists[0] = [
             widgets.Text(value='', placeholder='Preconception 1')
         ]
 
         self.instance._add_preconception()
-        self.assertEqual(len(self.instance.preconceptions), 2)
+        self.assertEqual(len(self.instance.lists[0]), 2)
 
     def test_start_inductive_analysis_creates_markdown_cell(self):
         self.instance.start_inductive_analysis()
@@ -162,14 +162,14 @@ class TestInductive(unittest.TestCase):
         self.assertFalse(self.instance._check_preconceptions())
 
     def test_check_preconceptions_returns_true_with_at_least_one_non_empty_value(self):
-        self.instance.preconceptions = [
+        self.instance.lists[0] = [
             widgets.Text(value='Test preconception', placeholder='Preconception 1'),
             widgets.Text(value='', placeholder='Preconception 2')
         ]
         self.assertTrue(self.instance._check_preconceptions())
 
     def test_format_preconceptions_returns_correct_string(self):
-        self.instance.preconceptions = [
+        self.instance.lists[0] = [
             widgets.Text(value='Dogs like treats', placeholder='Preconception 1'),
             widgets.Text(value='Chicken is the most popular flavor', placeholder='Preconception 2')
         ]
@@ -184,19 +184,19 @@ class TestInductive(unittest.TestCase):
         self.instance.utils.create_markdown_cells_above.assert_not_called()
 
     def test_save_preconceptions_filters_empty_input_fields(self):
-        self.instance.preconceptions = [
+        self.instance.lists[0] = [
             widgets.Text(value='Dogs like treats', placeholder='Preconception 1'),
             widgets.Text(value='', placeholder='Preconception 2'),
             widgets.Text(value='Chicken is the most popular flavor', placeholder='Preconception 3'),
             widgets.Text(value='', placeholder='Preconception 4')
         ]
         self.instance._save_preconceptions()
-        self.assertEqual(len(self.instance.preconceptions), 2)
-        self.assertEqual(self.instance.preconceptions[0].value, 'Dogs like treats')
-        self.assertEqual(self.instance.preconceptions[1].value, 'Chicken is the most popular flavor')
+        self.assertEqual(len(self.instance.lists[0]), 2)
+        self.assertEqual(self.instance.lists[0][0].value, 'Dogs like treats')
+        self.assertEqual(self.instance.lists[0][1].value, 'Chicken is the most popular flavor')
 
     def test_save_preconceptions_creates_markdown_cell(self):
-        self.instance.preconceptions[0].value = 'Dogs like treats'
+        self.instance.lists[0][0].value = 'Dogs like treats'
         text = '### Preconceptions\\n- Dogs like treats\\n### Data analysis'
         self.instance._save_preconceptions()
         self.instance.utils.create_markdown_cells_above.assert_called_with(
@@ -205,13 +205,13 @@ class TestInductive(unittest.TestCase):
         
     def test_save_preconceptions_calls_create_cell_operations(self):
         self.instance._create_cell_operations = Mock()
-        self.instance.preconceptions[0].value = 'Dogs like treats'
+        self.instance.lists[0][0].value = 'Dogs like treats'
         self.instance._save_preconceptions()
         self.instance._create_cell_operations.assert_called()
 
     def test_open_cells_does_not_open_negative_amount_of_cells(self):
         self.instance._cell_count = 3
-        self.instance._add_cells_int.value = -2
+        self.instance.fields[0].value = -2
         self.instance._open_cells()  
         self.assertEqual(self.instance._cell_count, 3)  
         self.instance.utils.create_code_cells_above.assert_not_called()
@@ -252,14 +252,14 @@ class TestInductive(unittest.TestCase):
         self.instance._display_summary.assert_called_with(error='You must write some kind of summary')
 
     def test_submit_summary_creates_markdown_cell(self):
-        self.instance.summary.value = 'They lived happily ever after.'
+        self.instance.fields[2].value = 'They lived happily ever after.'
         text = '### Summary: They lived happily ever after\\nThey lived happily ever after.'
         self.instance._submit_summary()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_submit_summary_calls_new_analysis(self):
         self.instance._evaluation_of_analysis = Mock()
-        self.instance.summary.value = 'They lived happily ever after.'
+        self.instance.fields[2].value = 'They lived happily ever after.'
         self.instance._submit_summary()
         self.instance._evaluation_of_analysis.assert_called()
     """

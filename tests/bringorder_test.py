@@ -22,21 +22,20 @@ class TestBringOrder(unittest.TestCase):
     def test_representation(self):
         printed = self.instance.__repr__()
         self.assertEqual(printed, '')
-#
-#     def test_deductive_start(self):
-#         self.instance.deductive.start_deductive_analysis = MagicMock()
-#         self.instance.deductive_button = Mock()
-#         self.instance.inductive_button = Mock()
-#         self.instance.start_deductive_analysis()
-#         self.instance.deductive.start_deductive_analysis.assert_called()
-#
-    @patch('bring_order.bringorder.BringOrder.get_next', side_effect=['start_analysis', 'inductive_analysis', 'exit'])
+
+    @patch('bring_order.bringorder.BringOrder.get_next', side_effect=['start_analysis', 'inductive_analysis', 'analysis_done' ,'exit'])
     def test_bring_order_exit(self, x):
         self.instance.start_analysis = MagicMock()
-        self.instance.start_analysis.return_value = 'exit'
+        #self.instance.start_analysis.return_value = 'exit'
         self.instance.bring_order()
         self.instance.get_next.assert_called()
         self.instance.boutils.delete_cell_from_current.assert_called()
 
-#    def test_inductive_start(self):
-#        self.instance.start_inductive_analysis.assert_called()
+    @patch('bring_order.bringorder.BringOrder.get_next', side_effect=['start_analysis', 'deductive_analysis', 'new_data'])
+    def test_bring_order_new_data(self, x):
+        self.instance.start_analysis = MagicMock()
+        self.instance.bring_order()
+        self.instance.get_next.assert_called()
+        self.instance.boutils.execute_cell_from_current.assert_called()
+
+

@@ -116,3 +116,15 @@ class BOGui:
         file_chooser = FileChooser()
 
         return file_chooser
+
+    def create_int_slider(self):
+        '''Creates a Numeric Slider'''
+        slider = widgets.IntSlider(
+            value=50, min=0, max=100, step=5,
+            description='', disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True, readout_format='d'
+        )
+
+        return slider
