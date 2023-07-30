@@ -1,26 +1,48 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
-from IPython.display import display, clear_output, Javascript
+from IPython.display import display, clear_output
 
 class Inductive:
     """Class that guides inductive analysis"""
 
     def __init__(self, bogui, boutils, next_step):
-        """Class constructor."""
+        """Class constructor.
+            Args:
+                bogui:
+                boutils:
+                next_step:
+            
+            lists:  0 = list of preconseptions, 
+                    1 = list of observations
+                    2 = list of preconseption checkboxes
+            fields: text and integer fiels
+                    0 = number of cells
+                    1 = observation field (note)
+                    2 = summary field
+                    3 = error message
+                    4 = pre-evaluation slider
+                    5 = post-evaluation slider
+        """
 
         self.bogui = bogui
         self.utils = boutils
         self.next_step = next_step
         self._cell_count = 0
-        self.buttons = self.bogui.init_buttons(self.button_list)
-        self.preconceptions = [self.bogui.create_input_field('', 'Preconception 1')]
-        self._add_cells_int = self.bogui.create_int_text()
-        self._notes = self.bogui.create_text_area()
         self.conclusion = None
-        self.summary = self.bogui.create_text_area('', 'Summary')
-        self.empty_notes_error = self.bogui.create_error_message()
-        self.observations = []
-        self.__checkbox_preconceptions = []
+        self.buttons = self.bogui.init_buttons(self.button_list)
+        self.lists = [
+            [self.bogui.create_input_field('', 'Preconception 1')],
+            [],
+            []
+        ]
+        self.fields = [
+            self.bogui.create_int_text(),
+            self.bogui.create_text_area(),
+            self.bogui.create_text_area('', 'Summary'),
+            self.bogui.create_error_message(),
+            self.bogui.create_int_slider(),
+            self.bogui.create_int_slider()
+        ]
 
     @property
     def button_list(self):
@@ -55,8 +77,8 @@ class Inductive:
     def _add_preconception(self, _=None):
         """Button function to add new preconception."""
 
-        self.preconceptions.append(
-            self.bogui.create_input_field('', f'Preconception {len(self.preconceptions) + 1}')
+        self.lists[0].append(
+            self.bogui.create_input_field('', f'Preconception {len(self.lists[0]) + 1}')
         )
 
         clear_output(wait=True)
@@ -65,7 +87,7 @@ class Inductive:
     def _check_preconceptions(self):
         """Checks that at least one of the preconceptions has a non-empty value."""
 
-        for item in self.preconceptions:
+        for item in self.lists[0]:
             if item.value != '':
                 return True
 
@@ -79,7 +101,7 @@ class Inductive:
         """
 
         formatted_preconceptions = '### Preconceptions\\n'
-        for item in self.preconceptions:
+        for item in self.lists[0]:
             preconception_text = f'- {item.value}\\n'
             formatted_preconceptions += preconception_text
 
@@ -93,9 +115,9 @@ class Inductive:
 
         if self._check_preconceptions():
             # Remove empty preconceptions from the list
-            self.preconceptions = list(filter(
+            self.lists[0] = list(filter(
                 lambda text_input: text_input.value != '',
-                self.preconceptions
+                self.lists[0]
             ))
 
             self.utils.create_markdown_cells_above(
@@ -118,7 +140,7 @@ class Inductive:
 
         preconception_grid = widgets.AppLayout(
             header=preconceptions_label,
-            center=widgets.VBox(self.preconceptions),
+            center=widgets.VBox(self.lists[0]),
             footer=widgets.VBox([
                 self.bogui.create_error_message(error),
                 widgets.HBox([
@@ -135,9 +157,9 @@ class Inductive:
     def _open_cells(self, _=None):
         """Open cells button function that opens the selected number of code cells."""
 
-        if self._add_cells_int.value > 0:
-            self._cell_count += self._add_cells_int.value
-            self.utils.create_code_cells_above(self._add_cells_int.value)
+        if self.fields[0].value > 0:
+            self._cell_count += self.fields[0].value
+            self.utils.create_code_cells_above(self.fields[0].value)
 
     def _delete_last_cell(self, _=None):
         """Delete last cell button function."""
@@ -177,8 +199,8 @@ class Inductive:
 
         notes_label = self.bogui.create_label(value='Explain what you observed:')
         self.conclusion = widgets.VBox([
-            widgets.HBox([notes_label, self._notes]),
-            self.empty_notes_error,
+            widgets.HBox([notes_label, self.fields[1]]),
+            self.fields[3],
             self.buttons['submit_obs']
         ])
 
@@ -215,9 +237,9 @@ class Inductive:
             formatted_obs (str)
         """
 
-        formatted_obs = f'#### Observation {len(self.observations)}: '
+        formatted_obs = f'#### Observation {len(self.lists[1])}: '
 
-        notes_list = self._notes.value.split('\n')
+        notes_list = self.fields[1].value.split('\n')
         first_line_list = notes_list[0].split(' ')
         first_words = self._get_first_words(first_line_list)
         formatted_obs += f'{first_words}\\n'
@@ -230,18 +252,18 @@ class Inductive:
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count."""
 
-        if self._check_value_not_empty(self._notes.value):
-            self.observations.append(self._notes.value)
+        if self._check_value_not_empty(self.fields[1].value):
+            self.lists[1].append(self.fields[1].value)
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)
             self._buttons_disabled(False)
-            self.empty_notes_error.value = ''
+            self.fields[3].value = ''
             self.conclusion.close()
-            self._notes.value = ''
+            self.fields[1].value = ''
             self._cell_count = 0
 
         else:
-            self.empty_notes_error.value = 'Observation field can not be empty'
+            self.fields[3].value = 'Observation field can not be empty'
 
     def _execute_ready(self, _=None):
         """Button function for Ready to summarize button."""
@@ -253,7 +275,7 @@ class Inductive:
 
         observations = "<ul>\n"
         observations += "\n".join(["<li>" + observation + "</li>"
-                                 for observation in self.observations])
+                                 for observation in self.lists[1]])
         observations += "\n</ul>"
 
         observation_list = widgets.HTML(
@@ -263,7 +285,7 @@ class Inductive:
         error_message = self.bogui.create_error_message(value=error)
         grid = widgets.VBox([
             observation_list,
-            widgets.HBox([summary_label, self.summary]),
+            widgets.HBox([summary_label, self.fields[2]]),
             error_message,
             self.buttons['submit_sum']
         ])
@@ -280,7 +302,7 @@ class Inductive:
 
         formatted_summary = '### Summary: '
 
-        summary_list = self.summary.value.split('\n')
+        summary_list = self.fields[2].value.split('\n')
         first_line_list = summary_list[0].split(' ')
         first_words = self._get_first_words(first_line_list)
         formatted_summary += f'{first_words}\\n'
@@ -293,7 +315,7 @@ class Inductive:
     def _submit_summary(self, _=None):
         """Button function to submit summary."""
 
-        if not self._check_value_not_empty(self.summary.value):
+        if not self._check_value_not_empty(self.fields[2].value):
             self._display_summary(error='You must write some kind of summary')
             return
 
@@ -307,57 +329,55 @@ class Inductive:
         grid = widgets.AppLayout(
             header = self.bogui.create_message(
                         'Evaluate how did this analysis met preconceptions?'),
-            center = widgets.IntSlider(value=50, min=0, max=100, step=5,
-                                        description='', disabled=False,
-                                        continuous_update=False,
-                                        orientation='horizontal',
-                                        readout=True, readout_format='d'
-                                        ),
+            center = self.fields[4],
             right_sidebar = self.buttons['lock'],
             footer = None
             )
         display(grid)
 
     def _lock_evaluation_pressed(self, _=None):
+        #self.utils.create_markdown_cells_above(
+        #    how_many=1,
+        #    text=f'According to the pre-evaluation, the analysis was\
+        #           approximately {self.fields[4].value} % in line with the\
+        #           preconceptions. '
+        #)
         clear_output(wait=False)
         label = self.bogui.create_message('Which of the preconceptions\
                                          was supported by this analysis?')
-        self.__checkbox_preconceptions = [
-                self.bogui.create_checkbox(prec.value) for prec in self.preconceptions
+        self.lists[2] = [
+                self.bogui.create_checkbox(prec.value) for prec in self.lists[0]
                 ]
-        output = widgets.VBox(self.__checkbox_preconceptions)
+        output = widgets.VBox(self.lists[2])
         display(label, output)
         grid = widgets.AppLayout(
-            header = self.bogui.create_message('Overall how satisfied you are in this analysis?'),
-            center = widgets.SelectionSlider(
-                options=['Very dissatisfied','Dissatisfied','Neutral','Satisfied','Very satisfied'],
-                value = 'Neutral',
-                description='',
-                disabled=False, continuous_update=False,
-                orientation='horizontal', readout=True
-            ),
+            header = self.bogui.create_message('Evaluate the analysis again after\
+                                                 checking the preconceptions'),
+            center = self.fields[5],
             footer = None)
         display(grid)
         display(self.buttons['save_results'])
 
     def _save_results(self, _=None):
         clear_output(wait=True)
-        formated_text = '### Evaluation of the analysis \\n #### Your\
-                         analysis does not support these preconceptions: \\n'
-        for preconception in self.__checkbox_preconceptions:
+        formated_text = '#### The analysis did not support these preconceptions: \\n'
+        for preconception in self.lists[2]:
             if preconception.value is False and preconception.description != '':
-                text = f'- {preconception.description}\\n'
+                text = f'- {preconception.description} \\n'
                 formated_text += text
-        if formated_text == '### Evaluation of the analysis \\n #### Your\
-                         analysis does not support these preconceptions: \\n':
-            formated_text = '### Evaluation of the analysis \\n #### The\
-                             analysis seems to have found what you thought it would.'
+        if formated_text == '#### The analysis did not support these preconceptions: \\n':
+            formated_text = '#### The analysis appears to have found\
+                             what it was supposed to find.\\n'
         self.utils.create_markdown_cells_above(how_many=1, text=formated_text)
+        text = f'### Evaluation of the analysis \\n #### According to the evaluation,\
+             the analysis was approximately {self.fields[5].value} % in line with the\
+             preconceptions.'
+        self.utils.create_markdown_cells_above(how_many=1, text=text)
         self.next_step[0] = 'analysis_done'
 
     def _checkbox_preconceptions(self):
         clear_output(wait=False)
-        checkboxes = [self.bogui.create_checkbox(prec) for prec in self.preconceptions]
+        checkboxes = [self.bogui.create_checkbox(prec) for prec in self.lists[0]]
         output = widgets.VBox(children=checkboxes)
         display(output)
 
@@ -387,7 +407,7 @@ class Inductive:
         )
 
         grid = widgets.GridspecLayout(2, 3, height='auto', width='100%')
-        grid[0, 0] = widgets.HBox([cell_number_label, self._add_cells_int])
+        grid[0, 0] = widgets.HBox([cell_number_label, self.fields[0]])
         grid[:, 1] = cell_buttons
         grid[1, 2] = self.buttons['ready']
 
