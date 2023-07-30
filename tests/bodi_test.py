@@ -4,9 +4,9 @@ from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
-from IPython import display
 import pandas as pd
 import scipy.stats as stats
+from bring_order.limitations import Limitations
 
 class TestBodi(unittest.TestCase):
 
@@ -16,9 +16,10 @@ class TestBodi(unittest.TestCase):
         self.instance = Bodi(BOUtils(), BOGui(), next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
+        self.instance.limitations = Mock()
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 7)
+        self.assertEqual(len(self.instance.buttons), 5)
 
     def test_start_data_hides_current_input(self):
         self.instance.title.value = 'Some title'
@@ -26,13 +27,6 @@ class TestBodi(unittest.TestCase):
         self.instance.data_description.value = 'Some description'
         self.instance.start_data_import()
         self.instance.boutils.hide_current_input.assert_called()
-
-    def test_check_limitations_returns_false_when_empty(self):
-        self.assertFalse(self.instance.check_limitations())
-
-    def test_check_limitations_returns_true_when_not_empty(self):
-        value = "Some limitations"
-        self.assertTrue(self.instance.check_limitations(value))
 
     def test_open_cells_increases_cell_count_with_default_one(self):
         correct_cell_count = self.instance.cell_count + 1
@@ -71,9 +65,8 @@ class TestBodi(unittest.TestCase):
         self.instance.boutils.delete_cell_above.asset_called()
 
     def test_start_analysis_clicked_checks_limitations(self):
-        self.instance.call_check_limitation = Mock()
         self.instance.start_analysis_clicked()
-        self.instance.call_check_limitation.assert_called()
+        self.instance.limitations.call_check_limitation.assert_called()
 
     def test_format_data_description_returns_correct_string(self):
         self.instance.title.value = 'My title'
@@ -91,23 +84,6 @@ class TestBodi(unittest.TestCase):
         correct = '# My title\\n ## Data: My data\\n ### Description: \\nList of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
 
-    def test_format_limitations_returns_correct_string(self):
-        self.instance.data_limitations[0].value = 'Limitation0'
-        self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
-        text = self.instance.format_limitations()
-        correct = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
-        self.assertEqual(text, correct)
-
-    def test_add_limitation_adds_limitation_input_to_list(self):
-        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
-            value=f'{dv}',
-            placeholder=f'{ph}')
-        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
-        self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 2)
-        self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 3)
-
     def test_run_cells_runs_the_correct_amount_of_cells(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
@@ -115,34 +91,19 @@ class TestBodi(unittest.TestCase):
         self.instance.run_cells()
         self.instance.boutils.run_cells_above.assert_called_with(3)
 
-    def test_call_check_limitation_returns_false_when_one_limitation_is_empty(self):
-        self.instance.data_limitations.append(widgets.Text('Limitation'))
-        self.instance.data_limitations.append(widgets.Text(''))
-        self.assertFalse(self.instance.call_check_limitation())
-
-    def test_call_check_limitation_returns_true_with_no_empty_limitations(self):
-        self.instance.data_limitations[0].value = 'Limitation0'
-        for n in range(1,3):
-            self.instance.data_limitations.append(
-                widgets.Text(f'Limitation{n}')
-            )
-        self.assertTrue(self.instance.call_check_limitation())
-
     def test_start_analysis_clicked_creates_markdown_cell(self):
-        self.instance.data_limitations[0].value = 'Limitation0'
-        self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
-        text = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
+        self.instance.limitations.format_limitations = MagicMock()
+        text = self.instance.limitations.format_limitations.return_value = '### Limitations\\n- Limitation0\\n- Limitation1\\n'        
+        self.instance.limitations.call_check_limitation = MagicMock()
+        self.instance.limitations.call_check_limitation.return_value = True
         self.instance.start_analysis_clicked()
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_start_analysis_clicked_sets_error_message_if_limitations_are_empty(self):
-        self.assertEqual(self.instance.empty_limitations_error.value, '')
-        self.instance.data_limitations.append(widgets.Text(''))
+        self.instance.limitations.call_check_limitation = MagicMock()
+        self.instance.limitations.call_check_limitation.return_value = False
         self.instance.start_analysis_clicked()
-        self.assertEqual(
-            self.instance.empty_limitations_error.value,
-            'Data limitations cannot be empty'
-        )
+        self.instance.limitations.set_error_value.assert_called_with('Data limitations cannot be empty')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_data_name_empty(self):
@@ -179,21 +140,7 @@ class TestBodi(unittest.TestCase):
         self.instance.open_cells()
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
-
-    def test_remove_limitation_removes_limitations(self):
-        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
-            value=f'{dv}',
-            placeholder=f'{ph}')
-        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
-        self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 2)
-        self.instance.remove_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 1)
-        
-    def test_last_limitation_is_not_removed(self):
-        self.instance.remove_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 1)
-
+   
     def test_normally_distributed_data_returns_true(self):
         numbers = [345, 346, 347, 500, 200, 400, 100]
         result = self.instance._is_normally_distributed(numbers)

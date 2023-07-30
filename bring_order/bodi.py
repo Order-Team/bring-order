@@ -4,6 +4,7 @@ from IPython.display import display, clear_output
 import pandas as pd
 from scipy import stats
 from pandas import read_csv
+from limitations import Limitations
 
 
 
@@ -21,9 +22,7 @@ class Bodi:
         self.data_description = self.bogui.create_text_area()
         self.add_cells_int = self.bogui.create_int_text()
         self.import_grid = self.data_import_grid()
-        self.data_limitations = [self.bogui.create_input_field('', 'Limitation 1')]
-        self.limitation_grid = None
-        self.empty_limitations_error = self.bogui.create_error_message()
+        self.limitations = Limitations(self.bogui, self.boutils)
         self.file_chooser = self.bogui.create_file_chooser()
         self.dataframe = pd.DataFrame()
         self.next_step = next_step
@@ -35,17 +34,13 @@ class Bodi:
         Returns:
             list of tuples in format (tag: str, description: str, command: func, style: str)
         """
-
         button_list = [
             ('save', 'Save description', self.start_data_import, 'success'),
             ('open', 'Open cells', self.open_cells, 'warning'),
             ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
             ('run', 'Run cells', self.run_cells, 'primary'),
-            ('add', 'Add limitation', self.add_limitation, 'primary'),
-            ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
-            ('remove', 'Remove limitation', self.remove_limitation, 'warning')
+            ('start', 'Start analysis', self.start_analysis_clicked, 'success')
         ]
-
         return button_list
 
     def data_import_grid(self):
@@ -62,7 +57,6 @@ class Bodi:
             ])
         return grid
 
-
     def open_cells(self, _=None):
         """Button function that opens selected number of cells above widget cell"""
         if self.add_cells_int.value > 0:
@@ -78,87 +72,12 @@ class Bodi:
     def run_cells(self, _=None):
         """Button function that runs data import cells"""
         self.boutils.run_cells_above(self.cell_count)
-        if self.limitation_grid:
-            self.limitation_grid.close()
-        self.display_limitations()
-
-    def add_limitation(self, _=None):
-        """Button function to add new limitation"""
-        if self.limitation_grid:
-            self.limitation_grid.close()
-        self.data_limitations.append(self.bogui.create_input_field
-                                    ('',f'Limitation {len(self.data_limitations)+1}'))
-        self.empty_limitations_error.value = ''
-        self.display_limitations()
-
-    def remove_limitation(self, _=None):
-        """Button function to remove a limitation field"""
-        if len(self.data_limitations) > 1:
-            # implementation
-            self.data_limitations.pop()
-            self.limitation_grid.close()
-            self.empty_limitations_error.value = ''
-            self.display_limitations()
-
-    def display_limitations(self):
-        """Shows text boxes and buttons for adding limitations"""
-        limitations_label = self.bogui.create_message(
-                value='Identify limitations to the data: what kind of\
-                questions cannot be answered with it?')
-
-        limitation_grid = widgets.VBox(self.data_limitations)
-
-        self.limitation_grid = widgets.AppLayout(
-            header=limitations_label,
-            center=limitation_grid,
-            footer=widgets.VBox([
-                self.empty_limitations_error,
-                widgets.HBox([
-                    self.buttons['start'],
-                    self.buttons['add'],
-                    self.buttons['remove']
-                ])
-            ]),
-            pane_heights=['30px', 1, '70px'],
-            grid_gap='12px'
-        )
-        display(self.limitation_grid)
-
-    def check_limitations(self, item=''):
-        """Checks that limitations have been given or commented"""
-        if item == '':
-            return False
-        return True
-
-    def call_check_limitation(self):
-        """Checks that none of the limitations is empty"""
-        for limitation in self.data_limitations:
-            if not self.check_limitations(limitation.value):
-                return False
-        return True
-
-    def format_limitations(self):
-        """Formats limitations for markdown to prevent Javascript error        
-        Returns:
-            formatted_limitations (str)
-        """
-        formatted_limitations = '### Limitations\\n'
-        for item in self.data_limitations:
-            limitation = '<br />'.join(item.value.split('\n'))
-            limitation_text = f'- {limitation}\\n'
-            formatted_limitations += limitation_text
-
-        return formatted_limitations
-
-    def start_analysis_clicked(self, _=None):
-        """Button function to start analysis after data preparation"""
-        if self.call_check_limitation():
-            text = self.format_limitations()
-            self.boutils.create_markdown_cells_above(1, text=text)
-            clear_output(wait=True)
-            self.next_step[0] = 'start_analysis'
-        else:
-            self.empty_limitations_error.value = 'Data limitations cannot be empty'
+        if self.limitations.limitation_grid:
+            self.limitations.limitation_grid.close()
+        self.limitations.display_limitations()
+        #if self.buttons['start']:
+        #    self.buttons['start'].close()
+        display(self.buttons['start'])    
 
     def format_data_description(self):
         """Formats data description for markdown
@@ -171,15 +90,25 @@ class Bodi:
         description = '<br />'.join(self.data_description.value.split('\n'))
         formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: \\n{description}'
         return formatted_text
+    
+    def start_analysis_clicked(self, _=None):
+        """Button function to start analysis after data preparation"""
+        if self.limitations.call_check_limitation():
+            text = self.limitations.format_limitations()
+            self.boutils.create_markdown_cells_above(1, text=text)
+            clear_output(wait=True)
+            self.next_step[0] = 'start_analysis'
+        else:
+            self.limitations.set_error_value('Data limitations cannot be empty')    
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
         if self.title.value == '':
-            self.bodi(error='Please give your study a title')
+            self.bodi(error = 'Please give your study a title')
         elif self.data_name.value == '':
-            self.bodi(error='You must name the data set')
+            self.bodi(error = 'You must name the data set')
         elif self.data_description.value == '':
-            self.bodi(error='You must give some description of the data')
+            self.bodi(error = 'You must give some description of the data')
 
         else:
             self.boutils.hide_current_input()
