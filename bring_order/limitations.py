@@ -1,10 +1,8 @@
 from ipywidgets import widgets
-from IPython.display import display, clear_output
-import pandas as pd
-from scipy import stats
+from IPython.display import display
 
 class Limitations:
-
+    '''Manages data limitations trough different phases of analysis'''
     def __init__(self, bogui, boutils):
         self.bogui = bogui
         self.boutils = boutils
