@@ -24,6 +24,7 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('README.md');
   await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -66,6 +67,7 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('README.md');
   await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -107,6 +109,7 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('README.md');
   await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
