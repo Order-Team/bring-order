@@ -14,15 +14,15 @@ class TestBodi(unittest.TestCase):
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
         self.instance.limitations = Mock()
+        self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
+        self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
+        self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 5)
+        self.assertEqual(len(self.instance.buttons), 8)
 
-    def test_start_data_hides_current_input(self):
-        self.instance.title.value = 'Some title'
-        self.instance.data_name.value = 'Some data'
-        self.instance.data_description.value = 'Some description'
-        self.instance.start_data_import()
+    def test_bodi_hides_current_input(self):
+        self.instance.bodi()
         self.instance.boutils.hide_current_input.assert_called()
 
     def test_open_cells_increases_cell_count_with_default_one(self):
@@ -70,7 +70,7 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.'
         text = self.instance.format_data_description()
-        correct = '# My title\\n ## Data: My data\\n ### Description: \\nList of integers.'
+        correct = '# My title\\n ## Data: My data\\n ### Description\\nList of integers.'
         self.assertEqual(text, correct)
 
     def test_format_data_description_returns_correct_string_with_new_line(self):
@@ -78,7 +78,7 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'List of integers.\nAscending order.'
         text = self.instance.format_data_description()
-        correct = '# My title\\n ## Data: My data\\n ### Description: \\nList of integers.<br />Ascending order.'
+        correct = '# My title\\n ## Data: My data\\n ### Description\\nList of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
 
     def test_run_cells_runs_the_correct_amount_of_cells(self):
@@ -122,15 +122,8 @@ class TestBodi(unittest.TestCase):
         self.instance.data_name.value = 'My data'
         self.instance.data_description.value = 'The sample size is 100.'
         self.instance.start_data_import()
-        text = '# My title\\n ## Data: My data\\n ### Description: \\nThe sample size is 100.'
+        text = '# My title\\n ## Data: My data\\n ### Description\\nThe sample size is 100.'
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
-
-    def test_start_data_import_increases_cell_count(self):
-        self.instance.title.value = 'My title'
-        self.instance.data_name.value = 'My data'
-        self.instance.data_description.value = 'The sample size is 100.'
-        self.instance.start_data_import()
-        self.assertEqual(self.instance.cell_count, 1)
 
     def test_open_cells_does_not_open_negative_amount_of_cells(self):
         self.instance.add_cells_int.value = -1

@@ -1,4 +1,4 @@
-'''Bring Order Data Import and preparation. '''
+"""Bring Order Data Import and preparation."""
 from ipywidgets import widgets
 from IPython.display import display, clear_output
 import pandas as pd
@@ -6,7 +6,7 @@ from limitations import Limitations
 from stattests import Stattests
 
 class Bodi:
-    '''Creates code cells for importing data and markdown cell(s) to describe data limitations'''
+    """Creates code cells for importing data and markdown cell(s) to describe data limitations"""
     def __init__(self, boutils, bogui, next_step):
         """Class constructor
         """
@@ -18,7 +18,6 @@ class Bodi:
         self.data_name = self.bogui.create_input_field()
         self.data_description = self.bogui.create_text_area()
         self.add_cells_int = self.bogui.create_int_text()
-        self.import_grid = self.data_import_grid()
         self.limitations = Limitations(self.bogui, self.boutils)
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
@@ -33,6 +32,9 @@ class Bodi:
         """
         button_list = [
             ('save', 'Save description', self.start_data_import, 'success'),
+            ('analyze', 'Analyze this data', self.check_variables, 'success'),
+            ('import', 'Import manually', self.show_cell_operations, 'primary'),
+            ('continue', 'Continue', self.show_cell_operations, 'primary'),
             ('open', 'Open cells', self.open_cells, 'warning'),
             ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
             ('run', 'Run cells', self.run_cells, 'primary'),
@@ -52,7 +54,14 @@ class Bodi:
             self.buttons['run'],
             self.buttons['delete']
             ])
+
         return grid
+
+    def show_cell_operations(self, _=None):
+        """Button function to show buttons for cell operations."""
+
+        clear_output(wait=True)
+        display(self.data_import_grid())
 
     def open_cells(self, _=None):
         """Button function that opens selected number of cells above widget cell"""
@@ -62,7 +71,7 @@ class Bodi:
 
     def delete_last_cell(self, _=None):
         """Button function to delete the last data import code cell"""
-        if self.cell_count > 1:
+        if self.cell_count > 0:
             self.boutils.delete_cell_above()
             self.cell_count -= 1
 
@@ -72,9 +81,8 @@ class Bodi:
         if self.limitations.limitation_grid:
             self.limitations.limitation_grid.close()
         self.limitations.display_limitations()
-        #if self.buttons['start']:
-        #    self.buttons['start'].close()
-        display(self.buttons['start'])    
+
+        display(self.buttons['start'])
 
     def format_data_description(self):
         """Formats data description for markdown
@@ -85,9 +93,9 @@ class Bodi:
         title = f'# {self.title.value}'
         dataset = f'{self.data_name.value}'
         description = '<br />'.join(self.data_description.value.split('\n'))
-        formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description: \\n{description}'
+        formatted_text = f'{title}\\n ## Data: {dataset}\\n ### Description\\n{description}'
         return formatted_text
-    
+
     def start_analysis_clicked(self, _=None):
         """Button function to start analysis after data preparation"""
         if self.limitations.call_check_limitation():
@@ -96,7 +104,93 @@ class Bodi:
             clear_output(wait=True)
             self.next_step[0] = 'start_analysis'
         else:
-            self.limitations.set_error_value('Data limitations cannot be empty')    
+            self.limitations.set_error_value('Data limitations cannot be empty')
+
+    def fc_callback(self):
+        """Opens two code cells to import pandas and read a csv file
+        after the user has selected the file."""
+
+        if self.file_chooser.selected.endswith('.csv'):
+            self.file_chooser.title = self.file_chooser.selected_filename
+            self.boutils.create_code_cells_above(2)
+            self.boutils.execute_cell_from_current(
+                distance=-2,
+                code='import pandas as pd',
+                hide_input=False
+            )
+            self.boutils.execute_cell_from_current(
+                distance=1,
+                code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
+                hide_input=False
+            )
+            self.file_chooser.register_callback(self.fc_callback_on_change)
+            clear_output(wait=True)
+            display(widgets.VBox([
+                self.file_chooser,
+                self.buttons['analyze']
+            ]))
+
+        else:
+            self.file_chooser.title = 'Unknown file type, choose a csv file or import manually.'
+            clear_output(wait=True)
+            display(widgets.VBox([
+                self.file_chooser,
+                self.buttons['import']
+            ]))
+
+    def fc_callback_on_change(self):
+        """Reads another csv file without importing pandas."""
+
+        if self.file_chooser.selected.endswith('.csv'):
+            self.file_chooser.title = self.file_chooser.selected_filename
+            self.boutils.execute_cell_from_current(
+                distance=-1,
+                code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
+                hide_input=False
+            )
+            clear_output(wait=True)
+            display(widgets.VBox([
+                self.file_chooser,
+                self.buttons['analyze']
+            ]))
+
+        else:
+            self.file_chooser.title = 'Unknown file type, choose a csv file or import manually.'
+            clear_output(wait=True)
+            display(widgets.VBox([
+                self.file_chooser,
+                self.buttons['import']
+            ]))
+
+    def check_normal_distribution(self):
+        """Checks which variables are not normally distributed and returns a message."""
+
+        message = 'All the numerical data variables seem to be normally distributed.'
+        data_frame = pd.read_csv(self.file_chooser.selected)
+        n_distributed = self.stattests.check_numerical_data(data_frame)
+        self.stattests.dataset = data_frame
+        values_ok = []
+        for key, val in n_distributed.items():
+            if not val:
+                values_ok.append(key)
+        if len(values_ok) > 0:
+            indexes = ', '.join(values_ok)
+            message = f'Attention! The following data variables are not normally distributed:\
+                {indexes}.'
+
+        return message
+
+    def check_variables(self, _=None):
+        """Button function to check if data variables are normally distributed
+        and to let the user check if selected data variables are independent."""
+
+        clear_output(wait=True)
+        normal_dist_result = self.bogui.create_message(self.check_normal_distribution())
+        display(widgets.VBox([
+            normal_dist_result,
+            self.stattests.select_variables(),
+            self.buttons['continue']
+        ]))
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
@@ -108,40 +202,16 @@ class Bodi:
             self.bodi(error = 'You must give some description of the data')
 
         else:
-            self.boutils.hide_current_input()
+            self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             clear_output(wait=True)
 
-            def fc_callback():
-                self.file_chooser.title = self.file_chooser.selected_filename
-                if self.file_chooser.selected.endswith('.csv'):
-                    data_frame = pd.read_csv(self.file_chooser.selected)
-                    n_distributed = self.stattests.check_numerical_data(data_frame)
-                    self.stattests.dataset = data_frame
-                    values_ok = []
-                    for key, val in n_distributed.items():
-                        if not val:
-                            values_ok.append(key)
-                    if len(values_ok) > 0:
-                        indexes = ', '.join(values_ok)
-                        self.file_chooser.title = f'Attention! Following data in index(es):\
-                                                {indexes} are not normally distributed.'
-                else:
-                    self.file_chooser.title = 'Unknown file type, please import manually'
-                self.import_grid.layout.visibility = 'visible'
-
-            self.file_chooser.register_callback(fc_callback)
-            self.file_chooser.title = 'Choose a data file'
-            self.import_grid.layout.visibility = 'hidden'
-            display(widgets.VBox([
-                self.file_chooser,
-                self.import_grid
-                ]))
-
-            self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
-            self.cell_count += 1
+            self.file_chooser.register_callback(self.fc_callback)
+            self.file_chooser.title = 'Choose a data file:'
+            display(self.file_chooser)
 
     def bodi(self, error=''):
         """Main function"""
+        self.boutils.hide_current_input()
         clear_output(wait=True)
         question = self.bogui.create_message('What kind of data are you using?')
         title_label = self.bogui.create_label('Main title of your research:')
@@ -168,12 +238,12 @@ class Bodi:
             pane_widths=[1, 5, 0],
             grid_gap='10px'
         )
+
         display(grid)
-        if 'data_name' in error:
+
+        if 'name' in error:
             self.data_name.focus()
         elif 'description' in error:
             self.data_description.focus()
         else:
             self.title.focus()
-
-

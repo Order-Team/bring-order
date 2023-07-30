@@ -23,18 +23,12 @@ class TestStattests(unittest.TestCase):
 
     def test_cannot_test_independence_without_imported_data(self):
         self.instance.select_variables()
-        self.instance.bogui.create_message.assert_called_with('Please import a csv file first')   
+        self.instance.bogui.create_message.assert_called_with(
+            'There are not enough categorical variables to perform a chi-square test.')   
 
     def test_cannot_test_independence_with_one_categorical_variable(self):
         iris_data = pd.read_csv("tests/test_iris.csv")
         self.instance.dataset = iris_data
         self.instance.select_variables()
         self.instance.bogui.create_message.assert_called_with(
-            'There are not enough categorical variables in your data') 
-
-    def test_importing_data_prompts_for_testing_independence_of_varibales(self):
-        loans_data = pd.read_csv("tests/loansData.csv")
-        self.instance.chi_square_test = MagicMock()
-        self.instance.dataset = loans_data        
-        self.instance.check_numerical_data(loans_data)
-        self.instance.chi_square_test.assert_called()    
+            'There are not enough categorical variables to perform a chi-square test.') 

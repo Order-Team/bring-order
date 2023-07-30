@@ -1,13 +1,33 @@
+"""A class to help with statistical tests"""
 from ipywidgets import widgets
 from IPython.display import display
 import pandas as pd
 from scipy import stats
 
 class Stattests:
-
+    """A class to help with statistical tests (normal distribution/independence of variables)"""
     def __init__(self, bogui):
+        """Class constructor."""
+
         self.dataset = pd.DataFrame()
         self.bogui = bogui
+        self.buttons = self.bogui.init_buttons(self.button_list)
+        self.explanatory = None
+        self.dependent = None
+
+    @property
+    def button_list(self):
+        """Buttons for Stattests class.
+
+        Returns:
+            list of tuples in format (tag: str, description: str, command: func, style: str)
+        """
+
+        button_list = [
+            ('test', 'Test', self.check_variable_independence, 'success')
+        ]
+
+        return button_list
 
     def check_numerical_data(self, dataframe):
         """Extract numerical data from pandas dataframe
@@ -25,7 +45,7 @@ class Stattests:
         for index in num_indexes.columns:
             lst = list(num_indexes[index].dropna())
             num_data[index] = lst
-        #loop trough dtypes marked as strings or objects.
+        # loop through dtypes marked as strings or objects.
         for index in str_indexes.columns:
             lst = list(str_indexes[index].dropna())
             numerical = True
@@ -34,16 +54,16 @@ class Stattests:
                 if item.lstrip('-').replace('.','',1).isdigit() is False:
                     numerical = False
                     break
-                #change sring value to float.
+                # change string value to float.
                 lst[idx] = float(item)
             if numerical:
                 num_data[index] = lst
         for item in num_data:
-            #call for function(s) to check data property
+            # call for function(s) to check data property
             ndistributed = self._is_normally_distributed(num_data[item])
             checked_indexes[item] = ndistributed
 
-        self.chi_square_test()
+        # self.chi_square_test()
         return checked_indexes
 
     def _is_normally_distributed(self, list_):
@@ -57,76 +77,63 @@ class Stattests:
         if len(result) >= 2:
             if result[1] > 0.05:
                 return True
-            return False
+
         return False
 
-    def chi_square_test(self):
-        """Creates option for chi square testing"""
-        question = self.bogui.create_message('Do you want to check for variable independence?')
-        yes_button = self.bogui.create_button('Yes', self.select_variables)
-        chi_test_grid = widgets.AppLayout(header = question,
-            left_sidebar = None,
-            center = widgets.HBox([
-                yes_button,
-            ]),
-            footer = None)
-        display(chi_test_grid)
+    def select_variables(self):
+        """Creates dropdowns for selecting two variables from imported data."""
 
-    def select_variables(self, _=None):
-        """Creates dropdowns for selecting two variables from imported data and performs 
-        a chi-square test of independence between them"""
-        if len(self.dataset) >= 2:
-            categorical = self.dataset.select_dtypes(exclude='number')
-            variables = categorical.columns.values
-            style = {'description_width': 'initial'}
-            if len(variables) >= 2:
-                explanatory = widgets.Dropdown(
-                    options = variables,
-                    description = 'Explanatory variable',
-                    style = style
-                )
-                dependent = widgets.Dropdown(
-                    options = variables,
-                    description ='Dependent variable',
-                    style = style
-                )
-                variable_grid = widgets.AppLayout(
-                header = self.bogui.create_message('Select variables from your data'),
-                left_sidebar = None,
-                center = widgets.VBox([
-                    explanatory,
-                    dependent
+        categorical = self.dataset.select_dtypes(exclude='number')
+        variables = categorical.columns.values
+        style = {'description_width': 'initial'}
+        if len(variables) >= 2:
+            self.explanatory = widgets.Dropdown(
+                options = variables,
+                description = 'Explanatory variable',
+                style = style
+            )
+            self.dependent = widgets.Dropdown(
+                options = variables,
+                description ='Dependent variable',
+                style = style
+            )
+            variable_grid = widgets.AppLayout(
+                header=self.bogui.create_message(
+                    'Choose variables if you want to test their independence:'
+                ),
+                center=widgets.VBox([
+                    self.explanatory,
+                    self.dependent
                 ]),
-                footer=None)
-                display(variable_grid)
-                exp = explanatory.value
-                dep = dependent.value
-                def check_variable_independence(_=None):
-                    crosstab = pd.crosstab(self.dataset[exp], self.dataset[dep])
-                    result = stats.chi2_contingency(crosstab)
-                    if len(result) >= 2:
-                        message = self.bogui.create_message(
-                        f"The test statistic is {result[0]:.6f} and\
-                        the p-value value is {result[1]:.6f}")
-                        result_view = widgets.VBox([message])
-                        display(result_view)
-                    else:
-                        message = self.bogui.create_message(
-                            "The the could not be implemented")
-                        result_view = widgets.VBox([message])
-                        display(result_view) 
-                chi_test__button = self.bogui.create_button(
-                    'Check', check_variable_independence)
-                display(chi_test__button)
-            else:
-                message = self.bogui.create_message(
-                    'There are not enough categorical variables in your data')
-                display(message)
+                footer=self.buttons['test']
+            )
+
+            return variable_grid
+
+        message = self.bogui.create_message(
+            'There are not enough categorical variables to perform a chi-square test.')
+
+        return message
+
+    def check_variable_independence(self, _=None):
+        """Performs a chi-square test of independence between selected variables
+        and prints the result."""
+
+        crosstab = pd.crosstab(
+            self.dataset[self.explanatory.value],
+            self.dataset[self.dependent.value]
+        )
+        result = stats.chi2_contingency(crosstab)
+        if len(result) >= 2:
+            message = self.bogui.create_message(
+            f"Chi square test for {self.explanatory.value} and {self.dependent.value}:\
+                the test statistic is {result[0]:.6f} and\
+                the p-value value is {result[1]:.6f}")
+            result_view = widgets.VBox([message])
+            display(result_view)
+
         else:
-            message = self.bogui.create_message('Please import a csv file first')
-            display(message)     
-
-
-
-
-
+            message = self.bogui.create_message(
+                "The test could not be performed")
+            result_view = widgets.VBox([message])
+            display(result_view)
