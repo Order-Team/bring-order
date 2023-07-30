@@ -15,3 +15,12 @@ def robottests(c):
 @task
 def alltests(c):
     c.run("pytest; pylint bring_order; poetry shell && ./run_robot_tests.sh")
+
+@task
+def coverage(c):
+    c.run("coverage run --branch -m pytest tests")
+    c.run("coverage report -m")
+
+@task
+def coverage_html(c):
+    c.run("coverage html")
