@@ -212,6 +212,7 @@ class Bodi:
     def bodi(self, error=''):
         """Main function"""
         self.boutils.hide_current_input()
+        self.boutils.hide_selected_input()
         clear_output(wait=True)
         question = self.bogui.create_message('What kind of data are you using?')
         title_label = self.bogui.create_label('Main title of your research:')

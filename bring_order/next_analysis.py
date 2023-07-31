@@ -7,7 +7,7 @@ class NextAnalysis:
         self.boutils = boutils
         self.next_step = next_step
         self.buttons = self.bogui.init_buttons(self.button_list)
-    
+
     @property
     def button_list(self):
         button_list = [
@@ -19,7 +19,7 @@ class NextAnalysis:
         ]
 
         return button_list
-    
+
     def new_analysis_view(self):
         """Display buttons to start a new analysis or prepare new data for analysis"""
         grid = widgets.HBox([
@@ -28,7 +28,7 @@ class NextAnalysis:
             self.buttons['done']
         ])
         display(grid)
-    
+
     def all_done(self, _=None):
         """Button function to display the export/close phase."""
         grid = widgets.HBox([
@@ -60,4 +60,3 @@ class NextAnalysis:
 
     def __repr__(self):
         return ''
-    

@@ -229,11 +229,23 @@ class BOUtils:
         '''
         display(Javascript(command))
 
-    def hide_current_input(self):
-        """Hides the input of current cell"""
+    def hide_selected_input(self):
+        """Hides the input of the selected cell"""
         command = '''
         var cell_index = IPython.notebook.get_selected_index();
         var cells = IPython.notebook.get_cells();
         cells[cell_index].input.hide();
+        '''
+        display(Javascript(command))
+
+
+    def hide_current_input(self):
+        """Hides the input of the currently executing cell"""
+        command = '''
+        var output_area = this;
+        var cell_element = output_area.element.parents('.cell');
+        var cell_idx = Jupyter.notebook.get_cell_elements().index(cell_element);
+        var cell = Jupyter.notebook.get_cell(cell_idx);
+        cell.input.hide();
         '''
         display(Javascript(command))

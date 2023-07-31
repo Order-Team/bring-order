@@ -20,7 +20,7 @@ class Limitations:
         button_list = [
             ('add', 'Add limitation', self.add_limitation, 'primary'),
             ('remove', 'Remove limitation', self.remove_limitation, 'warning')
-        ]    
+        ]
         return button_list
 
     def add_limitation(self, _=None):
