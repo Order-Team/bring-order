@@ -18,7 +18,7 @@ class Bodi:
         self.data_name = self.bogui.create_input_field()
         self.data_description = self.bogui.create_text_area()
         self.add_cells_int = self.bogui.create_int_text()
-        self.limitations = Limitations(self.bogui, self.boutils)
+        self.limitations = Limitations(self.bogui)
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.next_step = next_step
@@ -38,6 +38,8 @@ class Bodi:
             ('open', 'Open cells', self.open_cells, 'warning'),
             ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
             ('run', 'Run cells', self.run_cells, 'primary'),
+            ('add', 'Add limitation', self.add_limitation, 'primary'),
+            ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success')
         ]
         return button_list
@@ -76,13 +78,37 @@ class Bodi:
             self.cell_count -= 1
 
     def run_cells(self, _=None):
-        """Button function that runs data import cells"""
-        self.boutils.run_cells_above(self.cell_count)
-        if self.limitations.limitation_grid:
-            self.limitations.limitation_grid.close()
-        self.limitations.display_limitations()
+        """Button function that runs data import cells and shows limitation inputs."""
 
+        self.boutils.run_cells_above(self.cell_count)
+        self.display_limitations_view()
+
+    def display_limitations_view(self):
+        """Displays limitation view."""
+
+        limitation_grid = self.limitations.create_limitation_grid()
+        limitation_grid.footer=widgets.VBox([
+            self.limitations.empty_limitations_error,
+            widgets.HBox([
+                self.buttons['add'],
+                self.buttons['remove']
+            ])
+        ])
+
+        self.show_cell_operations()
+        display(limitation_grid)
         display(self.buttons['start'])
+
+    def add_limitation(self, _=None):
+        """Button function for adding new limitation."""
+
+        self.limitations.add_limitation()
+        self.display_limitations_view()
+
+    def remove_limitation(self, _=None):
+        """Button function for removing limitation."""
+        self.limitations.remove_limitation()
+        self.display_limitations_view()
 
     def format_data_description(self):
         """Formats data description for markdown
@@ -203,11 +229,15 @@ class Bodi:
 
         else:
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
-            clear_output(wait=True)
 
             self.file_chooser.register_callback(self.fc_callback)
             self.file_chooser.title = 'Choose a data file:'
-            display(self.file_chooser)
+
+            clear_output(wait=True)
+            display(widgets.VBox([
+                self.file_chooser,
+                self.buttons['import']
+            ]))
 
     def bodi(self, error=''):
         """Main function"""

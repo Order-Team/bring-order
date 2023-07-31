@@ -1,68 +1,40 @@
+"""Data limitations manager"""
 from ipywidgets import widgets
-from IPython.display import display
 
 class Limitations:
-    '''Manages data limitations trough different phases of analysis'''
-    def __init__(self, bogui, boutils):
+    """Manages data limitations through different phases of analysis."""
+    def __init__(self, bogui):
+        """Class constructor."""
         self.bogui = bogui
-        self.boutils = boutils
-        self.buttons = self.bogui.init_buttons(self.button_list)
         self.data_limitations = [self.bogui.create_input_field('', 'Limitation 1')]
-        self.limitation_grid = None
         self.empty_limitations_error = self.bogui.create_error_message()
 
-    @property
-    def button_list(self):
-        """Buttons for Limitations class.
-        Returns:
-            list of tuples in format (tag: str, description: str, command: func, style: str)
-        """
-        button_list = [
-            ('add', 'Add limitation', self.add_limitation, 'primary'),
-            ('remove', 'Remove limitation', self.remove_limitation, 'warning')
-        ]
-        return button_list
-
-    def add_limitation(self, _=None):
-        """Button function to add new limitation"""
-        if self.limitation_grid:
-            self.limitation_grid.close()
+    def add_limitation(self):
+        """Adds new limitation input to list."""
         self.data_limitations.append(self.bogui.create_input_field
                                     ('',f'Limitation {len(self.data_limitations)+1}'))
         self.empty_limitations_error.value = ''
-        self.display_limitations()
 
-    def remove_limitation(self, _=None):
-        """Button function to remove a limitation field"""
+    def remove_limitation(self):
+        """Removes the last limitation input from list."""
         if len(self.data_limitations) > 1:
-            # implementation
             self.data_limitations.pop()
-            self.limitation_grid.close()
             self.empty_limitations_error.value = ''
-            self.display_limitations()
 
-    def display_limitations(self):
-        """Shows text boxes and buttons for adding limitations"""
+    def create_limitation_grid(self):
+        """Returns text boxes for adding limitations"""
         limitations_label = self.bogui.create_message(
                 value='Identify limitations to the data: what kind of\
                 questions cannot be answered with it?')
 
-        limitation_grid = widgets.VBox(self.data_limitations)
-
-        self.limitation_grid = widgets.AppLayout(
+        limitation_grid = widgets.AppLayout(
             header=limitations_label,
-            center=limitation_grid,
-            footer=widgets.VBox([
-                self.empty_limitations_error,
-                widgets.HBox([
-                    self.buttons['add'],
-                    self.buttons['remove']
-                ])
-            ]),
+            center=widgets.VBox(self.data_limitations),
             pane_heights=['30px', 1, '70px'],
             grid_gap='12px'
         )
-        display(self.limitation_grid)
+
+        return limitation_grid
 
     def check_limitations(self, item=''):
         """Checks that limitations have been given or commented"""
@@ -91,4 +63,5 @@ class Limitations:
         return formatted_limitations
 
     def set_error_value(self, text):
+        """Sets error value."""
         self.empty_limitations_error.value = text

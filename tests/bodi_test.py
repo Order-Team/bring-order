@@ -17,9 +17,10 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
+        self.instance.limitations.empty_limitations_error = self.instance.bogui.create_error_message('')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 8)
+        self.assertEqual(len(self.instance.buttons), 10)
 
     def test_bodi_hides_current_input(self):
         self.instance.bodi()

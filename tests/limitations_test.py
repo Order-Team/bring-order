@@ -11,10 +11,8 @@ class TestLimitations(unittest.TestCase):
 
     def setUp(self):
         bogui = Mock()
-        boutils = Mock()
-        self.instance = Limitations(bogui, boutils)
+        self.instance = Limitations(bogui)
         self.instance.bogui = bogui
-        self.instance.boutils = boutils
 
     def test_check_limitations_returns_false_when_empty(self):
         self.assertFalse(self.instance.check_limitations())
