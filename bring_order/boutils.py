@@ -249,3 +249,39 @@ class BOUtils:
         cell.input.hide();
         '''
         display(Javascript(command))
+
+    def check_value_not_empty(self, value):
+        """Checks that text field was filled.
+            Args: string
+            Returns:
+                True: if string not empty
+                False: if string is empty
+        """
+        if value == '':
+            return False
+
+        return True
+
+    def get_first_words(self, word_list):
+        """Takes a word list and returns a string that has the first sentence or
+        the first five words and three dots if the sentence is longer.
+        
+        Args:
+            word_list (list)
+            
+        Returns:
+            first_words (str)
+        """
+
+        first_words = f'{word_list[0]}'
+
+        for word in word_list[1:5]:
+            first_words += f' {word}'
+            if any(mark in word for mark in ['.', '?', '!']):
+                return first_words.strip('.')
+
+        first_words.strip('.').strip(',')
+        if len(word_list) > 5:
+            first_words += '...'
+
+        return first_words

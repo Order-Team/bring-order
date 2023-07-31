@@ -26,6 +26,8 @@ class Inductive:
 
         self.bogui = bogui
         self.utils = boutils
+        self._check_value_not_empty = self.utils.check_value_not_empty
+        self._get_first_words = self.utils.get_first_words
         self.next_step = next_step
         self._cell_count = 0
         self.conclusion = None
@@ -206,30 +208,6 @@ class Inductive:
 
         display(self.conclusion)
 
-    def _get_first_words(self, word_list):
-        """Takes a word list and returns a string that has the first sentence or
-        the first five words and three dots if the sentence is longer.
-        
-        Args:
-            word_list (list)
-            
-        Returns:
-            first_words (str)
-        """
-
-        first_words = f'{word_list[0]}'
-
-        for word in word_list[1:5]:
-            first_words += f' {word}'
-            if any(mark in word for mark in ['.', '?', '!']):
-                return first_words.strip('.')
-
-        first_words.strip('.').strip(',')
-        if len(word_list) > 5:
-            first_words += '...'
-
-        return first_words
-
     def _format_observation(self):
         """Formats observation for markdown.
         
@@ -328,7 +306,7 @@ class Inductive:
         clear_output(wait=False)
         grid = widgets.AppLayout(
             header = self.bogui.create_message(
-                        'Evaluate how did this analysis met preconceptions?'),
+                        'Evaluate how well this analysis conforms to preconceptions?'),
             center = self.fields[4],
             right_sidebar = self.buttons['lock'],
             footer = None
@@ -343,8 +321,8 @@ class Inductive:
         #           preconceptions. '
         #)
         clear_output(wait=False)
-        label = self.bogui.create_message('Which of the preconceptions\
-                                         was supported by this analysis?')
+        label = self.bogui.create_message('Which of these preconceptions\
+                                         does the analysis conform to?')
         self.lists[2] = [
                 self.bogui.create_checkbox(prec.value) for prec in self.lists[0]
                 ]
@@ -366,8 +344,8 @@ class Inductive:
                 text = f'- {preconception.description} \\n'
                 formated_text += text
         if formated_text == '#### The analysis did not support these preconceptions: \\n':
-            formated_text = '#### The analysis appears to have found\
-                             what it was supposed to find.\\n'
+            formated_text = '#### The analysis appears to confirm\
+                             stated preconceptions.\\n'
         self.utils.create_markdown_cells_above(how_many=1, text=formated_text)
         text = f'### Evaluation of the analysis \\n #### According to the evaluation,\
              the analysis was approximately {self.fields[5].value} % in line with the\
@@ -380,18 +358,6 @@ class Inductive:
         checkboxes = [self.bogui.create_checkbox(prec) for prec in self.lists[0]]
         output = widgets.VBox(children=checkboxes)
         display(output)
-
-    def _check_value_not_empty(self, value):
-        """Checks that text field was filled.
-            Args: string
-            Returns:
-                True: if string not empty
-                False: if string is empty
-        """
-        if value == '':
-            return False
-
-        return True
 
     def _create_cell_operations(self):
         """Displays buttons for operations in inductive analysis."""
