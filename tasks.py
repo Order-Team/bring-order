@@ -20,7 +20,4 @@ def alltests(c):
 def coverage(c):
     c.run("coverage run --branch -m pytest tests")
     c.run("coverage report -m")
-
-@task
-def coverage_html(c):
     c.run("coverage html")

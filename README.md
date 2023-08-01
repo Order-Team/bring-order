@@ -151,16 +151,23 @@ invoke tests
 to run unit tests
 
 ```bash
-invoke lint
-```
-to run pylint
-
-```bash
 invoke robottests
 ```
 to run robottests
 
 ```bash
+invoke coverage
+```
+to run unit tests and create html coverage report´
+
+```bash
+invoke lint
+```
+to run pylint
+
+```bash
 invoke alltests
 ```
-to run all of the above
+to run pylint, unit tests and robot tests.
+
+
