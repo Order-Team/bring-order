@@ -4,11 +4,13 @@ from bring_order.inductive import Inductive
 from unittest.mock import Mock, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
+from bring_order.boval import BOVal
 
 class TestInductive(unittest.TestCase):
     def setUp(self):
         next_step = [None]
         self.instance = Inductive(BOGui(), BOUtils(), next_step)
+        self.instance.boval = BOVal()
         self.instance.utils = Mock()
         self.instance.bogui = Mock()
         self.instance.bogui.create_button = Mock()
@@ -27,7 +29,7 @@ class TestInductive(unittest.TestCase):
         self.assertIsNone(self.instance.conclusion)
 
     def test_that_empty_summary_returns_false(self):
-        self.assertFalse(self.instance._check_value_not_empty(self.instance.fields[2].value))
+        self.assertFalse(self.instance.boval.check_value_not_empty(self.instance.fields[2].value))
 
     def test_open_cells_button_is_created(self):
         self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
@@ -37,7 +39,7 @@ class TestInductive(unittest.TestCase):
 
     def test_filled_summary_returns_true(self):
         self.instance.fields[1].value = "Childrens' usage of psychosis medication has increased."
-        self.assertTrue(self.instance._check_value_not_empty(self.instance.fields[1]))   
+        self.assertTrue(self.instance.boval.check_value_not_empty(self.instance.fields[1]))   
 
     def test_new_observation_requires_notes(self):
         self.instance._check_value_not_empty = MagicMock()
@@ -82,27 +84,27 @@ class TestInductive(unittest.TestCase):
 
     def test_get_first_words_returns_correct_string_with_short_list(self):
         words = ['Short', 'list']
-        first_words = self.instance._get_first_words(words)
+        first_words = self.instance.boval.get_first_words(words)
         self.assertEqual(first_words, 'Short list')
 
     def test_get_first_words_returns_correct_string_with_long_list(self):
         words = ['Long', 'list', 'has', 'more', 'words', 'than', 'short', 'list']
-        first_words = self.instance._get_first_words(words)
+        first_words = self.instance.boval.get_first_words(words)
         self.assertEqual(first_words, 'Long list has more words...')
 
     def test_get_first_words_returns_first_short_sentence(self):
         words = ['My', 'sentence', 'is', 'short.', 'It', 'is', 'ok.']
-        first_words = self.instance._get_first_words(words)
+        first_words = self.instance.boval.get_first_words(words)
         self.assertEqual(first_words, 'My sentence is short')
 
     def test_get_first_words_returns_first_short_question(self):
         words = ['What', 'to', 'ask?', 'I', 'do', 'not', 'know.']
-        first_words = self.instance._get_first_words(words)
+        first_words = self.instance.boval.get_first_words(words)
         self.assertEqual(first_words, 'What to ask?')
 
     def test_get_first_words_returns_first_short_exclamation(self):
         words = ['I', 'want', 'ice', 'cream!', 'Preferably', 'mint', 'Puffet.']
-        first_words = self.instance._get_first_words(words)
+        first_words = self.instance.boval.get_first_words(words)
         self.assertEqual(first_words, 'I want ice cream!')
 
     def test_format_observation_returns_correct_string(self):

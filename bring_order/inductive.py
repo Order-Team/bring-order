@@ -1,6 +1,7 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
 from IPython.display import display, clear_output
+from boval import BOVal
 
 class Inductive:
     """Class that guides inductive analysis"""
@@ -26,8 +27,7 @@ class Inductive:
 
         self.bogui = bogui
         self.utils = boutils
-        self._check_value_not_empty = self.utils.check_value_not_empty
-        self._get_first_words = self.utils.get_first_words
+        self.boval = BOVal()
         self.next_step = next_step
         self._cell_count = 0
         self.conclusion = None
@@ -90,7 +90,7 @@ class Inductive:
         """Checks that at least one of the preconceptions has a non-empty value."""
 
         for item in self.lists[0]:
-            if item.value != '':
+            if self.boval.check_value_not_empty(item.value):
                 return True
 
         return False
@@ -219,7 +219,7 @@ class Inductive:
 
         notes_list = self.fields[1].value.split('\n')
         first_line_list = notes_list[0].split(' ')
-        first_words = self._get_first_words(first_line_list)
+        first_words = self.boval.get_first_words(first_line_list)
         formatted_obs += f'{first_words}\\n'
 
         notes = '<br />'.join(notes_list)
@@ -230,7 +230,7 @@ class Inductive:
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count."""
 
-        if self._check_value_not_empty(self.fields[1].value):
+        if self.boval.check_value_not_empty(self.fields[1].value):
             self.lists[1].append(self.fields[1].value)
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)
@@ -282,7 +282,7 @@ class Inductive:
 
         summary_list = self.fields[2].value.split('\n')
         first_line_list = summary_list[0].split(' ')
-        first_words = self._get_first_words(first_line_list)
+        first_words = self.boval.get_first_words(first_line_list)
         formatted_summary += f'{first_words}\\n'
 
         summary = '<br />'.join(summary_list)
@@ -293,7 +293,7 @@ class Inductive:
     def _submit_summary(self, _=None):
         """Button function to submit summary."""
 
-        if not self._check_value_not_empty(self.fields[2].value):
+        if not self.boval.check_value_not_empty(self.fields[2].value):
             self._display_summary(error='You must write some kind of summary')
             return
 
