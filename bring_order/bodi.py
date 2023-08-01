@@ -46,8 +46,8 @@ class Bodi:
         ]
         return button_list
     
-    def ai(self):
-        self.next_step = 'ai'
+    def ai(self, _=None):
+        self.next_step[0] = 'ai'
 
     def data_import_grid(self):
         """Creates widget grid"""

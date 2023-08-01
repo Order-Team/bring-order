@@ -89,12 +89,12 @@ class BringOrder:
         # that returns the name of the next function to be executed.
         # First, the data import function:
         next_step = self.get_next(self.bodi.bodi)
+        # Branching to AI assistant
+        if next_step == 'ai':
+            self.ai.display_ai_assistant()
         # Main analysis loop:
         while next_step == 'start_analysis':
             next_step = self.get_next(self.start_analysis)
-            # Branching to AI assistant
-            if next_step == 'ai':
-                self.ai.display_ai_assistant()
             # Branching to deductive/inductive:
             if next_step == 'deductive_analysis':
                 next_step = self.get_next(self.start_deductive_analysis)
