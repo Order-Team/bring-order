@@ -22,6 +22,7 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.next_step = next_step
+       
 
     @property
     def button_list(self):
@@ -40,9 +41,13 @@ class Bodi:
             ('run', 'Run cells', self.run_cells, 'primary'),
             ('add', 'Add limitation', self.add_limitation, 'primary'),
             ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
-            ('start', 'Start analysis', self.start_analysis_clicked, 'success')
+            ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
+            ('assist', 'AI assistant', self.ai, 'primary'),
         ]
         return button_list
+    
+    def ai(self):
+        self.next_step = 'ai'
 
     def data_import_grid(self):
         """Creates widget grid"""
@@ -54,7 +59,8 @@ class Bodi:
             self.add_cells_int,
             self.buttons['open'],
             self.buttons['run'],
-            self.buttons['delete']
+            self.buttons['delete'],
+            self.buttons['assist']
             ])
 
         return grid
@@ -238,6 +244,35 @@ class Bodi:
                 self.file_chooser,
                 self.buttons['import']
             ]))
+    
+    def initiate_ai_assistant(self, _=None):
+        feature_description = self.bogui.create_message('Enter a natural language prompt. The AI assistant will propose code to implement your request.')
+    
+        api_key_label = self.bogui.create_label('Enter your Open AI key here:')
+
+    
+        grid = widgets.AppLayout(
+        header = feature_description,
+        left_sidebar = widgets.HBox([
+            api_key_label,
+            self.api_key,
+           
+        ]),
+        center=widgets.VBox([
+                self.natural_language_prompt
+        ]),
+        footer = widgets.VBox([
+            self.buttons['send_ai'],
+            self.buttons['clear_ai'],
+            self.buttons['advanced_ai'],
+          
+        ]),
+        pane_widths=[1, 5, 0],
+        grid_gap='10px'
+        )
+
+        display(grid)
+
 
     def bodi(self, error=''):
         """Main function"""

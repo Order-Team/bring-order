@@ -15,6 +15,7 @@ from boutils import BOUtils
 from deductive import Deductive
 from inductive import Inductive
 from next_analysis import NextAnalysis
+from ai import Ai
 
 
 class BringOrder:
@@ -37,6 +38,11 @@ class BringOrder:
             self.boutils,
             self.bogui,
             self.next_step)
+        self.ai = Ai(
+            self.bogui,
+            self.boutils,
+            self.next_step
+        )
         self.bring_order()
 
 
@@ -86,6 +92,9 @@ class BringOrder:
         # Main analysis loop:
         while next_step == 'start_analysis':
             next_step = self.get_next(self.start_analysis)
+            # Branching to AI assistant
+            if next_step == 'ai':
+                self.ai.display_ai_assistant()
             # Branching to deductive/inductive:
             if next_step == 'deductive_analysis':
                 next_step = self.get_next(self.start_deductive_analysis)
