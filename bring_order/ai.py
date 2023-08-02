@@ -77,7 +77,7 @@ class Ai:
         model_engine = self.model_engine
 
         system_msg = "You are a helpful assistant."
-        content = "Placeholder, input from text field goes here. Say hello."
+        content = self.natural_language_prompt.value
         response = openai.ChatCompletion.create(
             model = model_engine,
             messages=[
