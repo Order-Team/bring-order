@@ -32,6 +32,7 @@ class Inductive:
         self._cell_count = 0
         self.conclusion = None
         self.buttons = self.bogui.init_buttons(self.button_list)
+        self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.lists = [
             [self.bogui.create_input_field('', 'Preconception 1')],
             [],
@@ -339,6 +340,7 @@ class Inductive:
     def _save_results(self, _=None):
         clear_output(wait=True)
         formated_text = '#### The analysis did not support these preconceptions: \\n'
+        limit = "\\n- ".join(lim.value for lim in self.data_limitations)
         for preconception in self.lists[2]:
             if preconception.value is False and preconception.description != '':
                 text = f'- {preconception.description} \\n'
@@ -347,9 +349,10 @@ class Inductive:
             formated_text = '#### The analysis appears to confirm\
                              stated preconceptions.\\n'
         self.utils.create_markdown_cells_above(how_many=1, text=formated_text)
-        text = f'### Evaluation of the analysis \\n #### According to the evaluation,\
-             the analysis was approximately {self.fields[5].value} % in line with the\
-             preconceptions.'
+        text = (f'### Evaluation of the analysis \\n'
+                f'#### According to the evaluation, the analysis was approximately\
+                {self.fields[5].value} % in line with the preconceptions.\\n'
+                f'#### Limitations that were noticed in the data:\\n- {limit}\\n')
         self.utils.create_markdown_cells_above(how_many=1, text=text)
         self.next_step[0] = 'analysis_done'
 

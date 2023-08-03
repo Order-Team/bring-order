@@ -80,6 +80,7 @@ class BringOrder:
 
     def start_inductive_analysis(self, _=None):
         """Starts inductive analysis"""
+        self.inductive.data_limitations = self.bodi.limitations.data_limitations
         self.close_buttons()
         return self.inductive.start_inductive_analysis()
 
