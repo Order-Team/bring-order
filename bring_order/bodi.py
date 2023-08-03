@@ -34,11 +34,13 @@ class Bodi:
         button_list = [
             ('save', 'Save description', self.start_data_import, 'success'),
             ('analyze', 'Analyze this data', self.check_variables, 'success'),
+            ('test', 'Test', self.check_variable_independence, 'success'),
+            ('close', 'Close test', self.close_independence_test, 'warning'),
+            ('independence', 'Test independence', self.display_independence_test, 'primary'),
             ('import', 'Import manually', self.show_cell_operations, 'primary'),
-            ('continue', 'Continue', self.show_cell_operations, 'primary'),
-            ('open', 'Open cells', self.open_cells, 'warning'),
+            ('open', 'Open cells', self.open_cells, 'primary'),
             ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
-            ('run', 'Run cells', self.run_cells, 'primary'),
+            ('run', 'Run cells', self.run_cells, 'warning'),
             ('add', 'Add limitation', self.add_limitation, 'primary'),
             ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
@@ -49,27 +51,50 @@ class Bodi:
     def ai(self, _=None):
         self.next_step[0] = 'ai'
 
-    def data_import_grid(self):
-        """Creates widget grid"""
+    def data_preparation_grid(self, message=None):
+        """Creates widget grid.
+        
+        Args:
+            message (widget, optional): HTML widget to be displayed
+        """
+
         cell_number_label = self.bogui.create_label(
             'Add code cells for data preparation:')
 
-        grid = widgets.HBox([
-            cell_number_label,
-            self.add_cells_int,
-            self.buttons['open'],
-            self.buttons['run'],
-            self.buttons['delete'],
-            self.buttons['assist']
-            ])
+        buttons = self.bogui.create_grid(
+            2,
+            3,
+            [
+                self.buttons['open'],
+                self.buttons['delete'],
+                self.buttons['run'],
+                self.buttons['independence'],
+                self.buttons['assist'],
+                self.bogui.create_placeholder()
+            ]
+        )
+        buttons.width = '100%'
+
+        grid = widgets.AppLayout(
+            left_sidebar=widgets.HBox([
+                cell_number_label,
+                self.add_cells_int
+            ]),
+            right_sidebar=buttons,
+            footer=message,
+            pane_widths=['320px', 0, '460px'],
+            pane_heights=['0px', '80px', 1],
+            grid_gap='12px'
+        )
 
         return grid
 
     def show_cell_operations(self, _=None):
         """Button function to show buttons for cell operations."""
 
+        self.buttons['independence'].disabled = True
         clear_output(wait=True)
-        display(self.data_import_grid())
+        display(self.data_preparation_grid())
 
     def open_cells(self, _=None):
         """Button function that opens selected number of cells above widget cell"""
@@ -91,6 +116,8 @@ class Bodi:
 
     def display_limitations_view(self):
         """Displays limitation view."""
+
+        self.buttons['independence'].disabled = True
 
         limitation_grid = self.limitations.create_limitation_grid()
         limitation_grid.footer=widgets.VBox([
@@ -194,35 +221,102 @@ class Bodi:
                 self.buttons['import']
             ]))
 
-    def check_normal_distribution(self):
-        """Checks which variables are not normally distributed and returns a message."""
+    def check_normal_distribution(self, data_frame):
+        """Checks which variables are not normally distributed.
 
-        message = 'All the numerical data variables seem to be normally distributed.'
-        data_frame = pd.read_csv(self.file_chooser.selected)
+        Args:
+            data_frame (DataFrame): the data to be tested
+        
+        Returns:
+            not_normal_dist (list): List of variables that are not normally distributed
+        """
+
         n_distributed = self.stattests.check_numerical_data(data_frame)
-        self.stattests.dataset = data_frame
-        values_ok = []
+        not_normal_dist = []
+
         for key, val in n_distributed.items():
             if not val:
-                values_ok.append(key)
-        if len(values_ok) > 0:
-            indexes = ', '.join(values_ok)
-            message = f'Attention! The following data variables are not normally distributed:\
-                {indexes}.'
+                not_normal_dist.append(key)
 
-        return message
+        return not_normal_dist
 
-    def check_variables(self, _=None):
-        """Button function to check if data variables are normally distributed
-        and to let the user check if selected data variables are independent."""
+    def check_variable_independence(self, _=None):
+        """Button function for independence test. Checks independence and adds limitation
+        if variables are not independent."""
+        
+        result = self.stattests.check_variable_independence()
+
+        if type(result[2]) is str:
+            message = self.bogui.create_error_message(result[2])
+
+        elif result[2] is False:
+            limitation = f'{result[0]} and {result[1]} are not independent'
+            if not limitation in self.limitations.get_values():
+                if self.limitations.data_limitations[-1].value != '':
+                    self.limitations.add_limitation()
+                self.limitations.data_limitations[-1].value = limitation
+
+            message = self.bogui.create_message(limitation)
+
+        else:
+            message = self.bogui.create_message(f'{result[0]} and {result[1]} are independent')
+
+        display(message)
+
+    def display_independence_test(self, _=None):
+        """Displays independence test and disables other buttons."""
+
+        independence_test = self.stattests.select_variables()
+        if not hasattr(independence_test, 'value'):
+            independence_test.footer = widgets.HBox([
+                self.buttons['test'],
+                self.buttons['close']
+            ])
+
+            for button in ['open', 'delete', 'run', 'assist']:
+                self.buttons[button].disabled = True
+
+            clear_output(wait=True)
+            display(self.data_preparation_grid())
+
+        self.buttons['independence'].disabled = True    
+        display(independence_test)
+
+    def close_independence_test(self, _=None):
+        """Closes the independence test and activates buttons."""
+
+        for button in ['open', 'delete', 'run', 'independence', 'assist']:
+            self.buttons[button].disabled = False
 
         clear_output(wait=True)
-        normal_dist_result = self.bogui.create_message(self.check_normal_distribution())
-        display(widgets.VBox([
-            normal_dist_result,
-            self.stattests.select_variables(),
-            self.buttons['continue']
-        ]))
+        if self.limitations.data_limitations[-1].value != '':
+            message = self.limitations.get_limitations_as_bullet_list()
+            display(self.data_preparation_grid(message=message))
+
+        else:
+            display(self.data_preparation_grid())
+
+    def check_variables(self, _=None):
+        """Button function to check if data variables are normally distributed.
+        Displays buttons for independence test and cell operations."""
+
+        data_frame = pd.read_csv(self.file_chooser.selected)
+        self.stattests.dataset = data_frame
+
+        not_normal = self.check_normal_distribution(data_frame)
+        for index, variable in enumerate(not_normal):
+            if index != 0:
+                self.limitations.add_limitation()
+            limitation = f'{variable} is not normally distributed'
+            self.limitations.data_limitations[index].value = limitation
+
+        clear_output(wait=True)
+        if len(not_normal) > 0:
+            message = self.limitations.get_limitations_as_bullet_list()
+            display(self.data_preparation_grid(message=message))
+
+        else:
+            display(self.data_preparation_grid())
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
@@ -278,7 +372,7 @@ class Bodi:
         """Main function"""
         self.boutils.hide_current_input()
         self.boutils.hide_selected_input()
-        clear_output(wait=True)
+
         question = self.bogui.create_message('What kind of data are you using?')
         title_label = self.bogui.create_label('Main title of your research:')
         data_name_label = self.bogui.create_label('Name of the data set:')
@@ -305,6 +399,7 @@ class Bodi:
             grid_gap='10px'
         )
 
+        clear_output(wait=True)
         display(grid)
 
         if 'name' in error:

@@ -21,9 +21,6 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Select' }).click();
-  await newPage.getByRole('listbox').selectOption('README.md');
-  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
@@ -64,9 +61,6 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Select' }).click();
-  await newPage.getByRole('listbox').selectOption('README.md');
-  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
@@ -106,9 +100,6 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Select' }).click();
-  await newPage.getByRole('listbox').selectOption('README.md');
-  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();

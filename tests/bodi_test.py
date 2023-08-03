@@ -20,7 +20,7 @@ class TestBodi(unittest.TestCase):
         self.instance.limitations.empty_limitations_error = self.instance.bogui.create_error_message('')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 11)
+        self.assertEqual(len(self.instance.buttons), 13)
 
     def test_bodi_hides_current_input(self):
         self.instance.bodi()
@@ -85,6 +85,7 @@ class TestBodi(unittest.TestCase):
     def test_run_cells_runs_the_correct_amount_of_cells(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
         self.instance.cell_count = 3
         self.instance.run_cells()
         self.instance.boutils.run_cells_above.assert_called_with(3)

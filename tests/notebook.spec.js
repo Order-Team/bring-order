@@ -33,7 +33,6 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
-  await newPage.getByRole('button', { name: 'Continue' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   expect(newPage.getByRole('button', { name: 'Start analysis' }).isVisible());
   expect(newPage.getByRole('button', { name: 'Add limitation' }).isVisible());
@@ -81,9 +80,6 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
-  await newPage.getByRole('button', { name: 'Select' }).click();
-  await newPage.getByRole('listbox').selectOption('README.md');
-  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
@@ -112,9 +108,6 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
-  await newPage.getByRole('button', { name: 'Select' }).click();
-  await newPage.getByRole('listbox').selectOption('README.md');
-  await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
@@ -148,15 +141,15 @@ test('import csv data with variable independence testing', async ({ page, contex
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
-  expect(newPage.getByText('Choose variables if you want to test their independence:').isVisible());
-  expect(newPage.getByText('Attention! The following data in index(es) are not normally distributed: Amount.Requested').isVisible());
+  expect(newPage.getByText('Amount.Requested is not normally distributed').isVisible());
+  await newPage.getByRole('button', { name: 'Test independence' }).click();
+  expect(newPage.getByText('Choose variables to test their independence:').isVisible());
   expect(newPage.getByRole('combobox', { name: 'Explanatory variable' }).isVisible());
   expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
   await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('Loan.Purpose');
   await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('Loan.Length');
-  expect(newPage.getByRole('button', { name: 'Test' }).isEnabled());
-  await newPage.getByRole('button', { name: 'Test' }).click();
-  expect(newPage.getByText('the test statistic is 44.406040 and the p-value value is 0.000026').isVisible());
+  await newPage.getByRole('button', { name: 'Test' , exact: true }).click();
+  expect(newPage.getByText('Loan.Purpose and Loan.Length are not independent').isVisible());
 });
 
 test('import csv data without variable independence testing', async ({ page, context }) => {
@@ -183,5 +176,6 @@ test('import csv data without variable independence testing', async ({ page, con
   await newPage.getByRole('listbox').selectOption('test_iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();  
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
+  await newPage.getByRole('button', { name: 'Test independence' }).click();
   expect(newPage.getByText('There are not enough categorical variables to perform a chi-square test.').isVisible());
 });

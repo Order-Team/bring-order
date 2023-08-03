@@ -11,23 +11,8 @@ class Stattests:
 
         self.dataset = pd.DataFrame()
         self.bogui = bogui
-        self.buttons = self.bogui.init_buttons(self.button_list)
         self.explanatory = None
         self.dependent = None
-
-    @property
-    def button_list(self):
-        """Buttons for Stattests class.
-
-        Returns:
-            list of tuples in format (tag: str, description: str, command: func, style: str)
-        """
-
-        button_list = [
-            ('test', 'Test', self.check_variable_independence, 'success')
-        ]
-
-        return button_list
 
     def check_numerical_data(self, dataframe):
         """Extract numerical data from pandas dataframe
@@ -99,13 +84,12 @@ class Stattests:
             )
             variable_grid = widgets.AppLayout(
                 header=self.bogui.create_message(
-                    'Choose variables if you want to test their independence:'
+                    'Choose variables to test their independence:'
                 ),
                 center=widgets.VBox([
                     self.explanatory,
                     self.dependent
-                ]),
-                footer=self.buttons['test']
+                ])
             )
 
             return variable_grid
@@ -115,25 +99,28 @@ class Stattests:
 
         return message
 
-    def check_variable_independence(self, _=None):
-        """Performs a chi-square test of independence between selected variables
-        and prints the result."""
+    def check_variable_independence(self):
+        """Performs a chi-square test of independence between selected variables.
+        
+        Returns:
+            result_tuple (tuple): A tuple with explanatory variable (str),
+            dependent variable (str), and True if variables are independent,
+            False if they are not independent, and error message (str) if
+            test could not be performed."""
 
         crosstab = pd.crosstab(
             self.dataset[self.explanatory.value],
             self.dataset[self.dependent.value]
         )
-        result = stats.chi2_contingency(crosstab)
-        if len(result) >= 2:
-            message = self.bogui.create_message(
-            f"Chi square test for {self.explanatory.value} and {self.dependent.value}:\
-                the test statistic is {result[0]:.6f} and\
-                the p-value value is {result[1]:.6f}")
-            result_view = widgets.VBox([message])
-            display(result_view)
 
-        else:
-            message = self.bogui.create_message(
-                "The test could not be performed")
-            result_view = widgets.VBox([message])
-            display(result_view)
+        result = 'Error: The test could not be performed'
+
+        test_result = stats.chi2_contingency(crosstab)
+        if len(test_result) >= 2:
+            if test_result[1] < 0.05:
+                result = False
+
+            else:
+                result = True
+
+        return (self.explanatory.value, self.dependent.value, result)

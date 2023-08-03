@@ -65,3 +65,19 @@ class Limitations:
     def set_error_value(self, text):
         """Sets error value."""
         self.empty_limitations_error.value = text
+
+    def get_values(self):
+        """Returns a list of the limitations as stirngs."""
+
+        return [limitation.value for limitation in self.data_limitations]
+
+    def get_limitations_as_bullet_list(self):
+        """Returns limitations as a HTML bullet list."""
+        
+        text = '<h4>Attention:</h4>\n<ul>\n'
+        text += '\n'.join([
+            '<li>' + limitation.value + '</li>'
+            for limitation in self.data_limitations])
+        text += '\n</ul>'
+
+        return widgets.HTML(text)
