@@ -26,49 +26,44 @@ class TestDeductive(unittest.TestCase):
         self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
         testValue = self.instance.check_theory_and_hypotheses(True)
         self.assertFalse(testValue)
-    
 
     def test_get_error_messages_gives_error_for_invalid_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'True/False'
         self.instance.hypotheses[1].value = 'The quick brown fox jumps over the lazy dog'
         errors = self.instance._get_error_messages()
-        self.assertEqual(errors, ('', 'The hypothesis must be at least 8 characters and\
-             not contain special characters', ''))
+        self.assertEqual(errors, ('', 'The hypothesis must contain at least 3 words and must not contain special characters', ''))
 
     def test_get_error_messages_gives_error_for_invalid_null_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[1].value = 'ABCABCABC123123@@@'
         errors = self.instance._get_error_messages()
-        self.assertEqual(errors, ('', '', 'The null hypothesis must be at least 8 characters and\
-             not contain special characters')) 
-    
+        self.assertEqual(errors, ('', '', 'The null hypothesis must contain at least 3 words and must not contain special characters')) 
+
     def test_get_error_messages_gives_error_for_theory(self):
         self.instance.theory_desc.value = 'Theory'
         self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         errors = self.instance._get_error_messages()
-        self.assertEqual(errors, ('The theory must be at least 8 characters and\
-             not contain special characters', '', ''))
-    
+        self.assertEqual(errors, ('The theory must contain at least 3 words and must not contain special characters', '', ''))
+
     def test_get_error_messages_gives_error_for_empty_value(self):
         self.instance.theory_desc.value = ""
         self.instance.hypotheses[0].value = ""
         self.instance.hypotheses[1].value = ""
         errors = self.instance._get_error_messages()
-        self.assertEqual(errors, ('The theory must be at least 8 characters and\
-             not contain special characters', 'The hypothesis must be at least 8 characters and\
-             not contain special characters', 'The null hypothesis must be at least 8 characters and\
-             not contain special characters'))
-    
+        self.assertEqual(errors, ('The theory must contain at least 3 words and must not contain special characters',
+                            'The hypothesis must contain at least 3 words and must not contain special characters',
+                            'The null hypothesis must contain at least 3 words and must not contain special characters'))
+
     def test_get_error_messages_gives_no_error_for_right_values(self):
         self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         errors = self.instance._get_error_messages()
         self.assertEqual(errors, ('', '', ''))
-    
+
     def test_get_warning_messages_gives_warning_for_hypothesis(self):
         self.instance.theory_desc.value = 'The quick brown fox jumps over the lazy dog'
         self.instance.hypotheses[0].value = 'over the lazy dog'
@@ -83,8 +78,8 @@ class TestDeductive(unittest.TestCase):
         self.instance.hypotheses[1].value = "The quick brown fox"
         errors = self.instance._get_warning_messages()
         self.assertEqual(errors, ('', '', 'Warning! The null hypothesis does not fill criteria of\
-             including a subject, a predicate and an object.')) 
-    
+             including a subject, a predicate and an object.'))
+
     def test_get_warning_messages_gives_warning_for_theory(self):
         self.instance.theory_desc.value = 'Theory theory theory'
         self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
@@ -96,18 +91,34 @@ class TestDeductive(unittest.TestCase):
     def test_check_theory_and_hypotheses_accept_valid_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]
         self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog" 
-        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"    
+        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         testValue = self.instance.check_theory_and_hypotheses(True)
         self.assertTrue(testValue)
 
+    def test_check_theory_and_hypotheses_accept_valid_inputs_without_validation(self):
+        self.instance.data_limitations = [widgets.Text('Limitation1')]
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[0].value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
+        testValue = self.instance.check_theory_and_hypotheses(False)
+        self.assertTrue(testValue)
+
     def test_check_theory_and_hypotheses_not_accept_wrong_inputs(self):
         self.instance.data_limitations = [widgets.Text('Limitation1')]
-        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog" 
-        self.instance.hypotheses[0].value = "The quick brown"    
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[0].value = "The quick brown"
         self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
         testValue = self.instance.check_theory_and_hypotheses(True)
-        self.assertFalse(testValue)    
+        self.assertFalse(testValue)
+
+    def test_check_theory_and_hypotheses_not_accept_wrong_inputs_without_validation(self):
+        self.instance.data_limitations = [widgets.Text('Limitation1')]
+        self.instance.theory_desc.value = "The quick brown fox jumps over the lazy dog"
+        self.instance.hypotheses[0].value = "The quick"
+        self.instance.hypotheses[1].value = "The quick brown fox does not jump over the lazy dog"
+        testValue = self.instance.check_theory_and_hypotheses(False)
+        self.assertFalse(testValue)
 
     def test_hypothesis_fields_can_be_cleared(self):
         self.instance.hypotheses[0].value = "Roses are red"
@@ -120,13 +131,7 @@ class TestDeductive(unittest.TestCase):
         self.instance.clear_hypotheses = MagicMock()
         self.instance.bad_hypotheses()
         self.instance.clear_hypotheses.assert_called()
-    """
-    def test_all_done_hides_widgets(self):
-        self.instance.save_results = MagicMock()
-        self.instance.all_done()
-        self.instance.save_results.assert_called()
-    """
-        
+
     def test_format_hypotheses_and_theory_returns_correct_string(self):
         self.instance.hypotheses[0].value = 'Test value'
         self.instance.hypotheses[1].value = 'Null test value'
@@ -139,4 +144,41 @@ class TestDeductive(unittest.TestCase):
     def test_clear_theory_clears_theory(self):
         self.instance.theory_desc.value = 'Theory of testing'
         self.instance.clear_theory()
-        self.assertEqual(self.instance.theory_desc.value, '')        
+        self.assertEqual(self.instance.theory_desc.value, '')
+
+    def test_open_cells_increases_cell_count_correctly(self):
+        self.instance.cell_count = 2
+        self.instance.add_cells_int.value = 3
+        self.instance.open_cells()
+        self.assertEqual(5, self.instance.cell_count)
+        self.instance.boutils.create_code_cells_above.assert_called()
+    
+    def test_open_cells_not_increases_cell_count_if_value_is_zero(self):
+        self.instance.cell_count = 2
+        self.instance.add_cells_int.value = 0
+        self.instance.open_cells()  
+        self.assertEqual(2, self.instance.cell_count)
+        self.instance.boutils.create_code_cells_above.assert_not_called()
+
+    def test_delete_last_cells_reduce_cell_count(self):
+        self.instance.cell_count = 5
+        self.instance.delete_last_cell()
+        self.instance.delete_last_cell()
+        self.assertEqual(3, self.instance.cell_count)
+        self.instance.boutils.delete_cell_above.assert_called()
+
+    def test_delete_last_cells_not_reduce_cell_count_is_value_is_zero(self):
+        self.instance.cell_count = 0
+        self.instance.delete_last_cell()
+        self.assertEqual(0, self.instance.cell_count)
+        self.instance.boutils.delete_cell_above.assert_not_called()
+
+    def test_run_cells_calls_the_method_with_correct_value(self):
+        self.instance.cell_count = 3
+        self.instance.run_cells()
+        self.instance.boutils.run_cells_above.assert_called_with(3)
+
+    def test_clear_cells_calls_the_method_with_correct_value(self):
+        self.instance.cell_count = 3
+        self.instance.clear_cells()
+        self.instance.boutils.clear_code_cells_above.assert_called_with(3)
