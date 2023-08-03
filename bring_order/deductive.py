@@ -412,9 +412,11 @@ class Deductive:
     def save_results(self, _=None):
         """Prints results as markdown and hides widgets"""
         clear_output(wait=True)
+        limitations = "\\n- ".join(lim.value for lim in self.data_limitations)
         text = (f'## Conclusion\\n### Accepted hypothesis: {self.conclusion.value[4:]}\\n'
                 f'The hypotheses were:\\n- Hypothesis (H1): {self.hypotheses[0].value}\\n'
-                f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n')
+                f'- Null hypothesis (H0): {self.hypotheses[1].value}\\n\\n'
+                f'#### Limitations that were noticed in the data:\\n- {limitations}\\n')
 
         if self.result_description.value:
             formatted_description = '<br />'.join(self.result_description.value.split('\n'))
