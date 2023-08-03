@@ -14,6 +14,7 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.api_key = ""
         self.model_engine = "gpt-3.5-turbo"
+        self.grid = None
     
     @property
     def button_list(self):
@@ -21,8 +22,7 @@ class Ai:
             ('send_ai_btn', 'Send', self.send_ai, 'primary'),
             ('clear_ai_btn', 'Clear', self.clear_ai, 'danger'),
             ('advanced_ai_btn', 'Advanced', self.advanced_ai, 'primary'),
-            ('close_ai_btn', 'Close', self.close_ai, 'warning'),
-
+            ('close_ai_btn', 'Close', self.close_ai, 'warning')
         ]
         return button_list
 
@@ -35,14 +35,16 @@ class Ai:
     
     def clear_ai(self,_=None):
         """Button function for clearing input text field"""
+        self.natural_language_prompt.value = ''
 
     def close_ai(self, _=None):
         """Button function for closing AI view"""
+        self.grid.close()
 
     def advanced_ai(self,_=None):
         """Button function for setting advanced options for the AI assistant"""
     
-    def display_ai_assistant(self, _=None):
+    def ai(self, _=None):
         """" Function for displaying communication with AI assistant"""
         feature_description = self.bogui.create_message('Enter a natural language prompt. The AI assistant will propose code to implement your request.')
     
@@ -53,7 +55,7 @@ class Ai:
             self.api_key_input_field,       
         ])
     
-        grid = widgets.AppLayout(
+        self.grid = widgets.AppLayout(
         header = api_key_element,
         center= widgets.VBox([
             feature_description,            
@@ -70,7 +72,7 @@ class Ai:
         grid_gap='10px'
         )
 
-        display(grid)
+        display(self.grid)
     
     def openai_api(self, _=None):
         openai.api_key = self.api_key

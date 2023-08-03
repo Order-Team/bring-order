@@ -3,6 +3,7 @@ import os
 import spacy
 from ipywidgets import widgets
 from IPython.display import display, clear_output
+from boval import BOVal
 
 class Deductive:
     """Class that guides deductive analysis"""
@@ -18,6 +19,7 @@ class Deductive:
         self.next_step = next_step
         self.bogui = bogui
         self.boutils = boutils
+        self.boval = BOVal()
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.theory_desc = self.bogui.create_text_area('','Theory')
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
@@ -139,7 +141,7 @@ class Deductive:
         """
         focused = None
         for item in input_list:
-            if item.value == '':
+            if not self.boval.check_value_not_empty(item.value):
                 item.focus()
                 focused = item
                 break
@@ -147,23 +149,23 @@ class Deductive:
         return focused
 
     def _get_error_messages(self):
+        error = 'must contain at least 3 words and must not contain special characters'
 
-        theory_error = 'The theory must be at least 8 characters and\
-             not contain special characters'
-        hypo_error= 'The hypothesis must be at least 8 characters and\
-             not contain special characters'
-        null_error = 'The null hypothesis must be at least 8 characters and\
-             not contain special characters'
-
-        if self._is_min_length(self.theory_desc.value)\
-            and self._is_not_al_num(self.theory_desc.value):
+        if self.boval.sentence_is_min_length(self.theory_desc.value)\
+            and self.boval.value_not_contains_symbols(self.theory_desc.value):
             theory_error = ''
-        if self._is_min_length(self.hypotheses[0].value)\
-            and self._is_not_al_num(self.hypotheses[0].value):
+        else:
+            theory_error = f'The theory {error}'
+        if self.boval.sentence_is_min_length(self.hypotheses[0].value)\
+            and self.boval.value_not_contains_symbols(self.hypotheses[0].value):
             hypo_error = ''
-        if self._is_min_length(self.hypotheses[1].value)\
-            and self._is_not_al_num(self.hypotheses[1].value):
+        else:
+            hypo_error= f'The hypothesis {error}'
+        if self.boval.sentence_is_min_length(self.hypotheses[1].value)\
+            and self.boval.value_not_contains_symbols(self.hypotheses[1].value):
             null_error = ''
+        else:
+            null_error = f'The null hypothesis {error}'
 
         return (theory_error, hypo_error, null_error)
 
@@ -173,33 +175,29 @@ class Deductive:
         Returns error messages based on nlp validation.
         
         Returns:
-            errors (tuple)
+            warnings (tuple)
         """
-        theory_warning = 'Warning! The theory does not fill criteria of\
-             including a subject, a predicate and an object.'
-        hypo_warning = 'Warning! The hypothesis does not fill criteria of\
-             including a subject, a predicate and an object.'
-        null_warning = 'Warning! The null hypothesis does not fill criteria of\
+        warning = 'does not fill criteria of\
              including a subject, a predicate and an object.'
 
-        subject = 'nsubj'
-        subject_passive = 'nsubjpass'
-        predicate = 'V'
-        prep_object = 'pobj'
-        direct_object = 'dobj'
-
-        if self._nlp(self.theory_desc.value, subject, subject_passive)\
-            and self._nlp_predicate(self.theory_desc.value, predicate)\
-            and self._nlp(self.theory_desc.value, prep_object, direct_object):
+        if self.boval.value_contain_nlp_subject(self.theory_desc.value)\
+            and self.boval.value_contain_predicate(self.theory_desc.value)\
+            and self.boval.value_contain_nlp_object(self.theory_desc.value):
             theory_warning = ''
-        if self._nlp(self.hypotheses[0].value, subject, subject_passive)\
-            and self._nlp_predicate(self.hypotheses[0].value, predicate)\
-            and self._nlp(self.hypotheses[0].value, prep_object, direct_object):
+        else:
+            theory_warning = f'Warning! The theory {warning}'
+        if self.boval.value_contain_nlp_subject(self.hypotheses[0].value)\
+            and self.boval.value_contain_predicate(self.hypotheses[0].value)\
+            and self.boval.value_contain_nlp_object(self.hypotheses[0].value):
             hypo_warning = ''
-        if self._nlp(self.hypotheses[1].value, subject, subject_passive)\
-            and self._nlp_predicate(self.hypotheses[1].value, predicate)\
-            and self._nlp(self.hypotheses[1].value, prep_object, direct_object):
+        else:
+            hypo_warning = f'Warning! The hypothesis {warning}'
+        if self.boval.value_contain_nlp_subject(self.hypotheses[1].value)\
+            and self.boval.value_contain_predicate(self.hypotheses[1].value)\
+            and self.boval.value_contain_nlp_object(self.hypotheses[1].value):
             null_warning = ''
+        else:
+            null_warning = f'Warning! The null hypothesis {warning}'
 
         return (theory_warning, hypo_warning, null_warning)
 
@@ -258,29 +256,28 @@ class Deductive:
         Returns:
             True/False: True if theory, hypothesis, and null hypothesis are all filled
         """
-        empty_theory_error, empty_hypo_error, empty_null_error = self._get_error_messages()
-        theory_warning, hypo_warning, null_warning = self._get_warning_messages()
+        # Errors and warnings lists: [0] theory, [1] hypothesis, [2] null hypothesis
+        errors = self._get_error_messages()
+        warnings = self._get_warning_messages()
 
-        theory_error, theory_error_color = self.__implement_error_messages(empty_theory_error,
-                                                                        theory_warning)
-        hypo_error, hypo_error_color = self.__implement_error_messages(empty_hypo_error,
-                                                                    hypo_warning)
-        null_error, null_error_color = self.__implement_error_messages(empty_null_error,
-                                                                    null_warning)
+        # Message lists with message value [0] and color [1]
+        theory_message = self.__implement_error_messages(errors[0], warnings[0])
+        hypo_message = self.__implement_error_messages(errors[1], warnings[1])
+        null_message = self.__implement_error_messages(errors[2], warnings[2])
 
-        theory_grid = self.__create_theory_grid(theory_error, theory_error_color)
-        hypotheses_grid = self.__create_hypotheses_grid(hypo_error, null_error,
-                                                        hypo_error_color, null_error_color)
+        theory_grid = self.__create_theory_grid(theory_message[0], theory_message[1])
+        hypotheses_grid = self.__create_hypotheses_grid(hypo_message[0], null_message[0],
+                                                        hypo_message[1], null_message[1])
 
         is_show_limitation_prompt = True
 
         # If errors exist in any of the fields
-        if len(empty_theory_error + empty_hypo_error + empty_null_error) > 0:
+        if len(errors[0] + errors[1] + errors[2]) > 0:
             is_show_limitation_prompt=False
 
         # If Validate - button is clicked and warnings exist
         elif is_validate:
-            if len(theory_warning + hypo_warning + null_warning ) > 0:
+            if len(warnings[0] + warnings[1] + warnings[2]) > 0:
                 is_show_limitation_prompt=False
 
         # Show errors or/and warnings
@@ -427,52 +424,6 @@ class Deductive:
 
         self.boutils.create_markdown_cells_above(1, text=text)
         self.next_step[0] = 'analysis_done'
-
-    def _is_min_length(self, text):
-        if not text:
-            return False
-        text.replace(" ", "")
-        if len(text) < 8:
-            return False
-        return True
-
-    def _is_not_al_num(self, text):
-        if not text:
-            return False
-        special_characters = "[{]}@#^\\*()+_=<>/"
-        if any(c in special_characters for c in text):
-            return False
-        return True
-
-    def _nlp_predicate(self, text, sentence_element):
-        '''Checks that string contains at least one predicate.
-
-            Args:
-                text(str)
-            Return:
-                true: if sentence contain at least one verb
-                false: if value is empty or not contain verb
-        '''
-        words = self.nlp(text)
-        if any(word.tag_[0] == sentence_element for word in words):
-            return True
-
-        return False
-
-    def _nlp(self, text, sentence_element1, sentence_element2):
-        '''Checks that string contains at least one of the desired sentence elements.
-
-            Args:
-                text(str)
-            Return:
-                true: if sentence contain at least one verb
-                false: if value is empty or not contain verb
-        '''
-        words = self.nlp(text)
-        if any(word.dep_ == sentence_element1 or sentence_element2 for word in words):
-            return True
-
-        return False
 
     def __repr__(self):
         return ''
