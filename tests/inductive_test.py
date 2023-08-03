@@ -42,8 +42,8 @@ class TestInductive(unittest.TestCase):
         self.assertTrue(self.instance.boval.check_value_not_empty(self.instance.fields[1]))   
 
     def test_new_observation_requires_notes(self):
-        self.instance._check_value_not_empty = MagicMock()
-        self.instance._check_value_not_empty.return_value = False
+        self.instance.boval.check_value_not_empty = MagicMock()
+        self.instance.boval.check_value_not_empty.return_value = False
         self.instance._new_observation()
         self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
 
@@ -57,6 +57,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(4, self.instance._cell_count)
 
     def test_open_cells_increases_cell_count_correctly(self):
+        self.instance.utils.create_code_cells_above = MagicMock()
         self.instance._cell_count = 3
         self.instance.fields[0].value = 3
         self.instance._open_cells()  
@@ -64,48 +65,21 @@ class TestInductive(unittest.TestCase):
         self.instance.utils.create_code_cells_above.assert_called()
 
     def test_zero_cells_are_not_run(self):
+        self.instance.utils.run_cells_above = MagicMock()
         self.instance._run_cells()
         self.instance.utils.run_cells_above.assert_not_called()
 
     def test_new_observation_cannot_be_empty(self):
-        self.instance._check_value_not_empty = MagicMock()
-        self.instance._check_value_not_empty.return_value = False
+        self.instance.fields[1].value = ''
         self.instance._new_observation()
         self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
   
     def test_new_observation_is_saved(self):
         self.instance.lists[1].append("There is a lot of noise.")
-        self.instance._check_value_not_empty = MagicMock()        
         self.instance.conclusion = MagicMock()
         self.instance.fields[1].value = "The sample is too small."
-        self.instance._check_value_not_empty.return_value = True
         self.instance._new_observation()
         self.assertEqual(2, len(self.instance.lists[1]))
-
-    def test_get_first_words_returns_correct_string_with_short_list(self):
-        words = ['Short', 'list']
-        first_words = self.instance.boval.get_first_words(words)
-        self.assertEqual(first_words, 'Short list')
-
-    def test_get_first_words_returns_correct_string_with_long_list(self):
-        words = ['Long', 'list', 'has', 'more', 'words', 'than', 'short', 'list']
-        first_words = self.instance.boval.get_first_words(words)
-        self.assertEqual(first_words, 'Long list has more words...')
-
-    def test_get_first_words_returns_first_short_sentence(self):
-        words = ['My', 'sentence', 'is', 'short.', 'It', 'is', 'ok.']
-        first_words = self.instance.boval.get_first_words(words)
-        self.assertEqual(first_words, 'My sentence is short')
-
-    def test_get_first_words_returns_first_short_question(self):
-        words = ['What', 'to', 'ask?', 'I', 'do', 'not', 'know.']
-        first_words = self.instance.boval.get_first_words(words)
-        self.assertEqual(first_words, 'What to ask?')
-
-    def test_get_first_words_returns_first_short_exclamation(self):
-        words = ['I', 'want', 'ice', 'cream!', 'Preferably', 'mint', 'Puffet.']
-        first_words = self.instance.boval.get_first_words(words)
-        self.assertEqual(first_words, 'I want ice cream!')
 
     def test_format_observation_returns_correct_string(self):
         obs = 'The day is sunny.'
@@ -157,6 +131,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(len(self.instance.lists[0]), 2)
 
     def test_start_inductive_analysis_creates_markdown_cell(self):
+        self.instance.utils.create_markdown_cells_above = MagicMock()
         self.instance.start_inductive_analysis()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1, '## Data exploration')
 
@@ -242,31 +217,21 @@ class TestInductive(unittest.TestCase):
         self.instance._cell_count = 1
         self.instance._run_cells()
         self.assertIsNotNone(self.instance.conclusion)
-    """
-    def test_start_new_analysis_calls_start_new(self):
-        self.instance._start_new_analysis()
-        self.instance.start_new.assert_called()
-    """
 
     def test_submit_summary_shows_error_with_empty_summary(self):
-        self.instance._display_summary = Mock()
+        self.instance._display_summary = MagicMock()
         self.instance._submit_summary()
         self.instance._display_summary.assert_called_with(error='You must write some kind of summary')
 
     def test_submit_summary_creates_markdown_cell(self):
+        self.instance.utils.create_markdown_cells_above = MagicMock()
         self.instance.fields[2].value = 'They lived happily ever after.'
         text = '### Summary: They lived happily ever after\\nThey lived happily ever after.'
         self.instance._submit_summary()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_submit_summary_calls_new_analysis(self):
-        self.instance._evaluation_of_analysis = Mock()
+        self.instance._evaluation_of_analysis = MagicMock()
         self.instance.fields[2].value = 'They lived happily ever after.'
         self.instance._submit_summary()
         self.instance._evaluation_of_analysis.assert_called()
-    """
-    def test_lock_evaluation_calls_save_results(self):
-        self.instance._save_results = Mock()
-        self.instance._lock_evaluation_pressed()
-        self.instance._save_results.assert_called()
-    """

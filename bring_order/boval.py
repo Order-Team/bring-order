@@ -25,7 +25,7 @@ class BOVal:
     def get_first_words(self, word_list):
         """Takes a word list and returns a string that has the first sentence or
         the first five words and three dots if the sentence is longer.
-        
+
         Args:
             word_list (list)
             
@@ -55,7 +55,7 @@ class BOVal:
         """
         if not self.check_value_not_empty(value):
             return False
-        value.replace(" ", "")
+        value = value.replace(" ", "")
         if len(value) < 8:
             return False
 
@@ -120,7 +120,11 @@ class BOVal:
         direct_object = 'dobj'
         if not self.check_value_not_empty(value):
             return False
-        words = self.nlp(value)
+        all_words = self.nlp(value)
+        words = []
+        for word in all_words:
+            if word.tag_[0]!='V':
+                words.append(word)
         if any(word.dep_ == prep_object or direct_object for word in words):
             return True
 
@@ -139,8 +143,28 @@ class BOVal:
         subject_passive = 'nsubjpass'
         if not self.check_value_not_empty(value):
             return False
-        words = self.nlp(value)
+        all_words = self.nlp(value)
+        words = []
+        for word in all_words:
+            if word.tag_[0] != 'V':
+                words.append(word)
+
         if any(word.dep_ == subject or subject_passive for word in words):
             return True
 
         return False
+
+    def lemmatization_of_value(self, value):
+        ''' Creates list of lemmas from given text.
+
+            Args:
+                text(str)
+            Return:
+                list: list of lemmas
+        '''
+        words = self.nlp(value)
+        lemmas = []
+        for word in words:
+            lemmas.append(word.lemma_)
+
+        return lemmas
