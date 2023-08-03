@@ -22,7 +22,7 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.next_step = next_step
-       
+
 
     @property
     def button_list(self):
@@ -45,7 +45,7 @@ class Bodi:
             ('assist', 'AI assistant', self.ai, 'primary'),
         ]
         return button_list
-    
+
     def ai(self, _=None):
         self.next_step[0] = 'ai'
 
@@ -244,19 +244,18 @@ class Bodi:
                 self.file_chooser,
                 self.buttons['import']
             ]))
-    
+
     def initiate_ai_assistant(self, _=None):
         feature_description = self.bogui.create_message('Enter a natural language prompt. The AI assistant will propose code to implement your request.')
-    
+
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
 
-    
+
         grid = widgets.AppLayout(
         header = feature_description,
         left_sidebar = widgets.HBox([
             api_key_label,
             self.api_key,
-           
         ]),
         center=widgets.VBox([
                 self.natural_language_prompt
@@ -265,7 +264,6 @@ class Bodi:
             self.buttons['send_ai'],
             self.buttons['clear_ai'],
             self.buttons['advanced_ai'],
-          
         ]),
         pane_widths=[1, 5, 0],
         grid_gap='10px'

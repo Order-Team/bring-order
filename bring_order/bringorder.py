@@ -89,10 +89,7 @@ class BringOrder:
         # The different ui functions are run through a helper function
         # that returns the name of the next function to be executed.
         # First, the data import function:
-        next_step = self.get_next(self.bodi.bodi)
-        # Branching to AI assistant
-        if next_step == 'ai':
-            self.ai.display_ai_assistant()
+        next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.ai])
         # Main analysis loop:
         while next_step == 'start_analysis':
             next_step = self.get_next(self.start_analysis)
@@ -111,11 +108,12 @@ class BringOrder:
         elif next_step == 'new_data':
             self.boutils.execute_cell_from_current(0, 'BringOrder()')
 
-    def get_next(self, function):
+    def get_next(self, function, subroutines=[]):
         """Runs a function, pauses execution until next_step is updated and then returns it.
         
         Args:
             function: a function to be executed
+            subroutines[function]: list of external subroutine functions that may be called by function
         Returns:
             next_step: name of the function to be executed after this"""
         function()
@@ -124,6 +122,10 @@ class BringOrder:
                 ui_poll(10)
                 time.sleep(0.1)
         next_step = str(self.next_step[0])
+        for sub in subroutines:
+            if sub.__name__ == self.next_step[0]:
+                self.next_step[0] = None
+                next_step = self.get_next(sub)   
         self.next_step[0] = None
         return next_step
 
