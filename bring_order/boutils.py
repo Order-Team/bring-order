@@ -285,3 +285,9 @@ class BOUtils:
             first_words += '...'
 
         return first_words
+    
+    def print_to_console(self, msg):
+        command = f'''
+        console.log("{msg}");
+        '''
+        display(Javascript(command))
