@@ -89,7 +89,7 @@ class BringOrder:
         # The different ui functions are run through a helper function
         # that returns the name of the next function to be executed.
         # First, the data import function:
-        next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.ai])
+        next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.toggle_ai])
         # Main analysis loop:
         while next_step == 'start_analysis':
             next_step = self.get_next(self.start_analysis)
@@ -116,17 +116,17 @@ class BringOrder:
             subroutines[function]: list of external subroutine functions that may be called by function
         Returns:
             next_step: name of the function to be executed after this"""
-        self.boutils.print_to_console('calling: ' + function.__name__)
+        #self.boutils.print_to_console('calling: ' + function.__name__)
         function()
         with ui_events() as ui_poll:
             while self.next_step[0] is None:
                 ui_poll(10)
                 time.sleep(0.1)
         next_step = str(self.next_step[0])
-        self.boutils.print_to_console('next step: ' + next_step)
+        #self.boutils.print_to_console('next step: ' + next_step)
         for sub in subroutines:
             if sub.__name__ == self.next_step[0]:
-                self.boutils.print_to_console('calling sub: ' + next_step)
+                #self.boutils.print_to_console('calling sub: ' + next_step)
                 self.next_step[0] = None
                 next_step = self.get_next(sub, subroutines=[sub])   
         self.next_step[0] = None

@@ -44,12 +44,18 @@ class Bodi:
             ('add', 'Add limitation', self.add_limitation, 'primary'),
             ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
-            ('assist', 'AI assistant', self.ai, 'primary'),
+            ('assist', 'AI assistant', self.toggle_ai, 'primary'),
         ]
         return button_list
 
-    def ai(self, _=None):
-        self.next_step[0] = 'ai'
+    def toggle_ai(self, _=None):
+        if self.buttons['assist'].description == 'AI assistant':
+            self.buttons['assist'].description = 'Close AI assistant'
+            self.buttons['assist'].button_style = 'warning'
+        else:
+            self.buttons['assist'].description = 'AI assistant'
+            self.buttons['assist'].button_style = 'primary'
+        self.next_step[0] = 'toggle_ai'
 
     def data_preparation_grid(self, message=None):
         """Creates widget grid.
@@ -338,33 +344,6 @@ class Bodi:
                 self.file_chooser,
                 self.buttons['import']
             ]))
-
-    def initiate_ai_assistant(self, _=None):
-        feature_description = self.bogui.create_message('Enter a natural language prompt. The AI assistant will propose code to implement your request.')
-
-        api_key_label = self.bogui.create_label('Enter your Open AI key here:')
-
-
-        grid = widgets.AppLayout(
-        header = feature_description,
-        left_sidebar = widgets.HBox([
-            api_key_label,
-            self.api_key,
-        ]),
-        center=widgets.VBox([
-                self.natural_language_prompt
-        ]),
-        footer = widgets.VBox([
-            self.buttons['send_ai'],
-            self.buttons['clear_ai'],
-            self.buttons['advanced_ai'],
-        ]),
-        pane_widths=[1, 5, 0],
-        grid_gap='10px'
-        )
-
-        display(grid)
-
 
     def bodi(self, error=''):
         """Main function"""

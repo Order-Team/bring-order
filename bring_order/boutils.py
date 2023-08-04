@@ -287,6 +287,11 @@ class BOUtils:
         return first_words
     
     def print_to_console(self, msg):
+        """Prints to browser console. Useful for debugging etc.
+        
+        Args:
+            msg (str)
+        """
         command = f'''
         console.log("{msg}");
         '''

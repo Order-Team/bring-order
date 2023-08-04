@@ -87,7 +87,7 @@ class BOGui:
 
     def create_int_text(self, default_value=1, desc=''):
         """Creates integer input"""
-        int_text = widgets.BoundedIntText(value=default_value, min=0, 
+        int_text = widgets.BoundedIntText(value=default_value, min=0,
                                         description=desc, layout={'width':'80px'})
         return int_text
 
