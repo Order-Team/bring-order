@@ -243,10 +243,10 @@ class Bodi:
     def check_variable_independence(self, _=None):
         """Button function for independence test. Checks independence and adds limitation
         if variables are not independent."""
-        
+
         result = self.stattests.check_variable_independence()
 
-        if type(result[2]) is str:
+        if isinstance(result[2], str):
             message = self.bogui.create_error_message(result[2])
 
         elif result[2] is False:
@@ -279,7 +279,7 @@ class Bodi:
             clear_output(wait=True)
             display(self.data_preparation_grid())
 
-        self.buttons['independence'].disabled = True    
+        self.buttons['independence'].disabled = True
         display(independence_test)
 
     def close_independence_test(self, _=None):

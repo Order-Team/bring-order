@@ -1,6 +1,5 @@
 """A class to help with statistical tests"""
 from ipywidgets import widgets
-from IPython.display import display
 import pandas as pd
 from scipy import stats
 

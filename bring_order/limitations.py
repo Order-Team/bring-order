@@ -73,7 +73,7 @@ class Limitations:
 
     def get_limitations_as_bullet_list(self):
         """Returns limitations as a HTML bullet list."""
-        
+
         text = '<h4>Attention:</h4>\n<ul>\n'
         text += '\n'.join([
             '<li>' + limitation.value + '</li>'

@@ -1,7 +1,8 @@
+from getpass import getpass
 from ipywidgets import widgets
 from IPython.display import display, clear_output
 import openai
-from getpass import getpass
+
 
 class Ai:
     def __init__(self, bogui, utils, next_step):
@@ -15,7 +16,7 @@ class Ai:
         self.api_key = ""
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
-    
+
     @property
     def button_list(self):
         button_list = [
@@ -27,12 +28,12 @@ class Ai:
         return button_list
 
     #def __create_input_grid(self):
-        
+
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
         self.api_key = self.api_key_input_field.value
         self.openai_api()
-    
+
     def clear_ai(self,_=None):
         """Button function for clearing input text field"""
         self.natural_language_prompt.value = ''
@@ -43,22 +44,22 @@ class Ai:
 
     def advanced_ai(self,_=None):
         """Button function for setting advanced options for the AI assistant"""
-    
+
     def ai(self, _=None):
         """" Function for displaying communication with AI assistant"""
         feature_description = self.bogui.create_message('Enter a natural language prompt. The AI assistant will propose code to implement your request.')
-    
+
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
 
         api_key_element = widgets.HBox([
             api_key_label,
-            self.api_key_input_field,       
+            self.api_key_input_field,
         ])
-    
+
         self.grid = widgets.AppLayout(
         header = api_key_element,
         center= widgets.VBox([
-            feature_description,            
+            feature_description,
             self.natural_language_prompt
           ]),
         footer = widgets.HBox([
@@ -66,14 +67,14 @@ class Ai:
             self.buttons['clear_ai_btn'],
             self.buttons['advanced_ai_btn'],
             self.buttons['close_ai_btn'],
-          
+
         ]),
         pane_widths=[2, 5, 5],
         grid_gap='10px'
         )
 
         display(self.grid)
-    
+
     def openai_api(self, _=None):
         openai.api_key = self.api_key
         model_engine = self.model_engine
@@ -91,5 +92,5 @@ class Ai:
         ## TODO: print message into a code cell
 
 
-        
+
         print("{}: {}".format(message['role'], message['content']))
