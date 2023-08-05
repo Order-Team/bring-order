@@ -74,10 +74,33 @@ class Limitations:
     def get_limitations_as_bullet_list(self):
         """Returns limitations as a HTML bullet list."""
 
-        text = '<h4>Attention:</h4>\n<ul>\n'
-        text += '\n'.join([
-            '<li>' + limitation.value + '</li>'
-            for limitation in self.data_limitations])
-        text += '\n</ul>'
+        text = ''
+        if self.data_limitations[0].value != '':
+            text = '<h4>There are some data limitations you should consider:</h4>\n<ul>\n'
+            text += '\n'.join([
+                '<li>' + limitation.value + '</li>'
+                for limitation in self.data_limitations])
+            text += '\n</ul>'
 
         return widgets.HTML(text)
+
+    def get_limitations_as_dropdown(self):
+        """Returns limitations as a Dropdown widget or None if there are no limitations yet."""
+
+        limitations = self.get_values()
+        if limitations[0] != '':
+            limitation_label = self.bogui.create_message(
+                'There are some data limitations you should consider:'
+            )
+            limitation_dropdown = widgets.Dropdown(
+                options=['Show limitations']+limitations,
+                value='Show limitations',
+                layout={'width': 'max-content'}
+            )
+
+            return widgets.VBox([
+                limitation_label,
+                limitation_dropdown
+            ])
+
+        return None

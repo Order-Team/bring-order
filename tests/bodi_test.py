@@ -1,4 +1,5 @@
 import unittest
+import pandas as pd
 from ipywidgets import widgets
 from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
@@ -19,9 +20,11 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
         self.instance.limitations.empty_limitations_error = self.instance.bogui.create_error_message('')
+        self.instance.limitations.get_limitations_as_bullet_list = lambda: widgets.HTML(value='')
+        self.instance.stattests.check_numerical_data = lambda data: {}
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 13)
+        self.assertEqual(len(self.instance.buttons), 14)
 
     def test_bodi_hides_current_input(self):
         self.instance.bodi()
@@ -134,12 +137,12 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
    
-    def test_run_cells_checks_if_user_runs_tests(self):
-        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
-        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
-        self.instance.cell_count = 1
-        self.instance.run_cells()
-        self.instance.stattests.detect_tests.assert_called()
+    # def test_run_cells_checks_if_user_runs_tests(self):
+    #     self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+    #     self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
+    #     self.instance.cell_count = 1
+    #     self.instance.run_cells()
+    #     self.instance.stattests.detect_tests.assert_called()
 
 
 

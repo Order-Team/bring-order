@@ -23,7 +23,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Run cells' }).click();
+  await newPage.getByRole('button', { name: 'Add limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -61,7 +61,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Run cells' }).click();
+  await newPage.getByRole('button', { name: 'Add limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -93,7 +93,7 @@ test('deductive analysis theory and hypothesis warnings', async ({ page, context
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Run cells' }).click();
+  await newPage.getByRole('button', { name: 'Add limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -129,7 +129,7 @@ test('deductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Run cells' }).click();
+  await newPage.getByRole('button', { name: 'Add limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();

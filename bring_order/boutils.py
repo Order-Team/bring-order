@@ -170,7 +170,9 @@ class BOUtils:
         """
 
         command = f'''
-        var current_index = IPython.notebook.get_selected_index();
+        var output_area = this;
+        var cell_element = output_area.element.parents('.cell');
+        var current_index = Jupyter.notebook.get_cell_elements().index(cell_element);
         var first_index = current_index - {cell_count};
         IPython.notebook.execute_cell_range(first_index, current_index);
         '''
@@ -285,7 +287,7 @@ class BOUtils:
             first_words += '...'
 
         return first_words
-    
+
     def print_to_console(self, msg):
         """Prints to browser console. Useful for debugging etc.
         
@@ -295,4 +297,42 @@ class BOUtils:
         command = f'''
         console.log("{msg}");
         '''
+        display(Javascript(command))
+
+    def check_cells_above(self, cell_count, test_name, variables):
+        """Check if cells above contain the given test and at least one of the given variables.
+        Prints a warning.
+        
+        Args:
+            cell_count (int): the number of cells to be checked
+            test_name (str): the text you are trying to find
+            variables (list): list of strings
+        """
+
+        command = f'''
+        var current_index = IPython.notebook.get_selected_index();
+        var first_index = current_index - {cell_count};
+        var cells = IPython.notebook.get_cells();
+        var variables = {variables}
+        var warning = ""
+        cells.forEach(function(cell) {{
+                var index = IPython.notebook.find_cell_index(cell);
+                if(index >= first_index && index < current_index) {{
+                    var cell_text = cell.get_text();
+                    if(cell_text.includes("{test_name}")) {{
+                        variables.forEach(function(variable) {{
+                            if(cell_text.includes(variable)) {{
+                                warning = warning + " " + variable + ",";
+                            }}
+                        }});
+                    }}
+                }}
+        }});
+        if(warning != "") {{
+            warning = "Warning! It seems that you are trying to use " + "{test_name}" + " for variables that are not normally distributed:" + warning
+            warning = warning.slice(0, -1);
+            element.text(warning);
+        }}
+        '''
+
         display(Javascript(command))

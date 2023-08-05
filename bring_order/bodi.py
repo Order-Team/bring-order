@@ -36,25 +36,28 @@ class Bodi:
             ('analyze', 'Analyze this data', self.check_variables, 'success'),
             ('test', 'Test', self.check_variable_independence, 'success'),
             ('close', 'Close test', self.close_independence_test, 'warning'),
-            ('independence', 'Test independence', self.display_independence_test, 'primary'),
+            ('independence', 'Test independence', self.display_independence_test, 'success'),
             ('import', 'Import manually', self.show_cell_operations, 'primary'),
             ('open', 'Open cells', self.open_cells, 'primary'),
-            ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
-            ('run', 'Run cells', self.run_cells, 'warning'),
+            ('delete', 'Delete last cell', self.delete_last_cell, 'warning'),
+            ('run', 'Run cells', self.run_cells, 'primary'),
             ('add', 'Add limitation', self.add_limitation, 'primary'),
             ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
-            ('assist', 'AI assistant', self.toggle_ai, 'primary'),
+            ('assist', 'AI assistant', self.toggle_ai, 'success'),
+            ('limitations', 'Add limitations', self.display_limitations_view, 'success')
         ]
         return button_list
 
     def toggle_ai(self, _=None):
+        """Button function to open/close AI assistant"""
+        
         if self.buttons['assist'].description == 'AI assistant':
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
         else:
             self.buttons['assist'].description = 'AI assistant'
-            self.buttons['assist'].button_style = 'primary'
+            self.buttons['assist'].button_style = 'success'
         self.next_step[0] = 'toggle_ai'
 
     def data_preparation_grid(self, message=None):
@@ -64,6 +67,7 @@ class Bodi:
             message (widget, optional): HTML widget to be displayed
         """
 
+        self.limitations.set_error_value('')
         cell_number_label = self.bogui.create_label(
             'Add code cells for data preparation:')
 
@@ -76,7 +80,7 @@ class Bodi:
                 self.buttons['run'],
                 self.buttons['independence'],
                 self.buttons['assist'],
-                self.bogui.create_placeholder()
+                self.buttons['limitations']
             ]
         )
         buttons.width = '100%'
@@ -110,21 +114,28 @@ class Bodi:
 
     def delete_last_cell(self, _=None):
         """Button function to delete the last data import code cell"""
+
         if self.cell_count > 0:
             self.boutils.delete_cell_above()
             self.cell_count -= 1
 
     def run_cells(self, _=None):
-        """Button function that runs data import cells and shows limitation inputs."""
+        """Button function that runs data import cells."""
 
+        clear_output(wait=True)
+        display(self.data_preparation_grid(
+            message=self.limitations.get_limitations_as_bullet_list()))
+        not_normal = self.check_normal_distribution(self.stattests.dataset)
+        self.boutils.check_cells_above(self.cell_count, 'ttest', not_normal)
         self.boutils.run_cells_above(self.cell_count)
-        self.stattests.detect_tests()
-        self.display_limitations_view()
 
-    def display_limitations_view(self):
+        # self.stattests.detect_tests()
+        # self.display_limitations_view()
+
+    def display_limitations_view(self, _=None):
         """Displays limitation view."""
 
-        self.buttons['independence'].disabled = True
+        # self.buttons['independence'].disabled = True
 
         limitation_grid = self.limitations.create_limitation_grid()
         limitation_grid.footer=widgets.VBox([
