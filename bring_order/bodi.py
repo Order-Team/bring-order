@@ -99,7 +99,7 @@ class Bodi:
         """Button function to show buttons for cell operations."""
 
         self.buttons['independence'].disabled = True
-        #clear_output(wait=True)
+        clear_output(wait=True)
         display(self.data_preparation_grid())
 
     def open_cells(self, _=None):
