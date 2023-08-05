@@ -45,7 +45,6 @@ class TestLimitations(unittest.TestCase):
         self.instance.remove_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)        
     
-    '''
     def test_add_limitation_adds_limitation_input_to_list(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
             value=f'{dv}',
@@ -65,4 +64,4 @@ class TestLimitations(unittest.TestCase):
         self.assertEqual(len(self.instance.data_limitations), 2)
         self.instance.remove_limitation()
         self.assertEqual(len(self.instance.data_limitations), 1)      
-    '''    
+    

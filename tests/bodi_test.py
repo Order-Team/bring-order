@@ -14,6 +14,7 @@ class TestBodi(unittest.TestCase):
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
         self.instance.limitations = Mock()
+        self.instance.stattests = Mock()
         self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
@@ -133,6 +134,12 @@ class TestBodi(unittest.TestCase):
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
    
+    def test_run_cells_checks_if_user_runs_tests(self):
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
+        self.instance.cell_count = 1
+        self.instance.run_cells()
+        self.instance.stattests.detect_tests.assert_called()
 
 
 

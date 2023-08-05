@@ -118,7 +118,7 @@ class Bodi:
         """Button function that runs data import cells and shows limitation inputs."""
 
         self.boutils.run_cells_above(self.cell_count)
-        #self.stattests.detect_tests()
+        self.stattests.detect_tests()
         self.display_limitations_view()
 
     def display_limitations_view(self):
