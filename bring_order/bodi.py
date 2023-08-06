@@ -146,6 +146,8 @@ class Bodi:
             ])
         ])
 
+        
+
         self.show_cell_operations()
         display(limitation_grid)
         display(self.buttons['start'])
