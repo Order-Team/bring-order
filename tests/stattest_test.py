@@ -10,6 +10,14 @@ class TestStattests(unittest.TestCase):
         bogui = Mock()
         self.instance = Stattests(bogui)
         self.instance.bogui = bogui
+        self.instance.explanatory = Mock()
+        self.instance.dependent = Mock()
+
+    def test_check_numerical_data_returns_only_filtered_data(self):
+        loans_data = pd.read_csv("tests/loansData.csv")    
+        self.instance.dataset = loans_data
+        filtered = self.instance.check_numerical_data(loans_data)
+        self.assertEqual(6, len(filtered))
 
     def test_normally_distributed_data_returns_true(self):
         numbers = [345, 346, 347, 500, 200, 400, 100]
@@ -32,3 +40,13 @@ class TestStattests(unittest.TestCase):
         self.instance.select_variables()
         self.instance.bogui.create_message.assert_called_with(
             'There are not enough categorical variables to perform a chi-square test.') 
+
+    def test_independence_test_returns_true_for_independent_variables(self):
+        loans_data = pd.read_csv("tests/loansData.csv")    
+        self.instance.dataset = loans_data
+        self.instance.select_variables = Mock()     
+        self.instance.explanatory.value = 'Loan.Purpose'
+        self.instance.dependent.value = 'State'
+        result = self.instance.check_variable_independence()
+        self.assertEqual(result, ('Loan.Purpose', 'State', True))
+
