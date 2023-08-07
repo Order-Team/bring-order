@@ -13,7 +13,8 @@ class Ai:
         self.api_key_input_field = self.bogui.create_password_field()
         self.context_input_field = self.bogui.create_input_field()
         self.buttons = self.bogui.init_buttons(self.button_list)
-        self.ai_output = None
+        self.ai_output_grid = None
+        self.ai_output = self.bogui.create_message('')
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
@@ -65,9 +66,11 @@ class Ai:
         if self.visible is False:
             self.visible = True
             self.display_ai()
+            self.display_ai_output()
         else:
             self.visible = False
             self.close_ai()
+            self.ai_output_grid.close()
 
     
     def display_ai(self, _=None, api_key_error='', nlp_error= '', context_error = ''):
@@ -109,21 +112,27 @@ class Ai:
             self.natural_language_prompt,
             self.bogui.create_error_message(nlp_error, 'red')
           ]),
-        footer = widgets.HBox([
+        footer =
+            widgets.HBox([
             self.buttons['send_ai_btn'],
             self.buttons['clear_ai_btn'],
             self.buttons['advanced_ai_btn']
-         
-
         ]),
-        pane_widths=[3, 5, 5],
-        grid_gap='12px'
+        pane_widths=[3, 3, 6],
+        pane_heights=[4, 6, 2]
+    
         )
 
         display(self.grid)
+    
+    def display_ai_output(self, _=None):
+
+        self.ai_output_grid = widgets.AppLayout(
+            center = self.ai_output
+        )
+        display(self.ai_output_grid)
 
        
-
     def openai_api(self, _=None):
 
         try:
@@ -138,9 +147,13 @@ class Ai:
                     {"role": "system", "content": system_msg},
                     {"role": "user", "content": content},
             ])
-
+            
             message = response.choices[0]['message']
-            self.display_markdown(message)
+            #self.ai_output = self.bogui.create_message(self.display_response(message))
+            self.ai_output.value = self.display_response(message)
+            #self.display_response(message)
+
+
 
         except openai.error.Timeout as e:
             message = self.bogui.create_message(
@@ -184,21 +197,30 @@ class Ai:
             f"OpenAI API request exceeded rate limit: {e}")
             display(message)
             pass
+    
+  
+    def display_response(self, message):
+        """ Parses, calls formatter and displays response from AI assistant 
+        
+        """     
+        text = self.format_response(message['content'])
+        return text
+
+
+    
+    def format_response(self, text):
+        """ Formats data description for html widget
+        
+        Returns:
+            formatted_text (str)
+        """
+   
+        formatted_text = '<br />'.join(text.split('\n'))
+        code = '<pre>' + formatted_text + '</pre>'
+
+        return code
                 
 
-    def display_markdown(self, message):
-
-        print(f"{message['content']}")
-    
-        # markdown_to_code_btn = self.buttons['insert_code_to_cell']
-        
-        # content_to_markdown =  """{}""".format(message['content'])
-        # self.ai_output = self.utils.create_markdown_cells_below_with_text(1, text = content_to_markdown)
-        
-        # display(markdown_to_code_btn)
-        # display(self.ai_output)
-      
-    
     def insert_code_to_cell(self, _=None):
         pass
  
