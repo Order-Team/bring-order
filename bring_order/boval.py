@@ -103,8 +103,9 @@ class BOVal:
         if not self.check_value_not_empty(value):
             return False
         words = self.nlp(value)
-        if any(word.tag_[0] == 'V' for word in words):
-            return True
+        for word in words:
+            if word.tag_[0] == 'V':
+                return True
 
         return False
 
@@ -121,13 +122,11 @@ class BOVal:
         direct_object = 'dobj'
         if not self.check_value_not_empty(value):
             return False
-        all_words = self.nlp(value)
-        words = []
-        for word in all_words:
+        words = self.nlp(value)
+        for word in words:
             if word.tag_[0]!='V':
-                words.append(word)
-        if any(word.dep_ == prep_object or direct_object for word in words):
-            return True
+                if word.dep_ == prep_object or word.dep_ == direct_object:
+                    return True
 
         return False
 
@@ -144,14 +143,12 @@ class BOVal:
         subject_passive = 'nsubjpass'
         if not self.check_value_not_empty(value):
             return False
-        all_words = self.nlp(value)
-        words = []
-        for word in all_words:
-            if word.tag_[0] != 'V':
-                words.append(word)
+        words = self.nlp(value)
 
-        if any(word.dep_ == subject or subject_passive for word in words):
-            return True
+        for word in words:
+            if word.tag_[0] != 'V':
+                if word.dep_ == subject or word.dep_ == subject_passive:
+                    return True
 
         return False
 
@@ -169,3 +166,18 @@ class BOVal:
             lemmas.append(word.lemma_)
 
         return lemmas
+
+    def check_text_is_lemmatized(self, value):
+        lemmas = []
+        if type(value) is str:
+            lemmas = self.lemmatization_of_value(value)
+            tokens = self.nlp.tokenizer(value)
+            if tokens == lemmas:
+                return True
+        if type(value) is list:
+            for i in value:
+                lemmas.append(self.lemmatization_of_value(i)[0])
+            if value == lemmas:
+                return True
+        else:
+            return False

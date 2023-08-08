@@ -75,11 +75,17 @@ class TestInductive(unittest.TestCase):
     def test_sentence_contains_subject1(self):
         self.assertTrue(self.boval.value_contain_nlp_subject('I want an interesting book'))
     
-    def test_sentence_contains_subject2(self):
-        self.assertTrue(self.boval.value_contain_nlp_subject('There is a ghost in the room'))
-    
     def test_sentence_not_contain_subject(self):
         self.assertFalse(self.boval.value_contain_nlp_subject('Running eating sleeping'))
+    
+    def test_sentence_not_contain_subject_with_random_input(self):
+        self.assertFalse(self.boval.value_contain_nlp_subject('dsfsdf fdfsfs fdsfsdf fsdfsf'))
+    
+    def test_sentence_not_contain_object_with_random_input(self):
+        self.assertFalse(self.boval.value_contain_nlp_object('dsfsdf fdfsfs fdsfsdf fsdfsf'))
+    
+    def test_sentence_not_contain_predicate_with_random_input(self):
+        self.assertFalse(self.boval.value_contain_predicate('dsfsdf fdfsfs fdsfsdf fsdfsf'))
     
     def test_sentence_contains_passive_subject(self):
         self.assertTrue(self.boval.value_contain_nlp_subject('The cake was eaten'))
@@ -112,3 +118,15 @@ class TestInductive(unittest.TestCase):
     def test_empty_value_lemmatization(self):
         lemmas = self.boval.lemmatization_of_value('')
         self.assertEqual(lemmas, [])
+    
+    def test_string_value_is_not_lemmatized(self):
+        value = 'She is going to buy an interesting book.'
+        self.assertFalse(self.boval.check_text_is_lemmatized(value))
+
+    def test_list_value_is_lemmatized(self):
+        value = ['she', 'be', 'go', 'to', 'buy', 'an', 'interesting', 'book']
+        self.assertTrue(self.boval.check_text_is_lemmatized(value))
+
+    def test_list_value_is_not_lemmatized(self):
+        value = ['she', 'is', 'going', 'to', 'buy', 'an', 'interesting', 'book']
+        self.assertFalse(self.boval.check_text_is_lemmatized(value))
