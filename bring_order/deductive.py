@@ -21,7 +21,7 @@ class Deductive:
         self.boutils = boutils
         self.boval = BOVal()
         self.buttons = self.bogui.init_buttons(self.button_list)
-        self.theory_desc = self.bogui.create_text_area('','Theory')
+        self.theory_desc = self.bogui.create_text_area('', 'Theory')
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis
         self.hypotheses = [
             self.bogui.create_input_field(),
@@ -30,7 +30,7 @@ class Deductive:
         self.add_cells_int = self.bogui.create_int_text()
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
-        self.result_description = self.bogui.create_text_area('','Results')
+        self.result_description = self.bogui.create_text_area('', 'Results')
 
         class_dir = os.path.dirname(os.path.realpath(__file__))
         model_path="language_models/en_core_web_sm/en_core_web_sm-3.6.0"
@@ -334,20 +334,20 @@ class Deductive:
         self.hypotheses[1].value = ''
         self.hypotheses[0].focus()
 
+    def delete_last_cell(self, _=None):
+        """Button function for removing the last code cell"""
+        if self.cell_count > 0:
+            self.boutils.delete_cell_above()
+            self.cell_count -= 1
+
     def open_cells(self, _=None):
         """Button function for opening new code cells"""
         if self.add_cells_int.value > 0:
             self.cell_count += self.add_cells_int.value
             self.boutils.create_code_cells_above(self.add_cells_int.value)
 
-    def delete_last_cell(self, _=None):
-        """Button function for deleting the last code cell"""
-        if self.cell_count > 0:
-            self.boutils.delete_cell_above()
-            self.cell_count -= 1
-
     def deactivate_cell_operations(self):
-        """Deactivates buttons after runnig code block"""
+        """Deactivates buttons after running code block"""
         self.buttons['open'].disabled = True
         self.buttons['clear'].disabled = True
         self.buttons['delete'].disabled = True
@@ -379,8 +379,7 @@ class Deductive:
 
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
-        self.boutils.run_cells_above(
-            self.cell_count)
+        self.boutils.run_cells_above(self.cell_count)
         self.deactivate_cell_operations()
 
         clear_output(wait=True)
@@ -398,8 +397,7 @@ class Deductive:
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
-        grid = widgets.GridspecLayout(2, 2, justify_items='center',
-                                     width='70%', align_items='center')
+        grid = widgets.GridspecLayout(2, 2, width='70%', align_items='center')
         grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
         grid[1, 1] = widgets.TwoByTwoLayout(
             top_left=self.buttons['open'],

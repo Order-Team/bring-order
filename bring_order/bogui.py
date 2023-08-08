@@ -36,8 +36,10 @@ class BOGui:
             button_list[button[0]] = new_button
         return button_list
 
-    def create_message(self, value, style={'font_size': '15px'}):
+    def create_message(self, value, style=''):
         """Creates HTML"""
+        if style == '':
+            style = {'font_size': '15px'}
         message = widgets.HTML(value=value, style=style)
         return message
 
@@ -97,7 +99,6 @@ class BOGui:
             options=options,
             description=desc,
             disabled=False,
-            font_size ="15px",
             layout={'width': 'max-content'}
         )
 
@@ -129,10 +130,10 @@ class BOGui:
         )
 
         return slider
-    
-    
+
     def create_password_field(self, default_value='', placeholder=''):
         """Creates password field"""
-        password_field = widgets.Password(value=default_value, placeholder=placeholder, disabled=False)
+        password_field = widgets.Password(value=default_value,
+                                          placeholder=placeholder,
+                                          disabled=False)
         return password_field
-
