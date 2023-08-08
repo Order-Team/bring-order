@@ -33,7 +33,7 @@ class Bodi:
 
         button_list = [
             ('save', 'Save description', self.start_data_import, 'success'),
-            ('analyze', 'Analyze this data', self.check_variables, 'success'),
+            ('analyze', 'Analyze this data', self.import_data, 'success'),
             ('test', 'Test', self.check_variable_independence, 'success'),
             ('close', 'Close test', self.close_independence_test, 'warning'),
             ('independence', 'Test independence', self.display_independence_test, 'success'),
@@ -45,7 +45,8 @@ class Bodi:
             ('remove', 'Remove limitations', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
             ('assist', 'AI assistant', self.toggle_ai, 'success'),
-            ('limitations', 'Check limitations', self.display_limitations_view, 'success')
+            ('limitations', 'Check limitations', self.display_limitations_view, 'success'),
+            ('choose', 'Choose data file', self.display_file_chooser, 'warning')
         ]
 
         return button_list
@@ -103,12 +104,15 @@ class Bodi:
     def show_cell_operations(self, _=None):
         """Button function to show buttons for cell operations."""
 
-        # self.buttons['independence'].disabled = True
         clear_output(wait=True)
+        display(self.buttons['choose'])
         display(self.data_preparation_grid())
 
     def open_cells(self, _=None):
         """Button function that opens selected number of cells above widget cell"""
+
+        self.buttons['choose'].disabled = True
+
         if self.add_cells_int.value > 0:
             self.cell_count += self.add_cells_int.value
             self.boutils.create_code_cells_above(self.add_cells_int.value)
@@ -119,6 +123,9 @@ class Bodi:
         if self.cell_count > 0:
             self.boutils.delete_cell_above()
             self.cell_count -= 1
+
+        if self.cell_count == 0:
+            self.buttons['choose'].disabled = False
 
     def run_cells(self, _=None):
         """Button function that runs data import cells."""
@@ -136,8 +143,6 @@ class Bodi:
     def display_limitations_view(self, _=None):
         """Displays limitation view."""
 
-        # self.buttons['independence'].disabled = True
-
         limitation_grid = self.limitations.create_limitation_grid()
         limitation_grid.footer=widgets.VBox([
             self.limitations.empty_limitations_error,
@@ -147,7 +152,8 @@ class Bodi:
             ])
         ])
 
-        self.show_cell_operations()
+        clear_output(wait=True)
+        display(self.data_preparation_grid())
         display(limitation_grid)
         display(self.buttons['start'])
 
@@ -185,60 +191,40 @@ class Bodi:
             self.limitations.set_error_value('Data limitations cannot be empty')
 
     def fc_callback(self):
-        """Opens two code cells to import pandas and read a csv file
-        after the user has selected the file."""
+        """Shows buttons to continue with selected data file or import manually."""
+
+        clear_output(wait=True)
 
         if self.file_chooser.selected.endswith('.csv'):
-            self.file_chooser.title = self.file_chooser.selected_filename
-            self.boutils.create_code_cells_above(2)
-            self.boutils.execute_cell_from_current(
-                distance=-2,
-                code='import pandas as pd',
-                hide_input=False
-            )
-            self.boutils.execute_cell_from_current(
-                distance=1,
-                code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
-                hide_input=False
-            )
-            self.file_chooser.register_callback(self.fc_callback_on_change)
-            clear_output(wait=True)
+            self.file_chooser.title = f'Selected file: {self.file_chooser.selected_filename}'
             display(widgets.VBox([
                 self.file_chooser,
                 self.buttons['analyze']
             ]))
 
         else:
-            self.file_chooser.title = 'Unknown file type, choose a csv file or import manually.'
-            clear_output(wait=True)
+            self.file_chooser.title = 'Unknown file type: choose a csv file or import manually.'
             display(widgets.VBox([
                 self.file_chooser,
                 self.buttons['import']
             ]))
 
-    def fc_callback_on_change(self):
-        """Reads another csv file without importing pandas."""
+    def import_data(self, _=None):
+        """Imports selected data in code cells and opens next view for data preparation."""
 
-        if self.file_chooser.selected.endswith('.csv'):
-            self.file_chooser.title = self.file_chooser.selected_filename
-            self.boutils.execute_cell_from_current(
-                distance=-1,
-                code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
-                hide_input=False
-            )
-            clear_output(wait=True)
-            display(widgets.VBox([
-                self.file_chooser,
-                self.buttons['analyze']
-            ]))
+        self.boutils.create_code_cells_above(2)
+        self.boutils.execute_cell_from_current(
+            distance=-2,
+            code='import pandas as pd',
+            hide_input=False
+        )
+        self.boutils.execute_cell_from_current(
+            distance=1,
+            code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
+            hide_input=False
+        )
 
-        else:
-            self.file_chooser.title = 'Unknown file type, choose a csv file or import manually.'
-            clear_output(wait=True)
-            display(widgets.VBox([
-                self.file_chooser,
-                self.buttons['import']
-            ]))
+        self.check_variables()
 
     def check_normal_distribution(self, data_frame):
         """Checks which variables are not normally distributed.
@@ -315,8 +301,8 @@ class Bodi:
         else:
             display(self.data_preparation_grid())
 
-    def check_variables(self, _=None):
-        """Button function to check if data variables are normally distributed.
+    def check_variables(self):
+        """Checks if data variables are normally distributed.
         Displays buttons for independence test and cell operations."""
 
         data_frame = pd.read_csv(self.file_chooser.selected)
@@ -337,6 +323,15 @@ class Bodi:
         else:
             display(self.data_preparation_grid())
 
+    def display_file_chooser(self, _=None):
+        """Displays file chooser for data import."""
+
+        clear_output(wait=True)
+        display(widgets.VBox([
+            self.file_chooser,
+            self.buttons['import']
+        ]))
+
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
 
@@ -353,11 +348,7 @@ class Bodi:
             self.file_chooser.register_callback(self.fc_callback)
             self.file_chooser.title = 'Choose a data file:'
 
-            clear_output(wait=True)
-            display(widgets.VBox([
-                self.file_chooser,
-                self.buttons['import']
-            ]))
+            self.display_file_chooser()
 
     def bodi(self, error=''):
         """Starts data import phase by asking titles and data description."""

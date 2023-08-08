@@ -24,7 +24,7 @@ class TestBodi(unittest.TestCase):
         self.instance.stattests.check_numerical_data = lambda data: {}
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 14)
+        self.assertEqual(len(self.instance.buttons), 15)
 
     def test_bodi_hides_current_input(self):
         self.instance.bodi()
