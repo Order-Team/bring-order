@@ -361,12 +361,14 @@ class Inductive:
 
         text = (f'### Evaluation of the analysis \\n'
                 f'#### Limitations that were noticed in the data:\\n- {limit}\\n'
-                f'#### Evaluations:\\n'
-                f'- According to the pre-evaluation, the analysis confirmed\
-                    approximately {self.fields[4].value} % of the preconceptions.\\n'
+                f'#### Evaluation:\\n'
                 f'- According to the final evaluation, the analysis confirmed approximately\
                 {self.fields[5].value} % of the preconceptions.\\n'
                 f'{formatted_text}')
+
+        # f'#### Evaluations:\\n'
+        # f'- According to the pre-evaluation, the analysis confirmed\
+        #    approximately {self.fields[4].value} % of the preconceptions.\\n'
 
         self.utils.create_markdown_cells_above(how_many=1, text=text)
         clear_output(wait=True)
