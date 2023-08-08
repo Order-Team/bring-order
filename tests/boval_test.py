@@ -54,6 +54,9 @@ class TestInductive(unittest.TestCase):
     def test_value_not_contain_symbols(self):
         self.assertTrue(self.boval.value_not_contains_symbols('test 1234'))
     
+    def test_sentence_to_short_with_whitespace(self):
+        self.assertFalse(self.boval.sentence_is_min_length('Small book '))
+    
     def test_sentence_to_short(self):
         self.assertFalse(self.boval.sentence_is_min_length('Small book'))
     
