@@ -70,7 +70,8 @@ class BOVal:
         """
         if not self.check_value_not_empty(value):
             return False
-        words = value.split(' ')
+        words = value.strip()
+        words = words.split(' ')
         if len(words) < 3:
             return False
 
