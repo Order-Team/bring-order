@@ -67,40 +67,102 @@ class Limitations:
         self.empty_limitations_error.value = text
 
     def get_values(self):
-        """Returns a list of the limitations as stirngs."""
+        """Returns a list of the limitations as strings."""
 
         return [limitation.value for limitation in self.data_limitations]
 
-    def get_limitations_as_bullet_list(self):
-        """Returns limitations as a HTML bullet list."""
+    def not_normally_distributed_variables(self):
+        """Returns a list of variable names in limitations that are not normally distributed."""
+
+        result = []
+        for limitation in self.get_values():
+            if 'is not normally distributed' in limitation:
+                result.append(limitation[:-28])
+
+        return result
+
+    def not_independent_variables(self):
+        """Returns a list of variables that are not independent. Each item is a pair of
+        variables as a string joined by 'and'."""
+
+        result = []
+        for limitation in self.get_values():
+            if 'are not independent' in limitation:
+                result.append(limitation[:-20])
+
+        return result
+
+    def other_limitations(self):
+        """Returns a list of limitations the user has added by hand."""
+
+        result = []
+        for limitation in self.get_values():
+            if ('not normally distributed' in limitation) or ('are not independent' in limitation):
+                continue
+            result.append(limitation)
+
+        return result
+
+    def get_limitations_for_print(self):
+        """Returns a compact bullet list of limitations as HTML widget."""
 
         text = ''
-        if self.data_limitations[0].value != '':
+        limitations = self.get_values()
+        if limitations[0] != '':
             text = '<h4>There are some data limitations you should consider:</h4>\n<ul>\n'
+
+            not_normal = self.not_normally_distributed_variables()
+            if len(not_normal) > 0:
+                text += '<li><b>Variables that are not normally distributed:</b> '
+                text += (', ').join(not_normal)
+                text += '</li>\n'
+
+            not_independent = self.not_independent_variables()
+            if len(not_independent) > 0:
+                text += '<li><b>Variables that are not independent:</b> '
+                text += (', ').join(not_independent)
+                text += '</li>\n'
+
+            other = self.other_limitations()
             text += '\n'.join([
-                '<li>' + limitation.value + '</li>'
-                for limitation in self.data_limitations])
-            text += '\n</ul>'
+                '<li>' + limitation + '</li>'
+                for limitation in other
+            ])
+
+            text += '</ul>'
 
         return widgets.HTML(text)
 
-    def get_limitations_as_dropdown(self):
-        """Returns limitations as a Dropdown widget or None if there are no limitations yet."""
+    # def get_limitations_as_bullet_list(self):
+    #     """Returns limitations as a HTML bullet list."""
 
-        limitations = self.get_values()
-        if limitations[0] != '':
-            limitation_label = self.bogui.create_message(
-                'There are some data limitations you should consider:'
-            )
-            limitation_dropdown = widgets.Dropdown(
-                options=['Show limitations']+limitations,
-                value='Show limitations',
-                layout={'width': 'max-content'}
-            )
+    #     text = ''
+    #     if self.data_limitations[0].value != '':
+    #         text = '<h4>There are some data limitations you should consider:</h4>\n<ul>\n'
+    #         text += '\n'.join([
+    #             '<li>' + limitation.value + '</li>'
+    #             for limitation in self.data_limitations])
+    #         text += '\n</ul>'
 
-            return widgets.VBox([
-                limitation_label,
-                limitation_dropdown
-            ])
+    #     return widgets.HTML(text)
 
-        return None
+    # def get_limitations_as_dropdown(self):
+    #     """Returns limitations as a Dropdown widget or None if there are no limitations yet."""
+
+    #     limitations = self.get_values()
+    #     if limitations[0] != '':
+    #         limitation_label = self.bogui.create_message(
+    #             'There are some data limitations you should consider:'
+    #         )
+    #         limitation_dropdown = widgets.Dropdown(
+    #             options=['Show limitations']+limitations,
+    #             value='Show limitations',
+    #             layout={'width': 'max-content'}
+    #         )
+
+    #         return widgets.VBox([
+    #             limitation_label,
+    #             limitation_dropdown
+    #         ])
+
+    #     return None

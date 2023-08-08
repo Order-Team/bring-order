@@ -20,7 +20,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
         self.instance.limitations.empty_limitations_error = self.instance.bogui.create_error_message('')
-        self.instance.limitations.get_limitations_as_bullet_list = lambda: widgets.HTML(value='')
+        self.instance.limitations.get_limitations_for_print = lambda: widgets.HTML(value='')
         self.instance.stattests.check_numerical_data = lambda data: {}
 
     def test_correct_amount_of_buttons_is_created(self):

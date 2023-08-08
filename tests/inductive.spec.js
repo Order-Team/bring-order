@@ -22,7 +22,7 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Add limitations' }).click();
+  await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -62,7 +62,7 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Add limitations' }).click();
+  await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -101,7 +101,7 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Add limitations' }).click();
+  await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -130,6 +130,7 @@ test('inductive analysis all done shows export buttons', async ({ page, context 
 });
 
 test('Data limitations are printed in evaluation', async ({ page, context }) => {
+  // @ts-ignore
   await page.goto(testURL);
   const pagePromise = context.waitForEvent('page');
   await page.click('#new-dropdown-button');
@@ -151,7 +152,7 @@ test('Data limitations are printed in evaluation', async ({ page, context }) => 
   await newPage.getByRole('listbox').selectOption('test_iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
-  await newPage.getByRole('button', { name: 'Add limitations' }).click();
+  await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByRole('button', { name: 'Add limitation', exact: true }).click();
   await newPage.getByPlaceholder('Limitation 4').click();
   await newPage.getByPlaceholder('Limitation 4').fill('Nothing about the dogs.');

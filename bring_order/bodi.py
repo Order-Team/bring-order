@@ -23,7 +23,6 @@ class Bodi:
         self.stattests = Stattests(self.bogui)
         self.next_step = next_step
 
-
     @property
     def button_list(self):
         """Buttons for Bodi class.
@@ -31,6 +30,7 @@ class Bodi:
         Returns:
             list of tuples in format (tag: str, description: str, command: func, style: str)
         """
+
         button_list = [
             ('save', 'Save description', self.start_data_import, 'success'),
             ('analyze', 'Analyze this data', self.check_variables, 'success'),
@@ -45,13 +45,14 @@ class Bodi:
             ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
             ('assist', 'AI assistant', self.toggle_ai, 'success'),
-            ('limitations', 'Add limitations', self.display_limitations_view, 'success')
+            ('limitations', 'Check limitations', self.display_limitations_view, 'success')
         ]
+
         return button_list
 
     def toggle_ai(self, _=None):
         """Button function to open/close AI assistant"""
-        
+
         if self.buttons['assist'].description == 'AI assistant':
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
@@ -102,7 +103,7 @@ class Bodi:
     def show_cell_operations(self, _=None):
         """Button function to show buttons for cell operations."""
 
-        self.buttons['independence'].disabled = True
+        # self.buttons['independence'].disabled = True
         clear_output(wait=True)
         display(self.data_preparation_grid())
 
@@ -124,7 +125,7 @@ class Bodi:
 
         clear_output(wait=True)
         display(self.data_preparation_grid(
-            message=self.limitations.get_limitations_as_bullet_list()))
+            message=self.limitations.get_limitations_for_print()))
         not_normal = self.check_normal_distribution(self.stattests.dataset)
         self.boutils.check_cells_above(self.cell_count, 'ttest', not_normal)
         self.boutils.run_cells_above(self.cell_count)
@@ -145,8 +146,6 @@ class Bodi:
                 self.buttons['remove']
             ])
         ])
-
-        
 
         self.show_cell_operations()
         display(limitation_grid)
@@ -276,7 +275,7 @@ class Bodi:
                     self.limitations.add_limitation()
                 self.limitations.data_limitations[-1].value = limitation
 
-            message = self.bogui.create_message(limitation)
+            message = self.bogui.create_message(f'Result added to limitations: {limitation}')
 
         else:
             message = self.bogui.create_message(f'{result[0]} and {result[1]} are independent')
@@ -293,7 +292,7 @@ class Bodi:
                 self.buttons['close']
             ])
 
-            for button in ['open', 'delete', 'run', 'assist']:
+            for button in ['open', 'delete', 'run', 'assist', 'limitations']:
                 self.buttons[button].disabled = True
 
             clear_output(wait=True)
@@ -305,12 +304,12 @@ class Bodi:
     def close_independence_test(self, _=None):
         """Closes the independence test and activates buttons."""
 
-        for button in ['open', 'delete', 'run', 'independence', 'assist']:
+        for button in ['open', 'delete', 'run', 'independence', 'assist', 'limitations']:
             self.buttons[button].disabled = False
 
         clear_output(wait=True)
         if self.limitations.data_limitations[-1].value != '':
-            message = self.limitations.get_limitations_as_bullet_list()
+            message = self.limitations.get_limitations_for_print()
             display(self.data_preparation_grid(message=message))
 
         else:
@@ -332,7 +331,7 @@ class Bodi:
 
         clear_output(wait=True)
         if len(not_normal) > 0:
-            message = self.limitations.get_limitations_as_bullet_list()
+            message = self.limitations.get_limitations_for_print()
             display(self.data_preparation_grid(message=message))
 
         else:
@@ -340,6 +339,7 @@ class Bodi:
 
     def start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
+
         if self.title.value == '':
             self.bodi(error = 'Please give your study a title')
         elif self.data_name.value == '':
@@ -360,7 +360,8 @@ class Bodi:
             ]))
 
     def bodi(self, error=''):
-        """Main function"""
+        """Starts data import phase by asking titles and data description."""
+
         self.boutils.hide_current_input()
         self.boutils.hide_selected_input()
 
