@@ -1,6 +1,6 @@
 
 from ipywidgets import widgets
-from IPython.display import display, clear_output
+from IPython.display import display
 import openai
 
 class Ai:
@@ -15,6 +15,8 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.ai_output_grid = None
         self.ai_output = self.bogui.create_message('')
+        self.ai_error_message_grid = None
+        self.ai_error_msg = self.bogui.create_message('')
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
@@ -25,8 +27,7 @@ class Ai:
             ('send_ai_btn', 'Send', self.send_ai, 'primary'),
             ('clear_ai_btn', 'Clear', self.clear_ai, 'danger'),
             ('advanced_ai_btn', 'Advanced', self.advanced_ai, 'primary'),
-            ('close_ai_btn', 'Close', self.close_ai, 'warning'),
-             ('insert_code_to_cell', 'Insert code to cell', self.insert_code_to_cell, 'primary'),
+            ('close_ai_btn', 'Close', self.close_ai, 'warning')
             
         ]
         return button_list
@@ -35,8 +36,14 @@ class Ai:
 
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
+        self.remove_ai_error_message()
         if self.validate_api_key() and self.validate_npl_input():
             self.openai_api()
+    
+    def remove_ai_error_message(self):
+        self.ai_error_msg = ''
+        if  self.ai_error_message_grid is not None:
+            self.ai_error_message_grid.close()
 
     def clear_ai(self,_=None):
         """Button function for clearing input text field"""
@@ -65,12 +72,14 @@ class Ai:
         """Toggles the AI view"""
         if self.visible is False:
             self.visible = True
+            self.remove_ai_error_message()
             self.display_ai()
             self.display_ai_output()
         else:
             self.visible = False
             self.close_ai()
             self.ai_output_grid.close()
+            self.remove_ai_error_message()
 
     
     def display_ai(self, _=None, api_key_error='', nlp_error= '', context_error = ''):
@@ -124,6 +133,7 @@ class Ai:
         )
 
         display(self.grid)
+        
     
     def display_ai_output(self, _=None):
 
@@ -132,7 +142,15 @@ class Ai:
         )
         display(self.ai_output_grid)
 
-       
+    
+    def display_ai_error_message(self, _=None):
+
+        self.ai_error_message_grid = widgets.AppLayout(
+            center = self.bogui.create_message(self.ai_error_msg)
+        )
+        display(self.ai_error_message_grid)
+
+
     def openai_api(self, _=None):
 
         try:
@@ -149,55 +167,46 @@ class Ai:
             ])
             
             message = response.choices[0]['message']
-            #self.ai_output = self.bogui.create_message(self.display_response(message))
             self.ai_output.value = self.display_response(message)
-            #self.display_response(message)
-
+      
 
 
         except openai.error.Timeout as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request timed out: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request timed out: {e}"
+            self.display_ai_error_message()
             pass
 
         except openai.error.APIError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API returned an API Error: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API returned an API Error: {e}"
+            self.display_ai_error_message()
             pass
 
         except openai.error.APIConnectionError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request failed to connect: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request failed to connect: {e}"
+            self.display_ai_error_message()
             pass
 
-    
+
         except openai.error.InvalidRequestError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request was invalid: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request was invalid: {e}"
+            self.display_ai_error_message()
             pass
 
         except openai.error.AuthenticationError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request was not authorized: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request was not authorized: {e}"
+            self.display_ai_error_message()
             pass
 
         except openai.error.PermissionError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request was not permitted: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request was not permitted: {e}"
+            self.display_ai_error_message()
             pass
 
         except openai.error.RateLimitError as e:
-            message = self.bogui.create_message(
-            f"OpenAI API request exceeded rate limit: {e}")
-            display(message)
+            self.ai_error_msg = f"OpenAI API request exceeded rate limit: {e}"
+            self.display_ai_error_message()
             pass
-    
+
   
     def display_response(self, message):
         """ Parses, calls formatter and displays response from AI assistant 
@@ -205,9 +214,9 @@ class Ai:
         """     
         text = self.format_response(message['content'])
         return text
-
-
     
+
+
     def format_response(self, text):
         """ Formats data description for html widget
         
@@ -221,13 +230,4 @@ class Ai:
         return code
                 
 
-    def insert_code_to_cell(self, _=None):
-        pass
- 
-        # content = self.ai_output.value
-        # first = content.split('```python')[1]
-        # second = first.split('```')[0]
-        # code = '<code>' + second.strip() + '</code>'
-        # print(code)
-      
          

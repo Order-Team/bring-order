@@ -13,7 +13,7 @@ class Inductive:
                 boutils:
                 next_step:
             
-            lists:  0 = list of preconseptions, 
+            lists:  0 = list of preconceptions, 
                     1 = list of observations
                     2 = list of preconseption checkboxes
             fields: text and integer fiels
@@ -86,6 +86,7 @@ class Inductive:
 
         clear_output(wait=True)
         display(self._create_preconception_grid())
+        self.lists[0][-1].focus()
 
     def _check_preconceptions(self):
         """Checks that at least one of the preconceptions has a non-empty value."""
@@ -139,7 +140,8 @@ class Inductive:
         """Creates the grid with input fields and buttons to add and save preconceptions."""
 
         preconceptions_label = self.bogui.create_message(
-                value='Write about your preconceptions concerning the data set:')
+                value='Write about your preconceptions concerning the data set:\
+                    what do you expect to find?')
 
         preconception_grid = widgets.AppLayout(
             header=preconceptions_label,
@@ -300,66 +302,84 @@ class Inductive:
 
         text = self._format_summary()
         self.utils.create_markdown_cells_above(1, text=text)
+
         self._evaluation_of_analysis()
 
     def _evaluation_of_analysis(self, _=None):
+        """Displays the slider for pre-evaluation."""
+
         self.buttons['submit_sum'].disabled = True
-        clear_output(wait=False)
+
         grid = widgets.AppLayout(
             header = self.bogui.create_message(
-                        'Evaluate how well this analysis conforms to preconceptions?'),
-            center = self.fields[4],
-            right_sidebar = self.buttons['lock'],
-            footer = None
-            )
+                        'Evaluate your analysis: how many percent of your\
+                            preconceptions does the analysis confirm?'),
+            center = widgets.HBox([
+                self.fields[4],
+                self.buttons['lock']
+            ])
+        )
+
+        clear_output(wait=True)
         display(grid)
 
     def _lock_evaluation_pressed(self, _=None):
-        #self.utils.create_markdown_cells_above(
-        #    how_many=1,
-        #    text=f'According to the pre-evaluation, the analysis was\
-        #           approximately {self.fields[4].value} % in line with the\
-        #           preconceptions. '
-        #)
-        clear_output(wait=False)
-        label = self.bogui.create_message('Which of these preconceptions\
-                                         does the analysis conform to?')
+        """Locks first evaluation value and shows preconception checkboxes."""
+
+        label = self.bogui.create_message('Which of your preconceptions\
+                                         does the analysis confirm?')
         self.lists[2] = [
                 self.bogui.create_checkbox(prec.value) for prec in self.lists[0]
                 ]
         output = widgets.VBox(self.lists[2])
-        display(label, output)
+
         grid = widgets.AppLayout(
-            header = self.bogui.create_message('Evaluate the analysis again after\
-                                                 checking the preconceptions'),
-            center = self.fields[5],
-            footer = None)
+            header = self.bogui.create_message('After checking the preconceptions,\
+                                                what percentage of them was confirmed?'),
+            center = widgets.VBox([
+                self.fields[5],
+                self.buttons['save_results']
+            ])
+        )
+
+        clear_output(wait=True)
+        display(label, output)
         display(grid)
-        display(self.buttons['save_results'])
 
     def _save_results(self, _=None):
-        clear_output(wait=True)
-        formated_text = '#### The analysis did not support these preconceptions: \\n'
+        """Saves evaluation as markdown."""
+
         limit = "\\n- ".join(lim.value for lim in self.data_limitations)
+        formatted_text = '#### The analysis did not support these preconceptions:\\n'
         for preconception in self.lists[2]:
-            if preconception.value is False and preconception.description != '':
-                text = f'- {preconception.description} \\n'
-                formated_text += text
-        if formated_text == '#### The analysis did not support these preconceptions: \\n':
-            formated_text = '#### The analysis appears to confirm\
-                             stated preconceptions.\\n'
-        self.utils.create_markdown_cells_above(how_many=1, text=formated_text)
+            if preconception.value is False:
+                text = f'- {preconception.description}\\n'
+                formatted_text += text
+        if formatted_text == '#### The analysis did not support these preconceptions:\\n':
+            formatted_text = '#### Note that the analysis appears to confirm\
+            all stated preconceptions!\\n'
+
         text = (f'### Evaluation of the analysis \\n'
-                f'#### According to the evaluation, the analysis was approximately\
-                {self.fields[5].value} % in line with the preconceptions.\\n'
-                f'#### Limitations that were noticed in the data:\\n- {limit}\\n')
+                f'#### Limitations that were noticed in the data:\\n- {limit}\\n'
+                f'#### Evaluation:\\n'
+                f'- According to the final evaluation, the analysis confirmed approximately\
+                {self.fields[5].value} % of the preconceptions.\\n'
+                f'{formatted_text}')
+
+        # f'#### Evaluations:\\n'
+        # f'- According to the pre-evaluation, the analysis confirmed\
+        #    approximately {self.fields[4].value} % of the preconceptions.\\n'
+
         self.utils.create_markdown_cells_above(how_many=1, text=text)
+        clear_output(wait=True)
         self.next_step[0] = 'analysis_done'
 
     def _checkbox_preconceptions(self):
-        clear_output(wait=False)
+        """Displays preconception checkboxes."""
+
         checkboxes = [self.bogui.create_checkbox(prec) for prec in self.lists[0]]
         output = widgets.VBox(children=checkboxes)
+        clear_output(wait=True)
         display(output)
 
     def _create_cell_operations(self):
