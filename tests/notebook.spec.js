@@ -36,7 +36,7 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Run cells' }).click();
   expect(newPage.getByRole('button', { name: 'Start analysis' }).isVisible());
   expect(newPage.getByRole('button', { name: 'Add limitation' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Remove limitation' }).isVisible());
+  expect(newPage.getByRole('button', { name: 'Remove limitations' }).isVisible());
  });
 
  test('import data errors', async ({ page, context }) => {
@@ -114,7 +114,7 @@ test('start of inductive and deductide', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   expect(newPage.getByRole('button', { name: 'Explore data' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Test hyporthesis' }).isVisible());
+  expect(newPage.getByRole('button', { name: 'Test hypothesis' }).isVisible());
 });
 
 test('import csv data with variable independence testing', async ({ page, context }) => {

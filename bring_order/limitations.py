@@ -8,18 +8,28 @@ class Limitations:
         self.bogui = bogui
         self.data_limitations = [self.bogui.create_input_field('', 'Limitation 1')]
         self.empty_limitations_error = self.bogui.create_error_message()
+        self.remove_checkboxes = [self.bogui.create_checkbox('Remove')]
 
     def add_limitation(self):
         """Adds new limitation input to list."""
         self.data_limitations.append(self.bogui.create_input_field
                                     ('',f'Limitation {len(self.data_limitations)+1}'))
+        self.remove_checkboxes.append(self.bogui.create_checkbox('Remove'))
         self.empty_limitations_error.value = ''
 
-    def remove_limitation(self):
-        """Removes the last limitation input from list."""
-        if len(self.data_limitations) > 1:
-            self.data_limitations.pop()
-            self.empty_limitations_error.value = ''
+    def remove_limitations(self):
+        """Removes selected limitations from list."""
+
+        not_removed = []
+        for index, check in enumerate(self.remove_checkboxes):
+            if not check.value:
+                not_removed.append(self.data_limitations[index])
+
+        self.data_limitations = not_removed
+        self.remove_checkboxes = self.remove_checkboxes[:len(self.data_limitations)]
+
+        if len(self.data_limitations) == 0:
+            self.add_limitation()
 
     def create_limitation_grid(self):
         """Returns text boxes for adding limitations"""
@@ -27,9 +37,15 @@ class Limitations:
                 value='Identify limitations to the data: what kind of\
                 questions cannot be answered with it?')
 
+        self.remove_checkboxes = [self.bogui.create_checkbox('Remove')
+                                  for _ in range(len(self.data_limitations))]
+
         limitation_grid = widgets.AppLayout(
             header=limitations_label,
-            center=widgets.VBox(self.data_limitations),
+            center=widgets.HBox([
+                widgets.VBox(self.data_limitations),
+                widgets.VBox(self.remove_checkboxes)
+            ]),
             pane_heights=['30px', 1, '70px'],
             grid_gap='12px'
         )

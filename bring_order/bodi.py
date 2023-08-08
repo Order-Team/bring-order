@@ -42,7 +42,7 @@ class Bodi:
             ('delete', 'Delete last cell', self.delete_last_cell, 'warning'),
             ('run', 'Run cells', self.run_cells, 'primary'),
             ('add', 'Add limitation', self.add_limitation, 'primary'),
-            ('remove', 'Remove limitation', self.remove_limitation, 'warning'),
+            ('remove', 'Remove limitations', self.remove_limitation, 'warning'),
             ('start', 'Start analysis', self.start_analysis_clicked, 'success'),
             ('assist', 'AI assistant', self.toggle_ai, 'success'),
             ('limitations', 'Check limitations', self.display_limitations_view, 'success')
@@ -159,7 +159,7 @@ class Bodi:
 
     def remove_limitation(self, _=None):
         """Button function for removing limitation."""
-        self.limitations.remove_limitation()
+        self.limitations.remove_limitations()
         self.display_limitations_view()
 
     def format_data_description(self):
