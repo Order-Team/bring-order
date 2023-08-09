@@ -223,6 +223,28 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message.assert_called_with(
             'Result added to limitations: var1 and var2 are not independent')
 
+    def test_check_variable_independence_adds_new_limitation_if_last_not_empty(self):
+        self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', False)
+        self.instance.limitations.data_limitations = [widgets.Text(value='Old limitation')]
+        self.instance.limitations.get_values = lambda: ['Old limitation']
+        self.instance.limitations.add_limitation = lambda: self.instance.limitations.data_limitations.append(widgets.Text())
+        self.instance._check_variable_independence()
+        self.assertEqual(
+            self.instance.limitations.data_limitations[0].value,
+            'Old limitation'
+        )
+        self.assertEqual(
+            self.instance.limitations.data_limitations[1].value,
+            'var1 and var2 are not independent'
+        )
+
+    def test_check_variable_independence_does_not_add_same_limitation_twice(self):
+        self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', False)
+        self.instance.limitations.data_limitations = [widgets.Text('var1 and var2 are not independent')]
+        self.instance.limitations.get_values = lambda: ['var1 and var2 are not independent']
+        self.instance._check_variable_independence()
+        self.assertEqual(len(self.instance.limitations.data_limitations), 1)
+        
     def test_check_variable_independence_does_not_add_limitation_and_creates_message(self):
         self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', True)
         self.instance.limitations.data_limitations = [widgets.Text('')]
