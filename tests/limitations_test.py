@@ -53,7 +53,7 @@ class TestLimitations(unittest.TestCase):
         self.instance.add_limitation()
         self.assertEqual(len(self.instance.data_limitations), 2)
         self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 3)     
+        self.assertEqual(len(self.instance.data_limitations), 3)    
 
     def test_remove_limitations_removes_limitations(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
@@ -69,4 +69,14 @@ class TestLimitations(unittest.TestCase):
         self.instance.remove_limitations()
         self.assertEqual(len(self.instance.data_limitations), 1)
         self.assertEqual(len(self.instance.remove_checkboxes), 1)      
+
+    def test_not_normally_distributed_returns_expected_list(self):
+        self.instance.data_limitations[0].value = 'Monthly.Income is not normally distributed'
+        self.instance.data_limitations.append(widgets.Text(f'Data sample is too small'))
+        self.instance.data_limitations.append(widgets.Text(f'Amount.Funded.By.Investors is not normally distributed'))
+        result = self.instance.not_normally_distributed_variables()
+        self.assertEqual(2, len(result))
+                                                                        
+
+   
     

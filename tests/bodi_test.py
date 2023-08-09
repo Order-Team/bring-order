@@ -136,14 +136,25 @@ class TestBodi(unittest.TestCase):
         self.instance.open_cells()
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
-   
-    # def test_run_cells_checks_if_user_runs_tests(self):
-    #     self.instance.bogui.create_message = lambda value : widgets.HTML(value)
-    #     self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
-    #     self.instance.cell_count = 1
-    #     self.instance.run_cells()
-    #     self.instance.stattests.detect_tests.assert_called()
 
+    def test_add_limitation_adds_limitation(self):
+        self.instance.display_limitations_view = MagicMock()
+        self.instance.add_limitation()
+        self.instance.limitations.add_limitation.assert_called()    
+
+    def test_remove_limitation_adds_limitation(self):
+        self.instance.display_limitations_view = MagicMock()
+        self.instance.remove_limitation()
+        self.instance.limitations.remove_limitations.assert_called()        
+
+    '''
+    def test_run_cells_checks_if_user_runs_tests(self):
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
+        self.instance.cell_count = 1
+        self.instance.run_cells()
+        self.instance.stattests.detect_tests.assert_called()
+    '''
 
 
 

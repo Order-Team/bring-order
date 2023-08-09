@@ -50,3 +50,13 @@ class TestStattests(unittest.TestCase):
         result = self.instance.check_variable_independence()
         self.assertEqual(result, ('Loan.Purpose', 'State', True))
 
+    def test_independence_test_returns_false_for_dependent_variables(self):
+        loans_data = pd.read_csv("tests/loansData.csv")    
+        self.instance.dataset = loans_data
+        self.instance.select_variables = Mock()     
+        self.instance.explanatory.value = 'Home.Ownership'
+        self.instance.dependent.value = 'Interest.Rate'
+        result = self.instance.check_variable_independence()
+        self.assertEqual(result, ('Home.Ownership', 'Interest.Rate', False))        
+
+
