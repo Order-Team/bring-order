@@ -296,11 +296,8 @@ class Bodi:
             self.buttons[button].disabled = False
 
         clear_output(wait=True)
-        if self.limitations.data_limitations[-1].value != '':
-            message = self.limitations.get_limitations_for_print()
-            display(self.data_preparation_grid(message=message))
-        else:
-            display(self.data_preparation_grid())
+        message = self.limitations.get_limitations_for_print()
+        display(self.data_preparation_grid(message=message))
 
     def check_variables(self):
         """Checks if data variables are normally distributed.

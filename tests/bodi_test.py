@@ -1,6 +1,8 @@
 import unittest
+import os
 import pandas as pd
 from ipywidgets import widgets
+from ipyfilechooser import FileChooser
 from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
@@ -109,10 +111,17 @@ class TestBodi(unittest.TestCase):
         self.instance.limitations.set_error_value.assert_called_with('Data limitations cannot be empty')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
-    def test_start_data_import_sets_error_message_if_data_name_empty(self):
+    def test_start_data_import_sets_error_message_if_title_empty(self):
         self.instance.bodi = Mock()
         self.instance._start_data_import()
         self.instance.bodi.assert_called_with(error='Please give your study a title')
+        self.instance.boutils.create_markdown_cells_above.assert_not_called()
+
+    def test_start_data_import_sets_error_message_if_data_name_empty(self):
+        self.instance.bodi = Mock()
+        self.instance.fields[0].value = "My title"
+        self.instance._start_data_import()
+        self.instance.bodi.assert_called_with(error='You must name the data set')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_description_empty(self):
@@ -155,3 +164,113 @@ class TestBodi(unittest.TestCase):
         self.instance.run_cells()
         self.instance.stattests.detect_tests.assert_called()
     '''
+
+    def test_toggle_ai_updates_button(self):
+        self.instance._toggle_ai()
+        self.assertEqual(self.instance.buttons['assist'].description, 'Close AI assistant')
+        self.assertEqual(self.instance.buttons['assist'].button_style, 'warning')
+        self.instance._toggle_ai()
+        self.assertEqual(self.instance.buttons['assist'].description, 'AI assistant')
+        self.assertEqual(self.instance.buttons['assist'].button_style, 'success')
+
+    def test_show_cell_operations_calls_data_preparation_grid(self):
+        self.instance.data_preparation_grid = MagicMock()
+        self.instance._show_cell_operations()
+        self.instance.data_preparation_grid.assert_called()
+
+    def test_start_data_import_prepares_file_chooser(self):
+        self.instance.file_chooser = FileChooser()
+        self.instance.file_chooser.register_callback = MagicMock()
+        self.instance.fields[0].value = 'Title'
+        self.instance.fields[1].value = 'Data set'
+        self.instance.fields[2].value = 'Description of data'
+        self.instance._start_data_import()
+        self.instance.file_chooser.register_callback.assert_called()
+        self.assertEqual(self.instance.file_chooser.title, 'Choose a data file:')
+        
+    def test_import_data_opens_and_executes_two_code_cells(self):
+        self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
+        self.instance.file_chooser = Mock()
+        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance._import_data()
+        self.instance.boutils.create_code_cells_above.assert_called_with(2)
+        self.assertEqual(self.instance.boutils.execute_cell_from_current.call_count, 2)
+
+    def test_import_data_calls_check_variables(self):
+        self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
+        self.instance.check_variables = MagicMock()
+        self.instance.file_chooser = Mock()
+        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance._import_data()
+        self.instance.check_variables.assert_called()
+
+    def test_check_variable_independence_creates_error_message_if_needed(self):
+        self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', 'Error')
+        self.instance.bogui.create_error_message = MagicMock()
+        self.instance._check_variable_independence()
+        self.instance.bogui.create_error_message.assert_called_with('Error')
+
+    def test_check_variable_independence_adds_limitation_and_creates_message(self):
+        self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', False)
+        self.instance.limitations.data_limitations = [widgets.Text('')]
+        self.instance.limitations.get_values = lambda: ['']
+        self.instance.bogui.create_message = MagicMock()
+        self.instance._check_variable_independence()
+        self.assertEqual(
+            self.instance.limitations.data_limitations[-1].value,
+            'var1 and var2 are not independent'
+        )
+        self.instance.bogui.create_message.assert_called_with(
+            'Result added to limitations: var1 and var2 are not independent')
+
+    def test_check_variable_independence_does_not_add_limitation_and_creates_message(self):
+        self.instance.stattests.check_variable_independence = lambda: ('var1', 'var2', True)
+        self.instance.limitations.data_limitations = [widgets.Text('')]
+        self.instance.limitations.get_values = lambda: ['']
+        self.instance.bogui.create_message = MagicMock()
+        self.instance._check_variable_independence()
+        self.assertNotEqual(
+            self.instance.limitations.data_limitations[-1].value,
+            'var1 and var2 are independent'
+        )
+        self.instance.bogui.create_message.assert_called_with(
+            'var1 and var2 are independent')
+        
+    def test_display_independence_test_disables_buttons(self):
+        self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
+        self.instance.stattests.select_variables = lambda: widgets.AppLayout()
+        for button in ['open', 'delete', 'run', 'assist', 'limitations']:
+            self.instance.buttons[button].disabled = False
+        self.instance._display_independence_test()
+        self.assertTrue(self.instance.buttons['open'].disabled)
+        self.assertTrue(self.instance.buttons['delete'].disabled)
+        self.assertTrue(self.instance.buttons['run'].disabled)
+        self.assertTrue(self.instance.buttons['assist'].disabled)
+        self.assertTrue(self.instance.buttons['limitations'].disabled)
+        self.assertTrue(self.instance.buttons['independence'].disabled)
+
+    def test_display_independence_test_does_not_disable_other_buttons_if_test_cannot_be_performed(self):
+        self.instance.stattests.select_variables = lambda: widgets.HTML(
+            'There are not enough categorical variables to perform a chi-square test.')
+        for button in ['open', 'delete', 'run', 'assist', 'limitations']:
+            self.instance.buttons[button].disabled = False
+        self.instance._display_independence_test()
+        self.assertFalse(self.instance.buttons['open'].disabled)
+        self.assertFalse(self.instance.buttons['delete'].disabled)
+        self.assertFalse(self.instance.buttons['run'].disabled)
+        self.assertFalse(self.instance.buttons['assist'].disabled)
+        self.assertFalse(self.instance.buttons['limitations'].disabled)
+        self.assertTrue(self.instance.buttons['independence'].disabled)
+
+    def test_close_independence_test_activates_buttons(self):
+        self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
+        for button in ['open', 'delete', 'run', 'independence', 'assist', 'limitations']:
+            self.instance.buttons[button].disabled = True
+        self.instance._close_independence_test()
+        self.assertFalse(self.instance.buttons['open'].disabled)
+        self.assertFalse(self.instance.buttons['delete'].disabled)
+        self.assertFalse(self.instance.buttons['run'].disabled)
+        self.assertFalse(self.instance.buttons['assist'].disabled)
+        self.assertFalse(self.instance.buttons['limitations'].disabled)
+        self.assertFalse(self.instance.buttons['independence'].disabled)
+

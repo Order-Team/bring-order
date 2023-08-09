@@ -76,7 +76,55 @@ class TestLimitations(unittest.TestCase):
         self.instance.data_limitations.append(widgets.Text(f'Amount.Funded.By.Investors is not normally distributed'))
         result = self.instance.not_normally_distributed_variables()
         self.assertEqual(2, len(result))
-                                                                        
 
-   
-    
+    def test_create_limitation_grid_creates_correct_number_of_checkboxes(self):
+        self.instance.data_limitations = [widgets.Text(), widgets.Text()]
+        self.instance.bogui.create_message = lambda value: widgets.HTML(value)
+        self.instance.bogui.create_checkbox = lambda desc: widgets.Checkbox(description=desc)
+        self.instance.create_limitation_grid()
+        self.assertEqual(len(self.instance.remove_checkboxes), 2)
+                                                                        
+    def test_set_error_value(self):
+        self.instance.set_error_value('My error')
+        self.assertEqual(self.instance.empty_limitations_error.value, 'My error')
+
+    def test_not_independent_variables_returns_correct_list(self):
+        self.instance.data_limitations[0].value = 'Var1 is not normally distributed'
+        self.instance.data_limitations.append(widgets.Text('Data sample is too small'))
+        self.instance.data_limitations.append(widgets.Text('Var1 and Var2 are not independent'))
+        self.instance.data_limitations.append(widgets.Text('Var3 and Var4 are not independent'))
+        self.assertEqual(
+            self.instance.not_independent_variables(),
+            ['Var1 and Var2', 'Var3 and Var4']
+        )
+
+    def test_other_limitations_returns_correct_list(self):
+        self.instance.data_limitations[0].value = 'Var1 is not normally distributed'
+        self.instance.data_limitations.append(widgets.Text('Data sample is too small'))
+        self.instance.data_limitations.append(widgets.Text('Var1 and Var2 are not independent'))
+        self.assertEqual(
+            self.instance.other_limitations(),
+            ['Data sample is too small']
+        )
+
+    def test_get_limitations_for_print_returns_empty_if_no_limitations_are_added(self):
+        self.instance.data_limitations = [widgets.Text(value='', placeholder='Limitation 1')]
+        self.assertEqual(
+            self.instance.get_limitations_for_print().value,
+            ''
+        )
+
+    def test_get_limitations_for_print_returns_correct_string_value(self):
+        self.instance.data_limitations = [widgets.Text(value='', placeholder='Limitation 1')]
+        self.instance.data_limitations.append(widgets.Text('Var1 is not normally distributed'))
+        self.instance.data_limitations.append(widgets.Text('Var2 is not normally distributed'))
+        self.instance.data_limitations.append(widgets.Text('Data sample is too small'))
+        self.instance.data_limitations.append(widgets.Text('Var3 and Var4 are not independent'))
+        correct = (
+            '<h4>There are some data limitations you should consider:</h4>\n<ul>\n'
+            '<li><b>Variables that are not normally distributed:</b> Var1, Var2</li>\n'
+            '<li><b>Variables that are not independent:</b> Var3 and Var4</li>\n'
+            '<li>Data sample is too small</li>'
+            '</ul>'
+        )
+        self.assertEqual(self.instance.get_limitations_for_print().value, correct)

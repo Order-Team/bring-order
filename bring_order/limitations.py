@@ -23,7 +23,11 @@ class Limitations:
         not_removed = []
         for index, check in enumerate(self.remove_checkboxes):
             if not check.value:
-                not_removed.append(self.data_limitations[index])
+                limitation = self.bogui.create_input_field(
+                    self.data_limitations[index].value,
+                    f'Limitation {len(not_removed)+1}'
+                )
+                not_removed.append(limitation)
 
         self.data_limitations = not_removed
         self.remove_checkboxes = self.remove_checkboxes[:len(self.data_limitations)]
@@ -124,7 +128,7 @@ class Limitations:
 
         text = ''
         limitations = self.get_values()
-        if limitations[0] != '':
+        if any(limitation != '' for limitation in limitations):
             text = '<h4>There are some data limitations you should consider:</h4>\n<ul>\n'
 
             not_normal = self.not_normally_distributed_variables()
@@ -143,6 +147,7 @@ class Limitations:
             text += '\n'.join([
                 '<li>' + limitation + '</li>'
                 for limitation in other
+                if limitation != ''
             ])
 
             text += '</ul>'
