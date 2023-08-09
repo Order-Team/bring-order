@@ -122,6 +122,10 @@ class TestInductive(unittest.TestCase):
     def test_string_value_is_not_lemmatized(self):
         value = 'She is going to buy an interesting book.'
         self.assertFalse(self.boval.check_text_is_lemmatized(value))
+    
+    def test_string_value_is_lemmatized(self):
+        value = 'she be go to buy an interesting book'
+        self.assertTrue(self.boval.check_text_is_lemmatized(value))
 
     def test_list_value_is_lemmatized(self):
         value = ['she', 'be', 'go', 'to', 'buy', 'an', 'interesting', 'book']

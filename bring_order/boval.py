@@ -125,7 +125,7 @@ class BOVal:
         words = self.nlp(value)
         for word in words:
             if word.tag_[0]!='V':
-                if word.dep_ == prep_object or word.dep_ == direct_object:
+                if word.dep_ in (prep_object, direct_object):
                     return True
 
         return False
@@ -147,7 +147,7 @@ class BOVal:
 
         for word in words:
             if word.tag_[0] != 'V':
-                if word.dep_ == subject or word.dep_ == subject_passive:
+                if word.dep_ in (subject, subject_passive):
                     return True
 
         return False
@@ -168,16 +168,24 @@ class BOVal:
         return lemmas
 
     def check_text_is_lemmatized(self, value):
+        ''' Checks if given value is lemmatized.
+
+            Args:
+                value (str)
+            Return:
+                True: value is lemmatized
+                False: value is not lemmatized
+        '''
         lemmas = []
-        if type(value) is str:
+        if isinstance(value, str):
             lemmas = self.lemmatization_of_value(value)
             tokens = self.nlp.tokenizer(value)
+            tokens = str(tokens).split(' ')
             if tokens == lemmas:
                 return True
-        if type(value) is list:
+        if isinstance(value, list):
             for i in value:
                 lemmas.append(self.lemmatization_of_value(i)[0])
             if value == lemmas:
                 return True
-        else:
-            return False
+        return False
