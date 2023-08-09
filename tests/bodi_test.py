@@ -32,56 +32,56 @@ class TestBodi(unittest.TestCase):
 
     def test_open_cells_increases_cell_count_with_default_one(self):
         correct_cell_count = self.instance.cell_count + 1
-        self.instance.open_cells()
+        self.instance._open_cells()
         self.assertEqual(self.instance.cell_count, correct_cell_count)
 
     def test_open_cells_increases_cell_count_with_selected_value(self):
-        self.instance.add_cells_int.value = 3
+        self.instance.fields[3].value = 3
         correct_cell_count = self.instance.cell_count + 3
-        self.instance.open_cells()
+        self.instance._open_cells()
         self.assertEqual(self.instance.cell_count, correct_cell_count)
 
     def test_open_cells_creates_code_cell(self):
-        self.instance.open_cells()
+        self.instance._open_cells()
         self.instance.boutils.create_code_cells_above.assert_called_with(1)
 
     def test_open_cells_creates_selected_number_of_code_cells(self):
-        self.instance.add_cells_int.value = 3
-        self.instance.open_cells()
+        self.instance.fields[3].value = 3
+        self.instance._open_cells()
         self.instance.boutils.create_code_cells_above.assert_called_with(3)
 
     def test_delete_last_cell_does_not_delete_extra_cells(self):
         correct_cell_count = self.instance.cell_count
-        self.instance.delete_last_cell()
+        self.instance._delete_last_cell()
         self.assertEqual(self.instance.cell_count, correct_cell_count)
         self.instance.boutils.delete_cell_above.assert_not_called()
 
     def test_delete_last_cell_decreases_cell_count(self):
         self.instance.cell_count = 3
-        self.instance.delete_last_cell()
+        self.instance._delete_last_cell()
         self.assertEqual(self.instance.cell_count, 2)
 
     def test_delete_last_cell_removes_cell(self):
-        self.instance.open_cells()
-        self.instance.delete_last_cell()
+        self.instance._open_cells()
+        self.instance._delete_last_cell()
         self.instance.boutils.delete_cell_above.asset_called()
 
     def test_start_analysis_clicked_checks_limitations(self):
-        self.instance.start_analysis_clicked()
+        self.instance._start_analysis_clicked()
         self.instance.limitations.call_check_limitation.assert_called()
 
     def test_format_data_description_returns_correct_string(self):
-        self.instance.title.value = 'My title'
-        self.instance.data_name.value = 'My data'
-        self.instance.data_description.value = 'List of integers.'
+        self.instance.fields[0].value = 'My title'
+        self.instance.fields[1].value = 'My data'
+        self.instance.fields[2].value = 'List of integers.'
         text = self.instance.format_data_description()
         correct = '# My title\\n ## Data: My data\\n ### Description\\nList of integers.'
         self.assertEqual(text, correct)
 
     def test_format_data_description_returns_correct_string_with_new_line(self):
-        self.instance.title.value = 'My title'
-        self.instance.data_name.value = 'My data'
-        self.instance.data_description.value = 'List of integers.\nAscending order.'
+        self.instance.fields[0].value = 'My title'
+        self.instance.fields[1].value = 'My data'
+        self.instance.fields[2].value = 'List of integers.\nAscending order.'
         text = self.instance.format_data_description()
         correct = '# My title\\n ## Data: My data\\n ### Description\\nList of integers.<br />Ascending order.'
         self.assertEqual(text, correct)
@@ -91,60 +91,60 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
         self.instance.cell_count = 3
-        self.instance.run_cells()
+        self.instance._run_cells()
         self.instance.boutils.run_cells_above.assert_called_with(3)
 
     def test_start_analysis_clicked_creates_markdown_cell(self):
         self.instance.limitations.format_limitations = MagicMock()
-        text = self.instance.limitations.format_limitations.return_value = '### Limitations\\n- Limitation0\\n- Limitation1\\n'        
+        text = self.instance.limitations.format_limitations.return_value = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
         self.instance.limitations.call_check_limitation = MagicMock()
         self.instance.limitations.call_check_limitation.return_value = True
-        self.instance.start_analysis_clicked()
+        self.instance._start_analysis_clicked()
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_start_analysis_clicked_sets_error_message_if_limitations_are_empty(self):
         self.instance.limitations.call_check_limitation = MagicMock()
         self.instance.limitations.call_check_limitation.return_value = False
-        self.instance.start_analysis_clicked()
+        self.instance._start_analysis_clicked()
         self.instance.limitations.set_error_value.assert_called_with('Data limitations cannot be empty')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_data_name_empty(self):
         self.instance.bodi = Mock()
-        self.instance.start_data_import()
+        self.instance._start_data_import()
         self.instance.bodi.assert_called_with(error='Please give your study a title')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_description_empty(self):
         self.instance.bodi = Mock()
-        self.instance.title.value = "My title"
-        self.instance.data_name.value = 'My data'
-        self.instance.start_data_import()
+        self.instance.fields[0].value = "My title"
+        self.instance.fields[1].value = 'My data'
+        self.instance._start_data_import()
         self.instance.bodi.assert_called_with(error='You must give some description of the data')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_creates_markdown_cell(self):
-        self.instance.title.value = 'My title'
-        self.instance.data_name.value = 'My data'
-        self.instance.data_description.value = 'The sample size is 100.'
-        self.instance.start_data_import()
+        self.instance.fields[0].value = 'My title'
+        self.instance.fields[1].value = 'My data'
+        self.instance.fields[2].value = 'The sample size is 100.'
+        self.instance._start_data_import()
         text = '# My title\\n ## Data: My data\\n ### Description\\nThe sample size is 100.'
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1, text=text)
 
     def test_open_cells_does_not_open_negative_amount_of_cells(self):
-        self.instance.add_cells_int.value = -1
-        self.instance.open_cells()
+        self.instance.fields[3].value = -1
+        self.instance._open_cells()
         self.assertEqual(self.instance.cell_count, 0)
         self.instance.boutils.create_code_cells_above.assert_not_called()
 
     def test_add_limitation_adds_limitation(self):
-        self.instance.display_limitations_view = MagicMock()
-        self.instance.add_limitation()
+        self.instance._display_limitations_view = MagicMock()
+        self.instance._add_limitation()
         self.instance.limitations.add_limitation.assert_called()    
 
     def test_remove_limitation_adds_limitation(self):
-        self.instance.display_limitations_view = MagicMock()
-        self.instance.remove_limitation()
+        self.instance._display_limitations_view = MagicMock()
+        self.instance._remove_limitation()
         self.instance.limitations.remove_limitations.assert_called()        
 
     '''
@@ -155,13 +155,3 @@ class TestBodi(unittest.TestCase):
         self.instance.run_cells()
         self.instance.stattests.detect_tests.assert_called()
     '''
-
-
-
-
-
-
-        
-
-
-

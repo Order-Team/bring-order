@@ -140,7 +140,6 @@ test('Data limitations are printed in evaluation', async ({ page, context }) => 
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
   await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
-  await newPage.getByLabel('Run').click();
   await newPage.getByLabel('', { exact: true }).first().fill('Dogs');
   await newPage.getByLabel('', { exact: true }).nth(1).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('iris');
