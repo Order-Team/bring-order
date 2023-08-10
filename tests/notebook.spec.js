@@ -13,7 +13,7 @@ test('import data without errors', async ({ page, context }) => {
   await page.click('#kernel-python3');
   const newPage = await pagePromise;
   await newPage.waitForLoadState();
-  expect(newPage.getByRole('link', { name: 'Jupyter Notebook' }).isEnabled());
+  await expect(newPage.getByRole('link', { name: 'Jupyter Notebook' })).toBeEnabled();
   await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
   await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
@@ -24,22 +24,33 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  expect(newPage.getByRole('heading', { name: 'Test study¶' }).isVisible());
-  expect(newPage.getByRole('heading', { name: 'Data: Test data¶' }).isVisible());
-  expect(newPage.getByRole('heading', { name: 'Description¶' }).isVisible());
-  await page.waitForTimeout(500);
+  await expect(newPage.getByRole('heading', { name: 'Test study' })).toBeVisible();
+  await expect(newPage.getByRole('heading', { name: 'Data: Test data' })).toBeVisible();
+  await expect(newPage.getByRole('heading', { name: 'Description' })).toBeVisible();
+  await expect(newPage.getByRole('paragraph').filter({ hasText: 'Importing test data' })).toBeVisible();
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
-  await newPage.getByRole('button', { name: 'Run cells' }).click();
-  expect(newPage.getByRole('button', { name: 'Start analysis' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Add limitation' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Remove limitations' }).isVisible());
+  await expect(newPage.getByRole('heading', { name: 'There are some data limitations you should consider:' })).toBeVisible();
+  await newPage.getByRole('button', { name: 'Check limitations' }).click();
+  await expect(newPage.getByRole('button', { name: 'Start analysis' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Add limitation' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Remove limitations' })).toBeEnabled();
+  await newPage.locator('.widget-label-basic > input').first().check();
+  await newPage.locator('div:nth-child(2) > .widget-label-basic > input').check();
+  await expect(newPage.locator('.widget-label-basic > input').first()).toBeChecked();
+  await expect(newPage.locator('.widget-label-basic > input').first()).toBeChecked();
+  await newPage.getByRole('button', { name: 'Remove limitations' }).click();
+  await newPage.getByRole('button', { name: 'Start analysis' }).click();
+  await expect(newPage.getByText('Monthly.Income is not normally distributed', { exact: true })).toBeVisible();
+  await expect(newPage.getByText('Open.CREDIT.Lines is not normally distributed', { exact: true })).toBeVisible();
+  await expect(newPage.getByRole('button', { name: 'Explore data' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Test hypothesis' })).toBeEnabled();
  });
 
- test('import data errors', async ({ page, context }) => {
+ test('import data and limitations errors', async ({ page, context }) => {
   // @ts-ignore
   await page.goto(testURL);
   const pagePromise = context.waitForEvent('page');
@@ -51,31 +62,15 @@ test('import data without errors', async ({ page, context }) => {
   await page.waitForTimeout(1500);
   await newPage.getByLabel('Run').click();
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  expect(newPage.locator('Please give your study a title').isVisible());
+  await expect(newPage.getByText('Please give your study a title')).toBeVisible();
   await newPage.getByLabel('', { exact: true }).first().click();
   await newPage.getByLabel('', { exact: true }).first().fill('Test study');
-  expect(newPage.locator('You must name the data set').isVisible());
+  await newPage.getByRole('button', { name: 'Save description' }).click();
+  await expect(newPage.getByText('You must name the data set')).toBeVisible();
   await newPage.getByLabel('', { exact: true }).nth(1).click();
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  expect(newPage.locator('You must give some description of the data').isVisible());
-});
-
-test('data limitations errors', async ({ page, context }) => {
-  // @ts-ignore
-  await page.goto(testURL);
-  const pagePromise = context.waitForEvent('page');
-  await page.click('#new-dropdown-button');
-  await page.click('#kernel-python3');
-  const newPage = await pagePromise;
-  await newPage.waitForLoadState();
-  await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(1500);
-  await newPage.getByLabel('Run').click();
-  await newPage.getByLabel('', { exact: true }).first().click();
-  await newPage.getByLabel('', { exact: true }).first().fill('Test study');
-  await newPage.getByLabel('', { exact: true }).nth(1).click();
-  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test data');
+  await expect(newPage.getByText('You must give some description of the data')).toBeVisible();
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
@@ -84,37 +79,9 @@ test('data limitations errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  expect(newPage.getByText('Data limitations cannot be empty').isVisible());
+  await expect(newPage.getByText('Data limitations cannot be empty')).toBeVisible();
   await newPage.getByRole('button', { name: 'Add limitation', exact: true }).click();
-  expect(newPage.getByPlaceholder('Limitation 2').isVisible);
-});
-
-test('start of inductive and deductide', async ({ page, context }) => {
-  // @ts-ignore
-  await page.goto(testURL);
-  const pagePromise = context.waitForEvent('page');
-  await page.click('#new-dropdown-button');
-  await page.click('#kernel-python3');
-  const newPage = await pagePromise;
-  await newPage.waitForLoadState();
-  await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
-  await page.waitForTimeout(1500);
-  await newPage.getByLabel('Run').click();
-  await newPage.getByLabel('', { exact: true }).first().click();
-  await newPage.getByLabel('', { exact: true }).first().fill('Test study');
-  await newPage.getByLabel('', { exact: true }).nth(1).click();
-  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test data');
-  await newPage.getByLabel('', { exact: true }).nth(2).click();
-  await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
-  await newPage.getByRole('button', { name: 'Save description' }).click();
-  await page.waitForTimeout(500);
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
-  await newPage.getByRole('button', { name: 'Check limitations' }).click();
-  await newPage.getByPlaceholder('Limitation 1').click();
-  await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
-  await newPage.getByRole('button', { name: 'Start analysis' }).click();
-  expect(newPage.getByRole('button', { name: 'Explore data' }).isVisible());
-  expect(newPage.getByRole('button', { name: 'Test hypothesis' }).isVisible());
+  await expect(newPage.getByPlaceholder('Limitation 2')).toBeVisible();
 });
 
 test('import csv data with variable independence testing', async ({ page, context }) => {
@@ -141,15 +108,16 @@ test('import csv data with variable independence testing', async ({ page, contex
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
-  expect(newPage.getByText('Amount.Requested is not normally distributed').isVisible());
+  await expect(newPage.getByRole('heading', { name: 'There are some data limitations you should consider:' })).toBeVisible();
+  await expect(newPage.getByText('Variables that are not normally distributed: Amount.Requested, Amount.Funded.By.')).toBeVisible();
   await newPage.getByRole('button', { name: 'Test independence' }).click();
-  expect(newPage.getByText('Choose variables to test their independence:').isVisible());
-  expect(newPage.getByRole('combobox', { name: 'Explanatory variable' }).isVisible());
-  expect(newPage.getByRole('combobox', { name: 'Dependent variable' }).isVisible());
+  await expect(newPage.getByText('Choose variables to test their independence:')).toBeVisible();
+  await expect(newPage.getByRole('combobox', { name: 'Explanatory variable' })).toBeEnabled();
+  await expect(newPage.getByRole('combobox', { name: 'Dependent variable' })).toBeEnabled();
   await newPage.getByRole('combobox', { name: 'Explanatory variable' }).selectOption('Loan.Purpose');
   await newPage.getByRole('combobox', { name: 'Dependent variable' }).selectOption('Loan.Length');
   await newPage.getByRole('button', { name: 'Test' , exact: true }).click();
-  expect(newPage.getByText('Loan.Purpose and Loan.Length are not independent').isVisible());
+  await expect(newPage.getByText('Loan.Purpose and Loan.Length are not independent')).toBeVisible();
 });
 
 test('import csv data without variable independence testing', async ({ page, context }) => {
@@ -177,5 +145,36 @@ test('import csv data without variable independence testing', async ({ page, con
   await newPage.getByRole('button', { name: 'Select' }).click();  
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
   await newPage.getByRole('button', { name: 'Test independence' }).click();
-  expect(newPage.getByText('There are not enough categorical variables to perform a chi-square test.').isVisible());
+  await expect(newPage.getByText('There are not enough categorical variables to perform a chi-square test.')).toBeVisible();
+});
+
+test('manual import data with ai assistant', async ({ page, context }) => {
+  // @ts-ignore
+  await page.goto(testURL);
+  const pagePromise = context.waitForEvent('page');
+  await page.click('#new-dropdown-button');
+  await page.click('#kernel-python3');
+  const newPage = await pagePromise;
+  await newPage.waitForLoadState();
+  await newPage.getByLabel('Edit code here').type('from bring_order import BringOrder\nBringOrder()');
+  await page.waitForTimeout(1500);
+  await newPage.getByLabel('Run').click();
+  await newPage.getByLabel('', { exact: true }).first().click();
+  await newPage.getByLabel('', { exact: true }).first().fill('Test iris study');
+  await newPage.getByLabel('', { exact: true }).nth(1).click();
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test iris data');
+  await newPage.getByLabel('', { exact: true }).nth(2).click();
+  await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test iris data');
+  await newPage.getByRole('button', { name: 'Save description' }).click();
+  await page.waitForTimeout(500);
+  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await expect(newPage.getByRole('button', { name: 'Choose data file' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'AI assistant' })).toBeVisible();
+  await newPage.getByRole('button', { name: 'AI assistant' }).click();
+  await newPage.locator('input[type="password"]').click();
+  await newPage.locator('input[type="password"]').fill('testpassword');
+  await newPage.getByLabel('', { exact: true }).nth(3).click();
+  await newPage.getByLabel('', { exact: true }).nth(3).fill('Test question');
+  await newPage.getByRole('button', { name: 'Send' }).click();
+  await expect(newPage.getByText('OpenAI API request was not authorized: Incorrect API key provided: testpassword.')).toBeVisible();
 });

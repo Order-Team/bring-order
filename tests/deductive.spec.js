@@ -28,17 +28,23 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
-  expect(newPage.getByRole('heading', { name: 'Test limitation¶' }).isVisible());
   await newPage.getByPlaceholder('Theory').click();
-  await newPage.getByPlaceholder('Theory').fill('Test theory');
+  await newPage.getByPlaceholder('Theory').fill('Test theory is added to the text field');
   await newPage.getByLabel('', { exact: true }).nth(1).click();
-  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test hypothesis');
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Test hypothesis is in correct form');
   await newPage.getByLabel('', { exact: true }).nth(2).click();
-  await newPage.getByLabel('', { exact: true }).nth(2).fill('Test null hypothesis');
-  await newPage.getByRole('button', { name: 'Validate input' }).click();
-  expect(newPage.getByText('Do the hypotheses fit within the limitations of the data set?').isVisible());
-  expect(newPage.getByText('You have set hypothesis (H1): Test hypothesis').isVisible());
-  expect(newPage.getByText('You have set hypothesis (H0): Test null hypothesis').isVisible());
+  await newPage.getByLabel('', { exact: true }).nth(2).fill('Test null hypothesis is in correct form');
+  await newPage.getByRole('button', { name: 'Save and continue' }).click();
+  await expect(newPage.getByRole('button', { name: 'Yes' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'No' })).toBeEnabled();
+  await expect(newPage.getByRole('heading', { name: 'Do the hypotheses fit within the limitations of the data set?' })).toBeVisible();
+  await expect(newPage.getByText('You have set hypothesis (H1): Test hypothesis is in correct form')).toBeVisible();
+  await expect(newPage.getByText('You have set null hypothesis (H0): Test null hypothesis is in correct form')).toBeVisible();
+  await newPage.getByRole('button', { name: 'Yes' }).click();
+  await expect(newPage.getByRole('button', { name: 'Open cells' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Run cells' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Delete last cell' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Clear cells' })).toBeEnabled();
 });
 
 test('deductive analysis theory and hypothesis errors', async ({ page, context }) => {
@@ -67,10 +73,10 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
   await newPage.getByRole('button', { name: 'Save and continue' }).click();
-  expect(newPage.getByText('The theory must be at least 8 characters and not contain special characters').isVisible());
-  expect(newPage.getByText('The hypothesis must be at least 8 characters and not contain special characters').isVisible());
-  expect(newPage.getByText('The null hypothesis must be at least 8 characters and not contain special characters').isVisible());
-  expect(newPage.getByRole('button', { name: 'Save and continue' }).isEnabled());
+  await expect(newPage.getByText('The theory must contain at least 3 words and must not contain special characters')).toBeVisible();
+  await expect(newPage.getByText('The hypothesis must contain at least 3 words and must not contain special characters')).toBeVisible();
+  await expect(newPage.getByText('The null hypothesis must contain at least 3 words and must not contain special characters')).toBeVisible();
+  await expect(newPage.getByRole('button', { name: 'Save and continue' })).toBeEnabled();
 });
 
 test('deductive analysis theory and hypothesis warnings', async ({ page, context }) => {
@@ -99,14 +105,19 @@ test('deductive analysis theory and hypothesis warnings', async ({ page, context
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
   await newPage.getByPlaceholder('Theory').click();
-  await newPage.getByPlaceholder('Theory').fill('Everyone Turku');
+  await newPage.getByPlaceholder('Theory').fill('Everyone to eats');
   await newPage.getByLabel('', { exact: true }).nth(1).click();
-  await newPage.getByLabel('', { exact: true }).nth(1).fill('Everyone Turku');
+  await newPage.getByLabel('', { exact: true }).nth(1).fill('Everyone to eats');
   await newPage.getByLabel('', { exact: true }).nth(2).click();
-  await newPage.getByLabel('', { exact: true }).nth(2).fill('Everyone Turku');
+  await newPage.getByLabel('', { exact: true }).nth(2).fill('Everyone to eats');
   await newPage.getByRole('button', { name: 'Validate input' }).click();
-  expect(newPage.getByText('Warning! The theory does not fill criteria of including a subject, a predicate and an object.').isVisible());
-  expect(newPage.getByRole('button', { name: 'Save and continue' }).isEnabled());
+  await expect(newPage.getByText('Warning! The theory does not fill criteria of including a subject, a predicate a')).toBeVisible();
+  await expect(newPage.getByText('Warning! The hypothesis does not fill criteria of including a subject, a predica')).toBeVisible();
+  await expect(newPage.getByText('Warning! The null hypothesis does not fill criteria of including a subject, a pr')).toBeVisible();
+  await expect(newPage.getByRole('button', { name: 'Save and continue' })).toBeEnabled();
+  await newPage.getByRole('button', { name: 'Save and continue' }).click();
+  await newPage.getByRole('button', { name: 'No' }).click();
+  await expect(newPage.getByText('Hypotheses must fit data limitations')).toBeVisible();
 });
 
 test('deductive analysis all done shows export buttons', async ({ page, context }) => {
@@ -147,12 +158,9 @@ test('deductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByPlaceholder('Results').fill('Test results');
   await newPage.getByRole('button', { name: 'Save' }).click();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await page.waitForTimeout(500);
-  expect(newPage.getByRole('button', { name: 'Export to pdf' }).isEnabled());
-  expect(newPage.getByRole('button', { name: 'Close BringOrder' }).isEnabled());
-  await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
+  await expect(newPage.getByRole('button', { name: 'Export to pdf' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Close BringOrder' })).toBeEnabled();
 });
-
 
 test('deductive analysis conclusions includes data limitations', async ({ page, context }) => {
   // @ts-ignore
@@ -184,7 +192,6 @@ test('deductive analysis conclusions includes data limitations', async ({ page, 
   await newPage.getByRole('button', { name: 'Add limitation', exact: true }).click();
   await newPage.getByPlaceholder('Limitation 4').click();
   await newPage.getByPlaceholder('Limitation 4').fill('Data has nothing to do with animals.');
-  await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
   await newPage.getByPlaceholder('Theory').click();
@@ -197,16 +204,12 @@ test('deductive analysis conclusions includes data limitations', async ({ page, 
   await newPage.getByRole('button', { name: 'Yes' }).click();
   await newPage.getByRole('button', { name: 'Open cells' }).click();
   await newPage.getByRole('button', { name: 'Run cells' }).click();
-  await page.waitForTimeout(500);
   await newPage.getByPlaceholder('Results').click();
   await newPage.getByPlaceholder('Results').fill('It seems that the dogs are smarter than cats.');
   await newPage.getByRole('button', { name: 'Save' }).click();
-  await page.waitForTimeout(500);
-  expect(newPage.getByText('#### Limitations that were noticed in the data:').isVisible());
-  expect(newPage.getByText('- sepallength is not normally distributed').nth(1).isVisible());
-  expect(newPage.getByText('- Data has nothing to do with animals.').nth(1).isVisible());
-  await page.waitForTimeout(500);
+  await expect(newPage.getByRole('heading', { name: 'Limitations that were noticed in the data:' })).toBeVisible();
+  await expect(newPage.getByText('sepallength is not normally distributed').nth(1)).toBeVisible();
+  await expect(newPage.getByText('Data has nothing to do with animals.').nth(1)).toBeVisible();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await page.waitForTimeout(500);
   await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
 });
