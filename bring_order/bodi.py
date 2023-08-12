@@ -229,7 +229,31 @@ class Bodi:
             code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
             hide_input=False
         )
+        # Load config files for the tests to be checkked
+        #checklist = self.load_cfg_file(self.file_chooser.selected_path)
         self.check_variables()
+
+    def load_cfg_file(self, cfg_path):
+        """Checks if given path contains file bringorder.cfg. If found,
+        returns a list with the tests specified in the config file. Otherwise
+        returns the list containing 'ttest'.
+
+        args:
+            cfg_path: directory containing bringorder.cfg_file
+        returns:
+            tests_to_check: list of test names
+        """
+        cfg_file = cfg_path + "/bringorder.cfg"
+        tests_to_check = []
+        try:
+            with open(cfg_file) as get_cfg:
+                for line in get_cfg:
+                    line = line.replace("\n", "")
+                    tests_to_check.append(line)
+        except FileNotFoundError:
+            tests_to_check.append('ttest')
+        return tests_to_check
+
 
     def check_normal_distribution(self, data_frame):
         """Checks which variables are not normally distributed.
