@@ -89,6 +89,7 @@ class BringOrder:
         # The different ui functions are run through a helper function
         # that returns the name of the next function to be executed.
         # First, the data import function:
+        next_step = self.get_next(self.ai.display_ai_popup)
         next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.toggle_ai])
         # Main analysis loop:
         while next_step == 'start_analysis':

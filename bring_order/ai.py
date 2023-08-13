@@ -1,6 +1,6 @@
 """AI assistant"""
 from ipywidgets import widgets
-from IPython.display import display
+from IPython.display import display, clear_output
 import openai
 
 class Ai:
@@ -21,6 +21,9 @@ class Ai:
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
+        self.api_key = None
+        self.ai_context = "You are a helpful assistant"
+
 
     @property
     def button_list(self):
@@ -32,10 +35,23 @@ class Ai:
         button_list = [
             ('send_ai_btn', 'Send', self.send_ai, 'primary'),
             ('clear_ai_btn', 'Clear', self.clear_ai, 'danger'),
-            ('advanced_ai_btn', 'Advanced', self.advanced_ai, 'primary'),
-            ('close_ai_btn', 'Close', self.close_ai, 'warning')
+            ('close_ai_btn', 'Close', self.close_ai, 'warning'),
+            ('send_api_key_btn','Submit key', self.initiate_ai, 'success'),
+            ('disable_ai', 'Skip', self.disable_ai, 'warning'),
         ]
         return button_list
+
+
+    def initiate_ai(self, _=None):
+        self.api_key = self.api_key_input_field.value
+        self.ai_context = self.context_input_field.value
+        print(self.ai_context)
+        clear_output(wait=True)
+        self.next_step[0] = 'bodi'
+
+    def disable_ai(self, _=None):
+        clear_output(wait=True)
+        self.next_step[0] = 'bodi'
 
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
@@ -57,8 +73,6 @@ class Ai:
         """Button function for closing AI view"""
         self.grid.close()
 
-    def advanced_ai(self,_=None):
-        """Button function for setting advanced options for the AI assistant"""
 
     def validate_api_key(self):
         """Button function for validating API key"""
@@ -85,13 +99,8 @@ class Ai:
             self.ai_output_grid.close()
             self.remove_ai_error_message()
 
-    def display_ai(self, _=None, api_key_error='', nlp_error= '', context_error = ''):
+    def display_ai_popup(self, _=None, api_key_error='', context_error = ''):
         """" Function for displaying communication with AI assistant"""
-        feature_description = self.bogui.create_message(
-            'Enter a natural language prompt. The AI assistant will propose code\
-            to implement your request.'
-            )
-
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
         api_key_element = widgets.HBox([
             api_key_label,
@@ -114,17 +123,34 @@ class Ai:
 
         self.grid = widgets.AppLayout(
             header = api_key_element,
+            center= context_element,
+            footer = widgets.HBox([
+                self.buttons['send_api_key_btn'],
+                self.buttons['disable_ai']
+                ]),
+            pane_widths=[3, 3, 6],
+            pane_heights=[4, 6, 2]
+            )
+
+        display(self.grid)
+
+
+    def display_ai(self, _=None, nlp_error= ''):
+      
+        feature_description = self.bogui.create_message(
+            'Enter a natural language prompt. The AI assistant will propose code\
+            to implement your request.'
+            )
+
+        self.grid = widgets.AppLayout(
+            header = feature_description,
             center= widgets.VBox([
-                context_element,
-                self.bogui.create_error_message(context_error, 'red'),
-                feature_description,
                 self.natural_language_prompt,
                 self.bogui.create_error_message(nlp_error, 'red')
                 ]),
             footer = widgets.HBox([
                 self.buttons['send_ai_btn'],
-                self.buttons['clear_ai_btn'],
-                self.buttons['advanced_ai_btn']
+                self.buttons['clear_ai_btn']
                 ]),
             pane_widths=[3, 3, 6],
             pane_heights=[4, 6, 2]
@@ -152,10 +178,10 @@ class Ai:
         """Function to check openai api key"""
 
         try:
-            openai.api_key = self.api_key_input_field.value
+            openai.api_key = self.api_key
             model_engine = self.model_engine
 
-            system_msg = self.context_input_field.value
+            system_msg = self.ai_context
             content = self.natural_language_prompt.value
             response = openai.ChatCompletion.create(
                 model = model_engine,
