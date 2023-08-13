@@ -14,7 +14,6 @@ class Ai:
         self.natural_language_prompt = self.bogui.create_text_area()
         self.api_key_input_field = self.bogui.create_password_field()
         self.context_input_field = self.bogui.create_input_field()
-        self.buttons = self.bogui.init_buttons(self.button_list)
         self.ai_output_grid = None
         self.ai_output = self.bogui.create_message('')
         self.ai_error_message_grid = None
