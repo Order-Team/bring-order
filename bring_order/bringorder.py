@@ -95,9 +95,9 @@ class BringOrder:
             next_step = self.get_next(self.start_analysis)
             # Branching to deductive/inductive:
             if next_step == 'deductive_analysis':
-                next_step = self.get_next(self.start_deductive_analysis)
+                next_step = self.get_next(self.start_deductive_analysis, subroutines=[self.ai.toggle_ai])
             elif next_step == 'inductive_analysis':
-                next_step = self.get_next(self.start_inductive_analysis)
+                next_step = self.get_next(self.start_inductive_analysis, subroutines=[self.ai.toggle_ai])
             # New analysis/export to pdf-view:
             if next_step == 'analysis_done':
                 next_step = self.get_next(self.next_analysis.new_analysis_view)

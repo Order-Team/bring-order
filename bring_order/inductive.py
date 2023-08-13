@@ -66,10 +66,22 @@ class Inductive:
             ('submit_obs', 'Submit observation', self._new_observation, 'warning'),
             ('submit_sum', 'Submit summary', self._submit_summary, 'success'),
             ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success'),
-            ('save_results', 'Save', self._save_results, 'success')
+            ('save_results', 'Save', self._save_results, 'success'),
+            ('assist', 'AI assistant', self.toggle_ai, 'success')
         ]
 
         return button_list
+    
+    def toggle_ai(self, _=None):
+        """Button function to open/close AI assistant"""
+
+        if self.buttons['assist'].description == 'AI assistant':
+            self.buttons['assist'].description = 'Close AI assistant'
+            self.buttons['assist'].button_style = 'warning'
+        else:
+            self.buttons['assist'].description = 'AI assistant'
+            self.buttons['assist'].button_style = 'success'
+        self.next_step[0] = 'toggle_ai'
 
     def start_inductive_analysis(self):
         """Starts inductive analysis."""
@@ -182,13 +194,14 @@ class Inductive:
         """Activates/deactivates buttons.
         
         Args:
-            disbled (bool): True to disable, False to activate
+            disabled (bool): True to disable, False to activate
         """
 
         self.buttons['open'].disabled = disabled
         self.buttons['clear'].disabled = disabled
         self.buttons['delete'].disabled = disabled
         self.buttons['ready'].disabled = disabled
+        self.buttons['assist'].disabled = disabled
 
     def _run_cells(self, _=None):
         """Executes cells above and displays text area for observations of analysis."""
@@ -200,6 +213,9 @@ class Inductive:
         if self.conclusion:
             self.conclusion.close()
 
+        if self.buttons['assist'].description == 'Close AI assistant':
+            self.toggle_ai()
+   
         self._buttons_disabled(True)
 
         notes_label = self.bogui.create_label(value='Explain what you observed:')
@@ -388,19 +404,41 @@ class Inductive:
         self.buttons['ready'].disabled = True
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
-        cell_buttons = widgets.TwoByTwoLayout(
+        """ cell_buttons = widgets.TwoByTwoLayout(
             top_left=self.buttons['open'],
             bottom_left=self.buttons['run'],
             top_right=self.buttons['delete'],
             bottom_right=self.buttons['clear']
         )
+        """
 
-        grid = widgets.GridspecLayout(2, 3, height='auto', width='100%')
-        grid[0, 0] = widgets.HBox([cell_number_label, self.fields[0]])
-        grid[:, 1] = cell_buttons
-        grid[1, 2] = self.buttons['ready']
+        buttons = self.bogui.create_grid(
+            2,
+            3,
+            [
+                self.buttons['open'],
+                self.buttons['delete'],
+                self.buttons['assist'],
+                self.buttons['run'],
+                self.buttons['clear'],
+                self.buttons['ready']
+            ]
+        )
+        buttons.width = '100%'
+
+        grid = widgets.AppLayout(
+            left_sidebar=widgets.HBox([
+                cell_number_label,
+                self.fields[0]
+            ]),
+            right_sidebar=buttons,
+            footer=None,
+            pane_widths=['320px', 0, '460px'],
+            pane_heights=['0px', '80px', 1],
+            grid_gap='12px'
+        )
 
         return grid
-
+    
     def __repr__(self):
         return ''

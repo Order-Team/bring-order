@@ -80,10 +80,14 @@ class BOGui:
                                       width=width,
                                       grid_gap="0px")
         item_index = 0
+        k = len(items)
         for i in range(rows):
             for j in range(cols):
+                if k == 0:
+                    break
                 grid[i, j] = items[item_index]
                 item_index += 1
+                k -= 1
 
         return grid
 

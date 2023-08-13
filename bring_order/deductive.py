@@ -55,10 +55,22 @@ class Deductive:
             ('run', 'Run cells', self.run_cells, 'warning'),
             ('clear', 'Clear cells', self.clear_cells, 'danger'),
             ('clear_theory', 'Clear theory', self.clear_theory, 'warning'),
+            ('assist', 'AI assistant', self.toggle_ai, 'success'),
             ('save_results', 'Save', self.save_results, 'success')
         ]
 
         return button_list
+    
+    def toggle_ai(self, _=None):
+        """Button function to open/close AI assistant"""
+
+        if self.buttons['assist'].description == 'AI assistant':
+            self.buttons['assist'].description = 'Close AI assistant'
+            self.buttons['assist'].button_style = 'warning'
+        else:
+            self.buttons['assist'].description = 'AI assistant'
+            self.buttons['assist'].button_style = 'success'
+        self.next_step[0] = 'toggle_ai'
 
     def __create_hypotheses_grid(self, hypo_error='',
                                 null_error='',
@@ -351,6 +363,7 @@ class Deductive:
         self.buttons['open'].disabled = True
         self.buttons['clear'].disabled = True
         self.buttons['delete'].disabled = True
+        self.buttons['assist'].disabled = True
 
     def __create_conclusion_grid(self):
         question = self.bogui.create_message(value='What happened?')
@@ -380,8 +393,10 @@ class Deductive:
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
         self.boutils.run_cells_above(self.cell_count)
+        if self.buttons['assist'].description == 'Close AI assistant':
+            self.toggle_ai()
+    
         self.deactivate_cell_operations()
-
         clear_output(wait=True)
         cell_operations = self.__create_cell_operations_grid()
         conclusion = self.__create_conclusion_grid()
@@ -396,14 +411,32 @@ class Deductive:
     def __create_cell_operations_grid(self):
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
+        
+        buttons = self.bogui.create_grid(
+            2,
+            3,
+            [
+                self.buttons['open'],
+                self.buttons['delete'],
+                self.buttons['assist'],
+                self.buttons['run'],
+                self.buttons['clear']               
+            ]
+        )
 
-        grid = widgets.GridspecLayout(2, 2, width='70%', align_items='center')
-        grid[1, 0] = widgets.HBox([cell_number_label, self.add_cells_int])
-        grid[1, 1] = widgets.TwoByTwoLayout(
-            top_left=self.buttons['open'],
-            bottom_left=self.buttons['run'],
-            top_right=self.buttons['delete'],
-            bottom_right=self.buttons['clear'])
+        buttons.width = '100%'
+
+        grid = widgets.AppLayout(
+            left_sidebar=widgets.HBox([
+                cell_number_label, 
+                self.add_cells_int
+            ]),
+            right_sidebar=buttons,
+            footer=None,
+            pane_widths=['320px', 0, '460px'],
+            pane_heights=['0px', '80px', 1],
+            grid_gap='12px'
+        )
 
         return grid
 
