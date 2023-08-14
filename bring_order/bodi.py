@@ -1,7 +1,8 @@
 """Bring Order Data Import and preparation."""
+import sys
+import pandas as pd
 from ipywidgets import widgets
 from IPython.display import display, clear_output
-import pandas as pd
 from limitations import Limitations
 from stattests import Stattests
 
@@ -226,12 +227,22 @@ class Bodi:
         )
         self.boutils.execute_cell_from_current(
             distance=1,
-            code=f"data_frame = pd.read_csv('{self.file_chooser.selected}')",
+            code=f"data_frame = pd.read_csv('{self.__check_file_path()}')",
             hide_input=False
         )
         # Load config files for the tests to be checkked
         #checklist = self.load_cfg_file(self.file_chooser.selected_path)
         self.check_variables()
+
+    def __check_file_path(self):
+        '''Check operation system. If windows corrects file path.
+            Returns:
+                path: str
+        '''
+        path = self.file_chooser.selected
+        if sys.platform.startswith('win'):
+            path = path.replace('\\', '/')
+        return path
 
     def load_cfg_file(self, cfg_path):
         """Checks if given path contains file bringorder.cfg. If found,
@@ -246,7 +257,7 @@ class Bodi:
         cfg_file = cfg_path + "/bringorder.cfg"
         tests_to_check = []
         try:
-            with open(cfg_file) as get_cfg:
+            with open(cfg_file, encoding="utf-8") as get_cfg:
                 for line in get_cfg:
                     line = line.replace("\n", "")
                     tests_to_check.append(line)
