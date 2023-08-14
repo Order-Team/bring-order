@@ -21,6 +21,7 @@ class TestInductive(unittest.TestCase):
         self.instance.bogui.create_error_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_label = lambda value: widgets.Label(value=value)
+        self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
         
     def test_cell_count_starts_at_0(self):
         self.assertEqual(self.instance._cell_count, 0)
@@ -35,7 +36,7 @@ class TestInductive(unittest.TestCase):
         self.assertEqual(self.instance.buttons['open'].description, 'Open cells')
 
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 11)
+        self.assertEqual(len(self.instance.buttons), 12)
 
     def test_filled_summary_returns_true(self):
         self.instance.fields[1].value = "Childrens' usage of psychosis medication has increased."
