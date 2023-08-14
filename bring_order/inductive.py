@@ -23,6 +23,7 @@ class Inductive:
                     3 = error message
                     4 = pre-evaluation slider
                     5 = post-evaluation slider
+                    6 = evaluation
         """
 
         self.bogui = bogui
@@ -44,7 +45,8 @@ class Inductive:
             self.bogui.create_text_area('', 'Summary'),
             self.bogui.create_error_message(),
             self.bogui.create_int_slider(),
-            self.bogui.create_int_slider()
+            self.bogui.create_int_slider(),
+            None
         ]
 
     @property
@@ -67,11 +69,12 @@ class Inductive:
             ('submit_sum', 'Submit summary', self._submit_summary, 'success'),
             ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success'),
             ('save_results', 'Save', self._save_results, 'success'),
-            ('assist', 'AI assistant', self.toggle_ai, 'success')
+            ('assist', 'AI assistant', self.toggle_ai, 'success'),
+            ('complete', 'Save and continue', self._complete_evaluation, 'success')
         ]
 
         return button_list
-    
+
     def toggle_ai(self, _=None):
         """Button function to open/close AI assistant"""
 
@@ -215,7 +218,7 @@ class Inductive:
 
         if self.buttons['assist'].description == 'Close AI assistant':
             self.toggle_ai()
-   
+
         self._buttons_disabled(True)
 
         notes_label = self.bogui.create_label(value='Explain what you observed:')
@@ -377,17 +380,58 @@ class Inductive:
 
         text = (f'### Evaluation of the analysis \\n'
                 f'#### Limitations that were noticed in the data:\\n- {limit}\\n'
-                f'#### Evaluation:\\n'
+                f'#### Evaluations:\\n'
+                f'- According to the pre-evaluation, the analysis confirmed\
+                approximately {self.fields[4].value} % of the preconceptions.\\n'
                 f'- According to the final evaluation, the analysis confirmed approximately\
                 {self.fields[5].value} % of the preconceptions.\\n'
                 f'{formatted_text}')
 
-        # f'#### Evaluations:\\n'
-        # f'- According to the pre-evaluation, the analysis confirmed\
-        #    approximately {self.fields[4].value} % of the preconceptions.\\n'
-
         self.utils.create_markdown_cells_above(how_many=1, text=text)
+        self._close_evaluation()
+
+    def _close_evaluation(self):
+        '''Creates text field for final evaluation'''
         clear_output(wait=True)
+        row = int(self.__check_evaluation_difference())
+        if row != 0:
+            eval_label = self.bogui.create_message('What caused the difference\
+                 between the pre- and final evaluation?')
+            self.fields[6] = widgets.Textarea(value='',description='',disabled=False,
+                                rows=row,layout={'width': '80%'})
+            grid = widgets.AppLayout(
+                header=None,
+                center = widgets.VBox([eval_label, self.fields[6]]),
+                footer = self.buttons['complete']
+            )
+            display(grid)
+        else:
+            self.next_step[0] = 'analysis_done'
+
+    def __check_evaluation_difference(self):
+        '''Check evaluation difference
+            Returns:
+                number of rows for text field: int
+        '''
+        difference = abs(int(self.fields[4].value) - int(self.fields[5].value))
+        num_row = 0
+        if difference <= 10:
+            return num_row
+        num_row = difference/5
+        return num_row
+
+    def _complete_evaluation(self, _=None):
+        clear_output(wait=True)
+        value = self.fields[6].value
+        value_list = self.fields[2].value.split('\n')
+        value = '<br />'.join(value_list)
+
+        evaluation = '### The difference between the pre- and final evaluation caused by: \\n'
+        if value == '':
+            evaluation += 'No explanation was given!'
+        else:
+            evaluation += f'{value}'
+        self.utils.create_markdown_cells_above(1, text=evaluation)
         self.next_step[0] = 'analysis_done'
 
     def _checkbox_preconceptions(self):
@@ -439,6 +483,6 @@ class Inductive:
         )
 
         return grid
-    
+
     def __repr__(self):
         return ''
