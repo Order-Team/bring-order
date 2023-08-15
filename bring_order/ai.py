@@ -1,6 +1,7 @@
 """AI assistant"""
 from ipywidgets import widgets
 from IPython.display import display, clear_output
+import pandas as pd
 import openai
 
 class Ai:
@@ -13,7 +14,8 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
         self.api_key_input_field = self.bogui.create_password_field()
-        self.context_input_field = self.bogui.create_input_field()
+        self.context_selection = self.bogui.create_checkbox("Include")
+        self.buttons = self.bogui.init_buttons(self.button_list)
         self.ai_output_grid = None
         self.ai_output = self.bogui.create_message('')
         self.ai_error_message_grid = None
@@ -21,9 +23,7 @@ class Ai:
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
-        self.api_key = None
-        self.ai_context = "You are a helpful assistant"
-
+        self.dataset = pd.DataFrame()
 
     @property
     def button_list(self):
@@ -44,8 +44,7 @@ class Ai:
 
     def initiate_ai(self, _=None):
         self.api_key = self.api_key_input_field.value
-        self.ai_context = self.context_input_field.value
-        print(self.ai_context)
+        self.ai_context = self.context_selection.value
         clear_output(wait=True)
         self.next_step[0] = 'bodi'
 
@@ -110,13 +109,12 @@ class Ai:
             ]),
         ])
 
-        context_label = self.bogui.create_label('Enter your context for the AI assistant here:')
-        self.context_input_field.value = 'You are a helpful assistant.'
-
+        context_label = self.bogui.create_label('Do you want to include your dataset as context?')        
+     
         context_element = widgets.HBox([
             context_label,
             widgets.VBox([
-                self.context_input_field,
+                self.context_selection,
                 self.bogui.create_error_message(context_error, 'red')
             ]),
         ])
@@ -180,8 +178,9 @@ class Ai:
         try:
             openai.api_key = self.api_key
             model_engine = self.model_engine
-
-            system_msg = self.ai_context
+            if self.context_selection.value:
+                variable_list = self.dataset.columns.values.tolist()
+                system_msg = "Variables of the dataset are " +str(variable_list)
             content = self.natural_language_prompt.value
             response = openai.ChatCompletion.create(
                 model = model_engine,

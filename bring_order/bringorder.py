@@ -34,15 +34,16 @@ class BringOrder:
             self.bogui,
             self.boutils,
             self.next_step)
-        self.bodi = Bodi(
-            self.boutils,
-            self.bogui,
-            self.next_step)
         self.ai = Ai(
             self.bogui,
             self.boutils,
             self.next_step
         )
+        self.bodi = Bodi(
+            self.boutils,
+            self.bogui,
+            self.ai,
+            self.next_step)
         self.bring_order()
 
 

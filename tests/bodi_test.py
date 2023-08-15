@@ -7,13 +7,15 @@ from unittest.mock import Mock, patch, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
+from bring_order.ai import Ai
 
 class TestBodi(unittest.TestCase):
 
+
     def setUp(self):
         next_step = [None]
-
-        self.instance = Bodi(BOUtils(), BOGui(), next_step=next_step)
+        ai = Mock()
+        self.instance = Bodi(BOUtils(), BOGui(), ai, next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
         self.instance.limitations = Mock()
