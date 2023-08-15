@@ -14,7 +14,10 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
         self.api_key_input_field = self.bogui.create_password_field()
-        self.context_selection = self.bogui.create_checkbox("Include")
+        self.context_selection = widgets.Dropdown(
+            options = ['No context', 'Include dataset', 'Enter manually']
+        )
+        self.context = 'You are a helpful assistant'
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.ai_output_grid = None
         self.ai_output = self.bogui.create_message('')
@@ -38,6 +41,7 @@ class Ai:
             ('close_ai_btn', 'Close', self.close_ai, 'warning'),
             ('send_api_key_btn','Submit key', self.initiate_ai, 'success'),
             ('disable_ai', 'Skip', self.disable_ai, 'warning'),
+            ('select_context', 'Select', self.select_context, 'success')
         ]
         return button_list
 
@@ -98,7 +102,7 @@ class Ai:
             self.ai_output_grid.close()
             self.remove_ai_error_message()
 
-    def display_ai_popup(self, _=None, api_key_error='', context_error = ''):
+    def display_ai_popup(self, _=None, api_key_error=''):
         """" Function for displaying communication with AI assistant"""
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
         api_key_element = widgets.HBox([
@@ -109,50 +113,59 @@ class Ai:
             ]),
         ])
 
-        context_label = self.bogui.create_label('Do you want to include your dataset as context?')        
-     
-        context_element = widgets.HBox([
-            context_label,
-            widgets.VBox([
-                self.context_selection,
-                self.bogui.create_error_message(context_error, 'red')
-            ]),
-        ])
-
         self.grid = widgets.AppLayout(
             header = api_key_element,
-            center= context_element,
-            footer = widgets.HBox([
+            center = widgets.HBox([
                 self.buttons['send_api_key_btn'],
                 self.buttons['disable_ai']
                 ]),
+            footer = None,    
             pane_widths=[3, 3, 6],
             pane_heights=[4, 6, 2]
-            )
+        )
 
         display(self.grid)
 
+    def select_context(self, _=None):
+        if self.context_selection.value == 'Include dataset':
+            variable_list = self.dataset.columns.values.tolist()
+            variables = "Variables of the dataset are " +str(variable_list)
+            self.context = variables
+        elif self.context_selection.value == 'Enter manually':
+            manual_context = self.bogui.create_text_area(place_holder='This is my context')
+            display(manual_context)
+            self.context = manual_context.value
 
-    def display_ai(self, _=None, nlp_error= ''):
-      
+
+    def display_ai(self, _=None, nlp_error= '', context_error = ''):
+        '''Displays a text field for entering a question and options for includng context'''
         feature_description = self.bogui.create_message(
             'Enter a natural language prompt. The AI assistant will propose code\
             to implement your request.'
             )
 
+        context_box = widgets.VBox([
+            self.bogui.create_message(
+            'Do you want to include your dataset as context or enter context manually?'),
+            self.context_selection,
+            self.buttons['select_context'],
+            self.bogui.create_error_message(context_error, 'red')
+        ])   
+
         self.grid = widgets.AppLayout(
             header = feature_description,
             center= widgets.VBox([
                 self.natural_language_prompt,
+                context_box,
                 self.bogui.create_error_message(nlp_error, 'red')
-                ]),
+            ]),
             footer = widgets.HBox([
                 self.buttons['send_ai_btn'],
                 self.buttons['clear_ai_btn']
                 ]),
-            pane_widths=[3, 3, 6],
-            pane_heights=[4, 6, 2]
-            )
+            pane_widths=[1, 8, 1],
+            pane_heights=[2, 6, 2]
+        )
 
         display(self.grid)
 
@@ -178,9 +191,7 @@ class Ai:
         try:
             openai.api_key = self.api_key
             model_engine = self.model_engine
-            if self.context_selection.value:
-                variable_list = self.dataset.columns.values.tolist()
-                system_msg = "Variables of the dataset are " +str(variable_list)
+            system_msg = self.context
             content = self.natural_language_prompt.value
             response = openai.ChatCompletion.create(
                 model = model_engine,
