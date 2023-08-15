@@ -5,7 +5,13 @@ from IPython.display import display, Javascript
 class BOUtils:
     """Helpful Javascript methods"""
     def __init__(self):
-        """Class constructor"""
+        """Class constructor.
+        The instance attribute self.change_cell_count is a function that
+        can be manipulated to change the cell_count attribute of the Bodi/Deductive/Inductive
+        instance that is calling BOUtils methods.
+        """
+
+        self.change_cell_count = lambda n: None
 
     def create_code_cells_above(self, how_many):
         """Creates code cells above the current cell
@@ -230,3 +236,62 @@ class BOUtils:
         '''
 
         display(Javascript(command))
+
+    def get_python_code_from_response(self, response):
+        """Returns the Python code extracted from AI response.
+        
+        Args:
+            response (str): the AI response
+            
+        Returns:
+            code (str): the Python code from the response
+        """
+
+        try:
+            code = response.split('```python\n')[1].split('\n```')[0]
+        except IndexError:
+            return 'No Python code in the response'
+
+        code = code.replace('\n', '\\n')
+        code = code.replace('"', '\\"')
+        code = code.replace("'", "\\'")
+
+        return code
+
+    def insert_ai_code_into_new_cell(self, code=''):
+        """Opens new empty code cell and inserts the given code into it.
+        
+        Args:
+            code (str)
+        """
+
+        command1 = '''
+        IPython.notebook.insert_cell_above("code");
+        var index = IPython.notebook.get_selected_index() - 1;
+        var cell = IPython.notebook.get_cell(index);
+        var cell_above = IPython.notebook.get_cell(index - 1);
+        while (cell_above.get_text() == "") {
+            cell = cell_above;
+            index = index - 1;
+            cell_above = IPython.notebook.get_cell(index - 1);
+        }
+        cell.set_text("# If the code doesn't appear here, please, copy-paste it manually.");
+        '''
+
+        display(Javascript(command1))
+        self.change_cell_count(1)
+
+        command2 = f'''
+        var output_area = this;
+        var active_element = output_area.element.parents('.cell');
+        var index = Jupyter.notebook.get_cell_elements().index(active_element) - 1;
+        var cell = Jupyter.notebook.get_cell(index);
+        while (cell.get_text() != "# If the code doesn't appear here, please, copy-paste it manually.") {{
+            index = index - 1;
+            cell = IPython.notebook.get_cell(index);
+        }}
+        cell.set_text("{code}");
+        '''
+
+        display(Javascript(command2))
+

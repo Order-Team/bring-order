@@ -486,3 +486,9 @@ class Inductive:
 
     def __repr__(self):
         return ''
+
+    def change_cell_count(self, number):
+        """Changes the cell_count value by the given number."""
+
+        self._cell_count += number
+        self._cell_count = max(self._cell_count, 0)

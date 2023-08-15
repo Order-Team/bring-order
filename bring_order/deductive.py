@@ -60,7 +60,7 @@ class Deductive:
         ]
 
         return button_list
-    
+
     def toggle_ai(self, _=None):
         """Button function to open/close AI assistant"""
 
@@ -395,7 +395,7 @@ class Deductive:
         self.boutils.run_cells_above(self.cell_count)
         if self.buttons['assist'].description == 'Close AI assistant':
             self.toggle_ai()
-    
+
         self.deactivate_cell_operations()
         clear_output(wait=True)
         cell_operations = self.__create_cell_operations_grid()
@@ -411,7 +411,7 @@ class Deductive:
     def __create_cell_operations_grid(self):
         """Creates widget grid"""
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
-        
+
         buttons = self.bogui.create_grid(
             2,
             3,
@@ -420,7 +420,7 @@ class Deductive:
                 self.buttons['delete'],
                 self.buttons['assist'],
                 self.buttons['run'],
-                self.buttons['clear']               
+                self.buttons['clear']
             ]
         )
 
@@ -428,7 +428,7 @@ class Deductive:
 
         grid = widgets.AppLayout(
             left_sidebar=widgets.HBox([
-                cell_number_label, 
+                cell_number_label,
                 self.add_cells_int
             ]),
             right_sidebar=buttons,
@@ -458,3 +458,9 @@ class Deductive:
 
     def __repr__(self):
         return ''
+
+    def change_cell_count(self, number):
+        """Changes the cell_count value by the given number."""
+
+        self.cell_count += number
+        self.cell_count = max(self.cell_count, 0)

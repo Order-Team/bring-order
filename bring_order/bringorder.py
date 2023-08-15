@@ -77,12 +77,14 @@ class BringOrder:
         if not hasattr(self, 'data_limitations'):
             self.data_limitations = self.bodi.limitations.data_limitations
         self.deductive.data_limitations = self.bodi.limitations.data_limitations
+        self.boutils.change_cell_count = self.deductive.change_cell_count
         return self.deductive.start_deductive_analysis()
 
     def start_inductive_analysis(self, _=None):
         """Starts inductive analysis"""
         self.inductive.data_limitations = self.bodi.limitations.data_limitations
         self.close_buttons()
+        self.boutils.change_cell_count = self.inductive.change_cell_count
         return self.inductive.start_inductive_analysis()
 
     def bring_order(self):
@@ -90,6 +92,7 @@ class BringOrder:
         # The different ui functions are run through a helper function
         # that returns the name of the next function to be executed.
         # First, the data import function:
+        self.boutils.change_cell_count = self.bodi.change_cell_count
         next_step = self.get_next(self.ai.display_ai_popup)
         next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.toggle_ai])
         # Main analysis loop:

@@ -425,3 +425,9 @@ class Bodi:
             self.fields[2].focus()
         else:
             self.fields[0].focus()
+
+    def change_cell_count(self, number):
+        """Changes the cell_count value by the given number."""
+
+        self.cell_count += number
+        self.cell_count = max(self.cell_count, 0)

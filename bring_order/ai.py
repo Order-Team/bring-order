@@ -59,6 +59,7 @@ class Ai:
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
         self.remove_ai_error_message()
+        self.ai_output.value = 'The AI assistant is processing your message...'
         if self.validate_api_key() and self.validate_npl_input():
             self.openai_api()
 
@@ -119,7 +120,7 @@ class Ai:
                 self.buttons['send_api_key_btn'],
                 self.buttons['disable_ai']
                 ]),
-            footer = None,    
+            footer = None,
             pane_widths=[3, 3, 6],
             pane_heights=[4, 6, 2]
         )
@@ -150,7 +151,7 @@ class Ai:
             self.context_selection,
             self.buttons['select_context'],
             self.bogui.create_error_message(context_error, 'red')
-        ])   
+        ])
 
         self.grid = widgets.AppLayout(
             header = feature_description,
@@ -179,6 +180,7 @@ class Ai:
     def display_ai_error_message(self, _=None):
         """Displays error message"""
 
+        self.ai_output.value = ''
         self.ai_error_message_grid = widgets.AppLayout(
             center = self.bogui.create_message(self.ai_error_msg)
         )
@@ -201,7 +203,13 @@ class Ai:
             ])
 
             message = response.choices[0]['message']
-            self.ai_output.value = self.display_response(message)
+            code = self.utils.get_python_code_from_response(message['content'])
+            if code == 'No Python code in the response':
+                self.ai_output.value = self.display_response(message)
+            else:
+                self.utils.insert_ai_code_into_new_cell(code)
+                self.ai_output.value = 'Code inserted into a code cell above.'
+                self.ai_output.value += '<br/>' + self.display_response(message)
 
         except openai.error.Timeout as err:
             self.ai_error_msg = f"OpenAI API request timed out: {err}"
