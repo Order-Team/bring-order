@@ -52,7 +52,13 @@ class Ai:
 
     def initiate_ai(self, _=None):
         self.api_key = self.api_key_input_field.value
+        if not self.validate_api_key():
+            clear_output(wait=True)
+            self.display_ai_popup(self.ai_error_msg)
+            return
+               
         self.ai_context = self.context_selection.value
+        
         clear_output(wait=True)
         self.next_step[0] = 'bodi'
 
@@ -66,7 +72,7 @@ class Ai:
         self.ai_output = ''
         self.display_ai_output('The AI assistant is processing your message...')
         self.buttons['show'].disabled = True
-        if self.validate_api_key() and self.validate_npl_input():
+        if self.validate_npl_input():
             self.openai_api()
 
     def remove_ai_error_message(self):
@@ -86,6 +92,32 @@ class Ai:
     def validate_api_key(self):
         """Button function for validating API key"""
         if not self.api_key_input_field.value:
+            self.ai_error_msg = 'Please enter your Open AI api key'
+            return False
+        
+        try:
+            openai.api_key = self.api_key
+            content = self.natural_language_prompt.value
+            response = openai.ChatCompletion.create(
+            model = self.model_engine,
+            messages=[
+                {"role": "system", "content": self.context},
+                {"role": "user", "content": content},
+            ])
+
+            if not response.choices[0]['message']['content']:
+                self.ai_error_msg = f"Please enter correct OpenAI API key. You recieved no respoonse from the AI assistant."
+                return False
+                   
+        except openai.error.AuthenticationError as err:
+            self.ai_error_msg = f"{err}"
+            return False 
+
+        return True
+    
+    def validate_context(self):
+        """Validates context"""
+        if not self.ai_context:
             return False
         return True
 
@@ -127,8 +159,8 @@ class Ai:
                 self.buttons['disable_ai']
                 ]),
             footer = None,
-            pane_widths=[3, 3, 6],
-            pane_heights=[4, 6, 2]
+            pane_widths=[4, 6, 4],
+            pane_heights=[4, 6, 3]
         )
 
         display(self.grid)
@@ -194,6 +226,7 @@ class Ai:
                 self.ai_output_grid.footer = self.buttons['show']
 
         display(self.ai_output_grid)
+    
 
     def display_ai_error_message(self):
         """Displays error message"""
