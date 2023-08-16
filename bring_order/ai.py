@@ -17,10 +17,12 @@ class Ai:
         self.context_selection = widgets.Dropdown(
             options = ['No context', 'Include dataset', 'Enter manually']
         )
-        self.context = 'You are a helpful assistant'
+        self.context = 'You are a helpful assistant. Give the answer in one Python code block\
+            indicated with ```python.'
         self.buttons = self.bogui.init_buttons(self.button_list)
-        self.ai_output_grid = None
-        self.ai_output = self.bogui.create_message('')
+        self.ai_response = ''
+        self.ai_output_grid = widgets.AppLayout()
+        self.ai_output = ''
         self.ai_error_message_grid = None
         self.ai_error_msg = self.bogui.create_message('')
         self.model_engine = "gpt-3.5-turbo"
@@ -41,7 +43,9 @@ class Ai:
             ('close_ai_btn', 'Close', self.close_ai, 'warning'),
             ('send_api_key_btn','Submit key', self.initiate_ai, 'success'),
             ('disable_ai', 'Skip', self.disable_ai, 'warning'),
-            ('select_context', 'Select', self.select_context, 'success')
+            ('select_context', 'Select', self.select_context, 'success'),
+            ('show', 'Show response', self.show_response, 'primary'),
+            ('hide', 'Hide response', self.hide_response, 'primary')
         ]
         return button_list
 
@@ -59,7 +63,9 @@ class Ai:
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
         self.remove_ai_error_message()
-        self.ai_output.value = 'The AI assistant is processing your message...'
+        self.ai_output = ''
+        self.display_ai_output('The AI assistant is processing your message...')
+        self.buttons['show'].disabled = True
         if self.validate_api_key() and self.validate_npl_input():
             self.openai_api()
 
@@ -76,7 +82,6 @@ class Ai:
     def close_ai(self, _=None):
         """Button function for closing AI view"""
         self.grid.close()
-
 
     def validate_api_key(self):
         """Button function for validating API key"""
@@ -96,6 +101,7 @@ class Ai:
             self.visible = True
             self.remove_ai_error_message()
             self.display_ai()
+            self.ai_output = ''
             self.display_ai_output()
         else:
             self.visible = False
@@ -103,7 +109,7 @@ class Ai:
             self.ai_output_grid.close()
             self.remove_ai_error_message()
 
-    def display_ai_popup(self, _=None, api_key_error=''):
+    def display_ai_popup(self, api_key_error=''):
         """" Function for displaying communication with AI assistant"""
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
         api_key_element = widgets.HBox([
@@ -138,7 +144,7 @@ class Ai:
             self.context = manual_context.value
 
 
-    def display_ai(self, _=None, nlp_error= '', context_error = ''):
+    def display_ai(self, nlp_error= '', context_error = ''):
         '''Displays a text field for entering a question and options for includng context'''
         feature_description = self.bogui.create_message(
             'Enter a natural language prompt. The AI assistant will propose code\
@@ -170,14 +176,26 @@ class Ai:
 
         display(self.grid)
 
-    def display_ai_output(self, _=None):
+    def display_ai_output(self, message='', hide=False):
         """Displays ai output"""
+
+        self.ai_output_grid.close()
+
         self.ai_output_grid = widgets.AppLayout(
-            center = self.ai_output
+            header = self.bogui.create_message(message),
+            center = self.bogui.create_message(self.ai_output),
+            pane_heights = ['40px', 1, '40px']
         )
+
+        if self.ai_response != '':
+            if hide:
+                self.ai_output_grid.footer = self.buttons['hide']
+            else:
+                self.ai_output_grid.footer = self.buttons['show']
+
         display(self.ai_output_grid)
 
-    def display_ai_error_message(self, _=None):
+    def display_ai_error_message(self):
         """Displays error message"""
 
         self.ai_output.value = ''
@@ -187,7 +205,7 @@ class Ai:
         display(self.ai_error_message_grid)
 
 
-    def openai_api(self, _=None):
+    def openai_api(self):
         """Function to check openai api key"""
 
         try:
@@ -202,14 +220,16 @@ class Ai:
                     {"role": "user", "content": content},
             ])
 
-            message = response.choices[0]['message']
-            code = self.utils.get_python_code_from_response(message['content'])
+            self.ai_response = response.choices[0]['message']['content']
+            code = self.utils.get_python_code_from_response(self.ai_response)
             if code == 'No Python code in the response':
-                self.ai_output.value = self.display_response(message)
+                self.display_ai_output('Python code was not found in the response.')
+                
             else:
                 self.utils.insert_ai_code_into_new_cell(code)
-                self.ai_output.value = 'Code inserted into a code cell above.'
-                self.ai_output.value += '<br/>' + self.display_response(message)
+                self.display_ai_output('Code inserted into a code cell above.')
+
+            self.buttons['show'].disabled = False
 
         except openai.error.Timeout as err:
             self.ai_error_msg = f"OpenAI API request timed out: {err}"
@@ -239,24 +259,36 @@ class Ai:
             self.ai_error_msg = f"OpenAI API request exceeded rate limit: {err}"
             self.display_ai_error_message()
 
-    def display_response(self, message):
-        """ Parses, calls formatter and displays response from AI assistant
+    # def display_response(self, message):
+    #     """ Parses, calls formatter and displays response from AI assistant
 
-        args:
+    #     args:
 
-        returns:
-        """
-        text = self.format_response(message['content'])
-        return text
+    #     returns:
+    #     """
+    #     text = self.format_response(message['content'])
+    #     return text
 
     def format_response(self, text):
-        """ Formats data description for html widget
+        """ Formats AI response for html widget.
 
         Returns:
             formatted_text (str)
         """
 
         formatted_text = '<br />'.join(text.split('\n'))
-        code = '<pre>' + formatted_text + '</pre>'
+        formatted_text = '<pre>' + formatted_text + '</pre>'
 
-        return code
+        return formatted_text
+
+    def show_response(self, _=None):
+        """Button function to show the complete AI response."""
+
+        self.ai_output = self.format_response(self.ai_response)
+        self.display_ai_output(message='The response from the AI assistant:', hide=True)
+
+    def hide_response(self, _=None):
+        """Button function to hide AI response."""
+
+        self.ai_output = ''
+        self.display_ai_output(message='Check the AI response by clicking the button below.')
