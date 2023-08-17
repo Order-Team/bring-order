@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from ipywidgets import widgets
 from ipyfilechooser import FileChooser
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi

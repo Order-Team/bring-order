@@ -168,7 +168,8 @@ class Ai:
     def select_context(self, _=None):
         if self.context_selection.value == 'Include dataset':
             variable_list = self.dataset.columns.values.tolist()
-            variables = "Variables of the dataset are " +str(variable_list)
+
+            variables = "Variables of the dataset are " + ', '.join([str(v) for v in variable_list])
             self.context = variables
         elif self.context_selection.value == 'Enter manually':
             manual_context = self.bogui.create_text_area(place_holder='This is my context')

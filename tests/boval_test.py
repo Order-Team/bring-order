@@ -1,7 +1,7 @@
 import unittest
 from bring_order.boval import BOVal
 
-class TestInductive(unittest.TestCase):
+class TestBoval(unittest.TestCase):
     def setUp(self):
         self.boval = BOVal()
 
