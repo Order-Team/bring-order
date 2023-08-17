@@ -1,4 +1,8 @@
 """Helpful Javascript methods"""
+#import collections.abc
+import textwrap
+from pptx import Presentation
+from pptx.util import Inches, Pt
 from IPython.display import display, Javascript
 
 
@@ -12,6 +16,10 @@ class BOUtils:
         """
 
         self.change_cell_count = lambda n: None
+        self.prs = Presentation()
+        self.__slides = []
+        for counter in range(20):
+            self.__slides.append('slide'+str(counter))
 
     def create_code_cells_above(self, how_many):
         """Creates code cells above the current cell
@@ -48,6 +56,39 @@ class BOUtils:
                 }}
             '''
             display(Javascript(command))
+        self.__create_slide(text)
+
+    def __create_slide(self, context):
+        ''' Creates new slide to slide deck
+            Args:
+                context: str
+        '''
+        #context = context.replace('\\n','\n')
+        rows = context.split('\\n')
+        slide_layout = self.prs.slide_layouts[6]
+        slide = self.prs.slides.add_slide(slide_layout)
+        left = top = Inches(1)
+        width = height = Inches(6)
+        txt_box = slide.shapes.add_textbox(left, top, width, height)
+        txt_frame = txt_box.text_frame
+        txt_frame.auto_size
+
+        for row in rows:
+            if '#' in row:
+                parag = txt_frame.add_paragraph()
+                row = row.replace('#','')
+                row = textwrap.fill(row, 85)
+                parag.text = row
+                parag.font.size = Pt(22)
+                parag.font.bold = True
+            else:
+                parag = txt_frame.add_paragraph()
+                row = row.replace('               ','')
+                row = textwrap.fill(row, 85)
+                parag.text = row
+                parag.font.size = Pt(16)
+        del slide
+        self.prs.save('bo_slides.pptx')
 
     def clear_code_cells_above(self, how_many):
         """Clears code cells above the active cell
@@ -294,4 +335,3 @@ class BOUtils:
         '''
 
         display(Javascript(command2))
-

@@ -423,7 +423,7 @@ class Inductive:
     def _complete_evaluation(self, _=None):
         clear_output(wait=True)
         value = self.fields[6].value
-        value_list = self.fields[2].value.split('\n')
+        value_list = self.fields[6].value.split('\n')
         value = '<br />'.join(value_list)
 
         evaluation = '### The difference between the pre- and final evaluation caused by: \\n'
