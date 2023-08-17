@@ -8,6 +8,7 @@ class Ai:
     """AI assistant"""
     def __init__(self, bogui, utils, next_step):
         """Initializes AI-assistant class"""
+
         self.bogui = bogui
         self.utils = utils
         self.next_step = next_step
@@ -19,12 +20,10 @@ class Ai:
         )
         self.context = 'You are a helpful assistant. Give the answer in one Python code block\
             indicated with ```python.'
-        self.buttons = self.bogui.init_buttons(self.button_list)
         self.ai_response = ''
         self.ai_output_grid = widgets.AppLayout()
-        self.ai_output = ''
-        self.ai_error_message_grid = None
-        self.ai_error_msg = self.bogui.create_message('')
+        self.ai_error_message_grid = self.bogui.create_message('')
+        self.ai_error_msg = ''
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
@@ -37,6 +36,7 @@ class Ai:
         Returns:
             list of tuples in format (tag: str, description: str, command: func, style: str)
         """
+
         button_list = [
             ('send_ai_btn', 'Send', self.send_ai, 'primary'),
             ('clear_ai_btn', 'Clear', self.clear_ai, 'danger'),
@@ -47,8 +47,8 @@ class Ai:
             ('show', 'Show response', self.show_response, 'primary'),
             ('hide', 'Hide response', self.hide_response, 'primary')
         ]
-        return button_list
 
+        return button_list
 
     def initiate_ai(self, _=None):
         self.api_key = self.api_key_input_field.value
@@ -56,9 +56,9 @@ class Ai:
             clear_output(wait=True)
             self.display_ai_popup(self.ai_error_msg)
             return
-               
+
         self.ai_context = self.context_selection.value
-        
+
         clear_output(wait=True)
         self.next_step[0] = 'bodi'
 
@@ -68,33 +68,40 @@ class Ai:
 
     def send_ai(self, _=None):
         """Button function for sending input to AI API"""
+
         self.remove_ai_error_message()
-        self.ai_output = ''
-        self.display_ai_output('The AI assistant is processing your message...')
-        self.buttons['show'].disabled = True
-        if self.validate_npl_input():
+        if self.natural_language_prompt.value != '':
+            self.display_ai_output(message='The AI assistant is processing your message...')
+            self.buttons['show'].disabled = True
             self.openai_api()
+        else:
+            self.display_ai_output(
+                message='Write a message for the AI assistant before sending.')
 
     def remove_ai_error_message(self):
         """Removes error messages from display"""
+
         self.ai_error_msg = ''
-        if  self.ai_error_message_grid is not None:
-            self.ai_error_message_grid.close()
+        self.ai_error_message_grid.close()
+        self.ai_error_message_grid = self.bogui.create_message('')
 
     def clear_ai(self,_=None):
         """Button function for clearing input text field"""
+
         self.natural_language_prompt.value = ''
 
     def close_ai(self, _=None):
         """Button function for closing AI view"""
+
         self.grid.close()
 
     def validate_api_key(self):
         """Button function for validating API key"""
+
         if not self.api_key_input_field.value:
             self.ai_error_msg = 'Please enter your Open AI api key'
             return False
-        
+
         try:
             openai.api_key = self.api_key
             content = self.natural_language_prompt.value
@@ -106,43 +113,38 @@ class Ai:
             ])
 
             if not response.choices[0]['message']['content']:
-                self.ai_error_msg = f"Please enter correct OpenAI API key. You recieved no respoonse from the AI assistant."
+                self.ai_error_msg = "Please enter correct OpenAI API key.\
+                    You recieved no response from the AI assistant."
                 return False
-                   
+
         except openai.error.AuthenticationError as err:
             self.ai_error_msg = f"{err}"
-            return False 
-
-        return True
-    
-    def validate_context(self):
-        """Validates context"""
-        if not self.ai_context:
             return False
-        return True
 
-    def validate_npl_input(self):
-        """Validates nlp input"""
-        if not self.natural_language_prompt.value:
-            return False
         return True
 
     def toggle_ai(self, _=None):
         """Toggles the AI view"""
+
+        self.remove_ai_error_message()
+
         if self.visible is False:
             self.visible = True
-            self.remove_ai_error_message()
             self.display_ai()
-            self.ai_output = ''
-            self.display_ai_output()
+            if self.ai_response != '':
+                self.display_ai_output(
+                    message='Check the previous response by clicking the button below.')
+            else:
+                self.display_ai_output()
+
         else:
             self.visible = False
             self.close_ai()
             self.ai_output_grid.close()
-            self.remove_ai_error_message()
 
     def display_ai_popup(self, api_key_error=''):
         """" Function for displaying communication with AI assistant"""
+
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
         api_key_element = widgets.HBox([
             api_key_label,
@@ -176,9 +178,9 @@ class Ai:
             display(manual_context)
             self.context = manual_context.value
 
-
     def display_ai(self, nlp_error= '', context_error = ''):
         '''Displays a text field for entering a question and options for includng context'''
+
         feature_description = self.bogui.create_message(
             'Enter a natural language prompt. The AI assistant will propose code\
             to implement your request.'
@@ -209,35 +211,39 @@ class Ai:
 
         display(self.grid)
 
-    def display_ai_output(self, message='', hide=False):
-        """Displays ai output"""
+    def display_ai_output(self, message='', ai_output=''):
+        """Displays ai output grid.
+        
+        Args:
+            message (str, optional): Message for the user
+            ai_output (str, optional): The AI response formatted for HTML
+        """
 
         self.ai_output_grid.close()
 
         self.ai_output_grid = widgets.AppLayout(
             header = self.bogui.create_message(message),
-            center = self.bogui.create_message(self.ai_output),
+            center = self.bogui.create_message(ai_output),
             pane_heights = ['40px', 1, '40px']
         )
 
-        if self.ai_response != '':
-            if hide:
-                self.ai_output_grid.footer = self.buttons['hide']
-            else:
-                self.ai_output_grid.footer = self.buttons['show']
+        # Display hide button if AI output is visible
+        if ai_output != '':
+            self.ai_output_grid.footer = self.buttons['hide']
+        # Display show button if there is a previous answer from AI
+        elif self.ai_response != '':
+            self.ai_output_grid.footer = self.buttons['show']
 
         display(self.ai_output_grid)
-    
 
     def display_ai_error_message(self):
         """Displays error message"""
 
-        self.ai_output.value = ''
-        self.ai_error_message_grid = widgets.AppLayout(
-            center = self.bogui.create_message(self.ai_error_msg)
-        )
-        display(self.ai_error_message_grid)
+        self.display_ai_output()
+        self.ai_error_message_grid.close()
+        self.ai_error_message_grid = self.bogui.create_message(self.ai_error_msg)
 
+        display(self.ai_error_message_grid)
 
     def openai_api(self):
         """Function to check openai api key"""
@@ -257,8 +263,9 @@ class Ai:
             self.ai_response = response.choices[0]['message']['content']
             code = self.utils.get_python_code_from_response(self.ai_response)
             if code == 'No Python code in the response':
-                self.display_ai_output('Python code was not found in the response.')
-                
+                self.display_ai_output(
+                    message='Python code was not found in the response.')
+
             else:
                 self.utils.insert_ai_code_into_new_cell(code)
                 self.display_ai_output('Code inserted into a code cell above.')
@@ -293,21 +300,14 @@ class Ai:
             self.ai_error_msg = f"OpenAI API request exceeded rate limit: {err}"
             self.display_ai_error_message()
 
-    # def display_response(self, message):
-    #     """ Parses, calls formatter and displays response from AI assistant
-
-    #     args:
-
-    #     returns:
-    #     """
-    #     text = self.format_response(message['content'])
-    #     return text
-
     def format_response(self, text):
         """ Formats AI response for html widget.
 
+        Args:
+            test (str): The AI response
+
         Returns:
-            formatted_text (str)
+            formatted_text (str): The AI response formatted for HTML
         """
 
         formatted_text = '<br />'.join(text.split('\n'))
@@ -318,11 +318,13 @@ class Ai:
     def show_response(self, _=None):
         """Button function to show the complete AI response."""
 
-        self.ai_output = self.format_response(self.ai_response)
-        self.display_ai_output(message='The response from the AI assistant:', hide=True)
+        output = self.format_response(self.ai_response)
+        self.display_ai_output(
+            message='The response from the AI assistant:',
+            ai_output=output)
 
     def hide_response(self, _=None):
         """Button function to hide AI response."""
 
-        self.ai_output = ''
-        self.display_ai_output(message='Check the AI response by clicking the button below.')
+        self.display_ai_output(
+            message='Check the previous response by clicking the button below.')
