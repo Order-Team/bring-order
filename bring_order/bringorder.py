@@ -27,6 +27,7 @@ class BringOrder:
         self.deductive = None
         self.inductive = None
         self.buttons = {}
+        self.dataset_variables = []
         # next_step is passed on to classes and used to track
         # which ui module to run next.
         self.next_step = [None]
@@ -37,12 +38,13 @@ class BringOrder:
         self.ai = Ai(
             self.bogui,
             self.boutils,
+            self.dataset_variables,
             self.next_step
         )
         self.bodi = Bodi(
             self.boutils,
             self.bogui,
-            self.ai,
+            self.dataset_variables,
             self.next_step)
         self.bring_order()
 

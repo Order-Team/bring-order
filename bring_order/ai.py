@@ -6,11 +6,12 @@ import openai
 
 class Ai:
     """AI assistant"""
-    def __init__(self, bogui, utils, next_step):
+    def __init__(self, bogui, utils, dataset_variables, next_step):
         """Initializes AI-assistant class"""
 
         self.bogui = bogui
         self.utils = utils
+        self.dataset_variables = dataset_variables
         self.next_step = next_step
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
@@ -185,11 +186,11 @@ class Ai:
 
     def select_context(self, _=None):
         if self.context_selection.value == 'Include dataset':
-            variable_list = self.dataset.columns.values.tolist()
-
+            #variable_list = self.dataset.columns.values.tolist()
+            self.utils.print_to_console('sending dataset variables: ' + ', '.join([str(v) for v in self.dataset_variables]))
             variables = " The user wants to process a dataset with Python code. \
                 The dataset has certain variables. Refer to these given variables where appropriate. \
-                Variables of the dataset are " + ', '.join([str(v) for v in variable_list])                
+                Variables of the dataset are " + ', '.join(str(v) for v in self.dataset_variables)                
             self.context += variables
         elif self.context_selection.value == 'Enter manually':
             manual_context = self.bogui.create_text_area(place_holder=' This is my context')

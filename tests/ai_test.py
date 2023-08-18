@@ -12,7 +12,12 @@ class TestAi(unittest.TestCase):
 
     def setUp(self):
         next_step = [None]
-        self.instance = Ai(BOGui(), BOUtils(), next_step=next_step)
+        self.instance = Ai(
+                            BOGui(),
+                            BOUtils(),
+                            dataset_variables=['sepallength', 'sepalwidth', 'petallength', 'petalwidth', 'class'],
+                            next_step=next_step
+                            )
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()        
         self.instance.context_selection = Mock()
