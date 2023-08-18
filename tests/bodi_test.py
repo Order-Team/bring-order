@@ -95,6 +95,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_message = lambda value : widgets.HTML(value)
         self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
         self.instance.cell_count = 3
+        self.instance.checklist = None
         self.instance._run_cells()
         self.instance.boutils.run_cells_above.assert_called_with(3)
 
@@ -194,6 +195,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
         self.instance.file_chooser = Mock()
         self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance.load_cfg_file = MagicMock()
         self.instance._import_data()
         self.instance.boutils.create_code_cells_above.assert_called_with(2)
         self.assertEqual(self.instance.boutils.execute_cell_from_current.call_count, 2)
@@ -203,6 +205,7 @@ class TestBodi(unittest.TestCase):
         self.instance.check_variables = MagicMock()
         self.instance.file_chooser = Mock()
         self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance.load_cfg_file = MagicMock()
         self.instance._import_data()
         self.instance.check_variables.assert_called()
 
