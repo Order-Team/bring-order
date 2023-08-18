@@ -8,7 +8,7 @@ from stattests import Stattests
 
 class Bodi:
     """Creates code cells for importing data and markdown cell(s) to describe data limitations"""
-    def __init__(self, boutils, bogui, dataset_variables, next_step):
+    def __init__(self, boutils, bogui, dataset_variables, ai_disabled, next_step):
         """Class constructor
             Args:
                 bogui: Bring Order GUI components class
@@ -37,6 +37,7 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.dataset_variables = dataset_variables
+        self.ai_disabled = ai_disabled
         self.checklist = None
         self.next_step = next_step
 
@@ -131,6 +132,7 @@ class Bodi:
         """Button function to show buttons for cell operations."""
 
         clear_output(wait=True)
+        self.buttons['assist'].disabled = self.ai_disabled[0]
         display(self.buttons['choose'])
         display(self.data_preparation_grid())
 
@@ -345,7 +347,6 @@ class Bodi:
         """
         data_frame = pd.read_csv(self.file_chooser.selected)
         self.dataset_variables.append(data_frame.columns.values.tolist())
-        self.boutils.print_to_console('extracted dataset variables: ' + ', '.join([str(v) for v in self.dataset_variables]))
         self.stattests.dataset = data_frame
 
         not_normal = self.check_normal_distribution(data_frame)

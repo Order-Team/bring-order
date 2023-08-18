@@ -28,6 +28,7 @@ class BringOrder:
         self.inductive = None
         self.buttons = {}
         self.dataset_variables = []
+        self.ai_disabled = [False]
         # next_step is passed on to classes and used to track
         # which ui module to run next.
         self.next_step = [None]
@@ -39,12 +40,14 @@ class BringOrder:
             self.bogui,
             self.boutils,
             self.dataset_variables,
+            self.ai_disabled,
             self.next_step
         )
         self.bodi = Bodi(
             self.boutils,
             self.bogui,
             self.dataset_variables,
+            self.ai_disabled,
             self.next_step)
         self.bring_order()
 
@@ -128,7 +131,7 @@ class BringOrder:
         with ui_events() as ui_poll:
             while self.next_step[0] is None:
                 ui_poll(10)
-                time.sleep(0.1)
+                time.sleep(0.01)
         next_step = str(self.next_step[0])
         #self.boutils.print_to_console('next step: ' + next_step)
         for sub in subroutines:
@@ -144,11 +147,13 @@ class BringOrder:
         self.deductive = Deductive(
             self.bogui,
             self.boutils,
+            self.ai_disabled,
             self.next_step
         )
         self.inductive = Inductive(
             self.bogui,
             self.boutils,
+            self.ai_disabled,
             self.next_step
         )
 

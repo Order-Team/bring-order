@@ -6,7 +6,7 @@ from boval import BOVal
 class Inductive:
     """Class that guides inductive analysis"""
 
-    def __init__(self, bogui, boutils, next_step):
+    def __init__(self, bogui, boutils, ai_disabled, next_step):
         """Class constructor.
             Args:
                 bogui:
@@ -28,6 +28,7 @@ class Inductive:
 
         self.bogui = bogui
         self.utils = boutils
+        self.ai_disabled = ai_disabled
         self.boval = BOVal()
         self.next_step = next_step
         self._cell_count = 0
@@ -257,6 +258,7 @@ class Inductive:
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)
             self._buttons_disabled(False)
+            self.buttons['assist'].disabled = self.ai_disabled[0]
             self.fields[3].value = ''
             self.conclusion.close()
             self.fields[1].value = ''
@@ -446,6 +448,7 @@ class Inductive:
         """Displays buttons for operations in inductive analysis."""
 
         self.buttons['ready'].disabled = True
+        self.buttons['assist'].disabled = self.ai_disabled[0]
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
 
         """ cell_buttons = widgets.TwoByTwoLayout(

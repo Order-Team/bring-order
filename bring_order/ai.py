@@ -6,12 +6,13 @@ import openai
 
 class Ai:
     """AI assistant"""
-    def __init__(self, bogui, utils, dataset_variables, next_step):
+    def __init__(self, bogui, utils, dataset_variables, ai_disabled, next_step):
         """Initializes AI-assistant class"""
 
         self.bogui = bogui
         self.utils = utils
         self.dataset_variables = dataset_variables
+        self.ai_disabled = ai_disabled
         self.next_step = next_step
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
@@ -64,6 +65,8 @@ class Ai:
         self.next_step[0] = 'bodi'
 
     def disable_ai(self, _=None):
+        self.ai_disabled[0] = True
+        self.utils.print_to_console('ai disabled: ' + str(self.ai_disabled[0]))
         clear_output(wait=True)
         self.next_step[0] = 'bodi'
 

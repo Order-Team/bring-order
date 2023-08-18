@@ -7,7 +7,7 @@ from boval import BOVal
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, bogui, boutils, next_step):
+    def __init__(self, bogui, boutils, ai_disabled, next_step):
         """Class constructor
         
         Args:
@@ -19,6 +19,7 @@ class Deductive:
         self.next_step = next_step
         self.bogui = bogui
         self.boutils = boutils
+        self.ai_disabled = ai_disabled
         self.boval = BOVal()
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.theory_desc = self.bogui.create_text_area('', 'Theory')
@@ -336,6 +337,7 @@ class Deductive:
         text = self._format_hypotheses_and_theory()
         self.boutils.create_markdown_cells_above(1, text=text)
         cell_operations = self.__create_cell_operations_grid()
+        self.buttons['assist'].disabled = self.ai_disabled[0]
         clear_output(wait=True)
         display(cell_operations)
         self.add_cells_int.focus()

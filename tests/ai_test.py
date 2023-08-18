@@ -16,6 +16,7 @@ class TestAi(unittest.TestCase):
                             BOGui(),
                             BOUtils(),
                             dataset_variables=['sepallength', 'sepalwidth', 'petallength', 'petalwidth', 'class'],
+                            ai_disabled = [False],
                             next_step=next_step
                             )
         self.instance.boutils = Mock()

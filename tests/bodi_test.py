@@ -14,8 +14,9 @@ class TestBodi(unittest.TestCase):
 
     def setUp(self):
         next_step = [None]
-        ai = Mock()
-        self.instance = Bodi(BOUtils(), BOGui(), ai, next_step=next_step)
+        dataset_variables = Mock()
+        ai_disabled = [False]
+        self.instance = Bodi(BOUtils(), BOGui(), dataset_variables, ai_disabled, next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
         self.instance.limitations = Mock()

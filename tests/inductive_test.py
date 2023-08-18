@@ -9,7 +9,8 @@ from bring_order.boval import BOVal
 class TestInductive(unittest.TestCase):
     def setUp(self):
         next_step = [None]
-        self.instance = Inductive(BOGui(), BOUtils(), next_step)
+        ai_disabled = [False]
+        self.instance = Inductive(BOGui(), BOUtils(), ai_disabled, next_step)
         self.instance.boval = BOVal()
         self.instance.utils = Mock()
         self.instance.bogui = Mock()

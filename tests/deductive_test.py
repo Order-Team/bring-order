@@ -12,7 +12,8 @@ class TestDeductive(unittest.TestCase):
         """ test instance of Deductive - class
         """
         next_step = [None]
-        self.instance = Deductive(BOGui(), BOUtils(), next_step)
+        ai_disabled = [False]
+        self.instance = Deductive(BOGui(), BOUtils(), ai_disabled, next_step)
         self.instance.boutils = Mock()
 
     def test_check_theory_and_hypotheses_submit_returns_false_with_empty_hypothesis(self):
