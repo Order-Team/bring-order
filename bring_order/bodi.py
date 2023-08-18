@@ -38,6 +38,7 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.ai = ai
+        self.checklist = None
         self.next_step = next_step
 
     @property
@@ -159,7 +160,9 @@ class Bodi:
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
         not_normal = self.check_normal_distribution(self.stattests.dataset)
-        self.boutils.check_cells_above(self.cell_count, 'ttest', not_normal)
+        if len(not_normal) > 0:
+            for stat_test in self.checklist:
+                self.boutils.check_cells_above(self.cell_count, stat_test, not_normal)
         self.boutils.run_cells_above(self.cell_count)
 
     def _display_limitations_view(self, _=None):
@@ -233,7 +236,7 @@ class Bodi:
             hide_input=False
         )
         # Load config files for the tests to be checkked
-        #checklist = self.load_cfg_file(self.file_chooser.selected_path)
+        self.checklist = self.load_cfg_file(self.file_chooser.selected_path)
         self.check_variables()
 
     def __check_file_path(self):
@@ -263,6 +266,7 @@ class Bodi:
                 for line in get_cfg:
                     line = line.replace("\n", "")
                     tests_to_check.append(line)
+            tests_to_check.pop()          
         except FileNotFoundError:
             tests_to_check.append('ttest')
         return tests_to_check
