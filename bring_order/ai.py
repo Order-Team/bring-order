@@ -94,16 +94,21 @@ class Ai:
         """Button function for closing AI view"""
 
         self.grid.close()
+        self.natural_language_prompt.value = ''
+        self.context = 'You are a helpful assistant. Give the answer in one Python code block\
+            indicated with ```python.'
 
     def validate_api_key(self):
         """Button function for validating API key"""
 
+        self.utils.print_to_console('validating api key...')
         if not self.api_key_input_field.value:
             self.ai_error_msg = 'Please enter your Open AI api key'
             return False
 
         try:
             openai.api_key = self.api_key
+            """
             content = self.natural_language_prompt.value
             response = openai.ChatCompletion.create(
             model = self.model_engine,
@@ -116,6 +121,15 @@ class Ai:
                 self.ai_error_msg = "Please enter correct OpenAI API key.\
                     You recieved no response from the AI assistant."
                 return False
+            """
+            response = openai.Model.list()
+            if not response.data[0]['object'] == 'model':
+                self.utils.print_to_console('bad response from OpenAI')
+                self.ai_error_msg = "Please enter correct OpenAI API key.\
+                    You received no response from the AI assistant."
+                return False
+            #model_id_list = [model['id'] for model in response.data]
+            self.utils.print_to_console('api key validated: received model list from OpenAI')
 
         except openai.error.AuthenticationError as err:
             self.ai_error_msg = f"{err}"
@@ -129,6 +143,7 @@ class Ai:
         self.remove_ai_error_message()
 
         if self.visible is False:
+            self.utils.print_to_console('opening ai')
             self.visible = True
             self.display_ai()
             if self.ai_response != '':
@@ -138,6 +153,7 @@ class Ai:
                 self.display_ai_output()
 
         else:
+            self.utils.print_to_console('closing ai')
             self.visible = False
             self.close_ai()
             self.ai_output_grid.close()
@@ -171,12 +187,16 @@ class Ai:
         if self.context_selection.value == 'Include dataset':
             variable_list = self.dataset.columns.values.tolist()
 
-            variables = "Variables of the dataset are " + ', '.join([str(v) for v in variable_list])
-            self.context = variables
+            variables = " The user wants to process a dataset with Python code. \
+                The dataset has certain variables. Refer to these given variables where appropriate. \
+                Variables of the dataset are " + ', '.join([str(v) for v in variable_list])                
+            self.context += variables
         elif self.context_selection.value == 'Enter manually':
-            manual_context = self.bogui.create_text_area(place_holder='This is my context')
+            manual_context = self.bogui.create_text_area(place_holder=' This is my context')
             display(manual_context)
-            self.context = manual_context.value
+            self.context += manual_context.value
+        
+        self.utils.print_to_console(self.context)
 
     def display_ai(self, nlp_error= '', context_error = ''):
         '''Displays a text field for entering a question and options for includng context'''

@@ -24,7 +24,7 @@ class TestAi(unittest.TestCase):
         self.instance.context_selection.value = 'Include dataset'
         self.instance.select_context()
         test_context = 'Variables of the dataset are sepallength, sepalwidth, petallength, petalwidth, class'
-        self.assertEqual(test_context, self.instance.context)
+        self.assertIn(test_context, self.instance.context)
 
     def test_correct_amount_of_buttons_is_created(self):
         self.assertEqual(len(self.instance.buttons), 8)
