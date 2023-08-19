@@ -1,7 +1,6 @@
 """AI assistant"""
 from ipywidgets import widgets
 from IPython.display import display, clear_output
-import pandas as pd
 import openai
 
 class Ai:
@@ -176,15 +175,17 @@ class Ai:
 
         display(self.grid)
 
-    def add_variables(self, _=None):
-        self.utils.print_to_console('sending dataset variables: ' + ', '.join([str(v) for v in self.dataset_variables]))
-        variables = " The user wants to process a dataset with Python code. \
-            The dataset has certain variables. Refer to these given variables where appropriate. \
-            Variables of the dataset are " + ', '.join(str(v) for v in self.dataset_variables)                
-        self.utils.print_to_console(variables)
-        return variables
+    def add_instructions(self, _=None):
+        '''Constructs a string containing variables of the user's dataset and
+           instructions to the AI assistant'''
+        variable_list = ', '.join([str(v) for v in self.dataset_variables])
+        self.utils.print_to_console('sending dataset variables: ' + variable_list)
+        instructions = 'The user wants to process a dataset with Python code.\
+        The dataset has certain variables. Refer to these given variables where appropriate.\
+        Variables of the dataset are ' + variable_list
+        return instructions
 
-    def display_ai(self, nlp_error= '', context_error = ''):
+    def display_ai(self, nlp_error= ''):
         '''Displays a text field for entering a question and options for includng context'''
 
         feature_description = self.bogui.create_message(
@@ -205,7 +206,7 @@ class Ai:
             pane_widths=[1, 8, 1],
             pane_heights=[2, 6, 2]
         )
-
+        self.utils.print_to_console(self.dataset_variables)
         display(self.grid)
 
     def display_ai_output(self, message='', ai_output=''):
@@ -250,7 +251,7 @@ class Ai:
             model_engine = self.model_engine
             system_msg = 'You are a helpful assistant. Give the answer in one Python code block\
             indicated with ```python.'
-            content = self.natural_language_prompt.value + self.add_variables()
+            content = self.natural_language_prompt.value + self.add_instructions()
             response = openai.ChatCompletion.create(
                 model = model_engine,
                 messages=[

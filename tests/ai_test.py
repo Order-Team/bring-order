@@ -20,13 +20,20 @@ class TestAi(unittest.TestCase):
                             next_step=next_step
                             )
         self.instance.boutils = Mock()
-        self.instance.bogui = Mock()        
+        self.instance.bogui = Mock()
         self.instance.context_selection = Mock()
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_error_message = lambda value, color: widgets.HTML(value=value)
 
     def test_correct_amount_of_buttons_is_created(self):
         self.assertEqual(len(self.instance.buttons), 7)
+
+    def test_add_instructions_contains_dataset_variables(self):
+        test_instructions = self.instance.add_instructions()
+        variable_list = ', '.join([str(v) for v in self.instance.dataset_variables])
+        self.assertEqual(test_instructions, 'The user wants to process a dataset with Python code.\
+        The dataset has certain variables. Refer to these given variables where appropriate.\
+        Variables of the dataset are ' + variable_list)
 
     def test_send_ai_disables_show_button(self):
         self.instance.buttons['show'].disabled = False

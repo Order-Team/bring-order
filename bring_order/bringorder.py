@@ -120,7 +120,6 @@ class BringOrder:
 
     def get_next(self, function, subroutines=[]):
         """Runs a function, pauses execution until next_step is updated and then returns it.
-        
         Args:
             function: a function to be executed
             subroutines[function]: list of external subroutine functions that may be called by function
@@ -138,7 +137,7 @@ class BringOrder:
             if sub.__name__ == self.next_step[0]:
                 #self.boutils.print_to_console('calling sub: ' + next_step)
                 self.next_step[0] = None
-                next_step = self.get_next(sub, subroutines=[sub])   
+                next_step = self.get_next(sub, subroutines=[sub])
         self.next_step[0] = None
         return next_step
 

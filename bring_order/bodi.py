@@ -183,8 +183,7 @@ class Bodi:
         display(self.buttons['start'])
 
     def format_data_description(self):
-        """Formats data description for markdown
-        
+        """Formats data description for markdown        
         Returns:
             formatted_text (str)
         """
@@ -267,7 +266,7 @@ class Bodi:
                 for line in get_cfg:
                     line = line.replace("\n", "")
                     tests_to_check.append(line)
-            tests_to_check.pop()          
+            tests_to_check.pop()
         except FileNotFoundError:
             tests_to_check.append('ttest')
         return tests_to_check
@@ -277,8 +276,7 @@ class Bodi:
         """Checks which variables are not normally distributed.
 
         Args:
-            data_frame (DataFrame): the data to be tested
-        
+            data_frame (DataFrame): the data to be tested        
         Returns:
             not_normal_dist (list): List of variables that are not normally distributed
         """

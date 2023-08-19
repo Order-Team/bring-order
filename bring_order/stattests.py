@@ -1,10 +1,7 @@
 """A class to help with statistical tests"""
-from IPython.display import display
 from ipywidgets import widgets
 import pandas as pd
 from scipy import stats
-from IPython.core import history
-
 
 class Stattests:
     """A class to help with statistical tests (normal distribution/independence of variables)"""
@@ -103,7 +100,7 @@ class Stattests:
 
     def check_variable_independence(self):
         """Performs a chi-square test of independence between selected variables.
-        
+
         Returns:
             result_tuple (tuple): A tuple with explanatory variable (str),
             dependent variable (str), and True if variables are independent,
@@ -126,19 +123,4 @@ class Stattests:
                 result = True
 
         return (self.explanatory.value, self.dependent.value, result)
-
-    def detect_tests(self):
-        '''Method to detect if user if user is performing certain statistical
-        tests in their code.
-        '''
-        hist_access = history.HistoryAccessor()
-        current = hist_access.get_last_session_id()
-        session = hist_access.get_range(current)
-        for entry in session:
-            if "ttest" in entry[2]:
-                message = self.bogui.create_message("You tried to perform t-test")
-                result_view = widgets.VBox([message])
-                display(result_view)
-                return True
-        return False             
-        
+    
