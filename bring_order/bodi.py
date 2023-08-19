@@ -155,7 +155,7 @@ class Bodi:
             self.buttons['choose'].disabled = False
 
     def _run_cells(self, _=None):
-        """Button function that runs data import cells."""
+        """Button function that runs cells for manual data import"""
 
         clear_output(wait=True)
         display(self.data_preparation_grid(

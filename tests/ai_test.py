@@ -25,15 +25,8 @@ class TestAi(unittest.TestCase):
         self.instance.bogui.create_message = lambda value: widgets.HTML(value=value)
         self.instance.bogui.create_error_message = lambda value, color: widgets.HTML(value=value)
 
-    def test_dataframe_variables_are_added_as_context(self):
-        self.instance.dataset = pd.read_csv('tests/test_iris.csv')
-        self.instance.context_selection.value = 'Include dataset'
-        self.instance.select_context()
-        test_context = 'Variables of the dataset are sepallength, sepalwidth, petallength, petalwidth, class'
-        self.assertIn(test_context, self.instance.context)
-
     def test_correct_amount_of_buttons_is_created(self):
-        self.assertEqual(len(self.instance.buttons), 8)
+        self.assertEqual(len(self.instance.buttons), 7)
 
     def test_send_ai_disables_show_button(self):
         self.instance.buttons['show'].disabled = False

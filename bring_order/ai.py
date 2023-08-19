@@ -17,11 +17,6 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
         self.api_key_input_field = self.bogui.create_password_field()
-        self.context_selection = widgets.Dropdown(
-            options = ['No context', 'Include dataset', 'Enter manually']
-        )
-        self.context = 'You are a helpful assistant. Give the answer in one Python code block\
-            indicated with ```python.'
         self.ai_response = ''
         self.ai_output_grid = widgets.AppLayout()
         self.ai_error_message_grid = self.bogui.create_message('')
@@ -29,7 +24,6 @@ class Ai:
         self.model_engine = "gpt-3.5-turbo"
         self.grid = None
         self.visible = False
-        self.dataset = pd.DataFrame()
 
     @property
     def button_list(self):
@@ -45,7 +39,6 @@ class Ai:
             ('close_ai_btn', 'Close', self.close_ai, 'warning'),
             ('send_api_key_btn','Submit key', self.initiate_ai, 'success'),
             ('disable_ai', 'Skip', self.disable_ai, 'warning'),
-            ('select_context', 'Select', self.select_context, 'success'),
             ('show', 'Show response', self.show_response, 'primary'),
             ('hide', 'Hide response', self.hide_response, 'primary')
         ]
@@ -58,8 +51,6 @@ class Ai:
             clear_output(wait=True)
             self.display_ai_popup(self.ai_error_msg)
             return
-
-        self.ai_context = self.context_selection.value
 
         clear_output(wait=True)
         self.next_step[0] = 'bodi'
@@ -99,8 +90,6 @@ class Ai:
 
         self.grid.close()
         self.natural_language_prompt.value = ''
-        self.context = 'You are a helpful assistant. Give the answer in one Python code block\
-            indicated with ```python.'
 
     def validate_api_key(self):
         """Button function for validating API key"""
@@ -117,7 +106,7 @@ class Ai:
             response = openai.ChatCompletion.create(
             model = self.model_engine,
             messages=[
-                {"role": "system", "content": self.context},
+                {"role": "system", "content": context},
                 {"role": "user", "content": content},
             ])
 
@@ -187,20 +176,13 @@ class Ai:
 
         display(self.grid)
 
-    def select_context(self, _=None):
-        if self.context_selection.value == 'Include dataset':
-            #variable_list = self.dataset.columns.values.tolist()
-            self.utils.print_to_console('sending dataset variables: ' + ', '.join([str(v) for v in self.dataset_variables]))
-            variables = " The user wants to process a dataset with Python code. \
-                The dataset has certain variables. Refer to these given variables where appropriate. \
-                Variables of the dataset are " + ', '.join(str(v) for v in self.dataset_variables)                
-            self.context += variables
-        elif self.context_selection.value == 'Enter manually':
-            manual_context = self.bogui.create_text_area(place_holder=' This is my context')
-            display(manual_context)
-            self.context += manual_context.value
-        
-        self.utils.print_to_console(self.context)
+    def add_variables(self, _=None):
+        self.utils.print_to_console('sending dataset variables: ' + ', '.join([str(v) for v in self.dataset_variables]))
+        variables = " The user wants to process a dataset with Python code. \
+            The dataset has certain variables. Refer to these given variables where appropriate. \
+            Variables of the dataset are " + ', '.join(str(v) for v in self.dataset_variables)                
+        self.utils.print_to_console(variables)
+        return variables
 
     def display_ai(self, nlp_error= '', context_error = ''):
         '''Displays a text field for entering a question and options for includng context'''
@@ -210,19 +192,10 @@ class Ai:
             to implement your request.'
             )
 
-        context_box = widgets.VBox([
-            self.bogui.create_message(
-            'Do you want to include your dataset as context or enter context manually?'),
-            self.context_selection,
-            self.buttons['select_context'],
-            self.bogui.create_error_message(context_error, 'red')
-        ])
-
         self.grid = widgets.AppLayout(
             header = feature_description,
             center= widgets.VBox([
                 self.natural_language_prompt,
-                context_box,
                 self.bogui.create_error_message(nlp_error, 'red')
             ]),
             footer = widgets.HBox([
@@ -275,8 +248,9 @@ class Ai:
         try:
             openai.api_key = self.api_key
             model_engine = self.model_engine
-            system_msg = self.context
-            content = self.natural_language_prompt.value
+            system_msg = 'You are a helpful assistant. Give the answer in one Python code block\
+            indicated with ```python.'
+            content = self.natural_language_prompt.value + self.add_variables()
             response = openai.ChatCompletion.create(
                 model = model_engine,
                 messages=[

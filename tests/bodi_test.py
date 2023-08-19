@@ -302,3 +302,9 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.buttons['limitations'].disabled)
         self.assertFalse(self.instance.buttons['independence'].disabled)
 
+    def test_load_cfg_file_returns_list_of_tests(self):    
+        result = self.instance.load_cfg_file('tests/')
+        test_list = ['ttest', 'oneway', 'pearson', 'zscore', 'linregress']
+        self.assertEqual(test_list, result)
+                     
+                     
