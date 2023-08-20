@@ -249,8 +249,8 @@ class Ai:
         try:
             openai.api_key = self.api_key
             model_engine = self.model_engine
-            system_msg = 'You are a helpful assistant. Give the answer in one Python code block\
-            indicated with ```python.'
+            system_msg = 'If the answer includes code, give the answer in one Python code block\
+            indicated with ```python. If not, please ignore all information about the dataset.'
             content = self.natural_language_prompt.value + self.add_instructions()
             response = openai.ChatCompletion.create(
                 model = model_engine,
