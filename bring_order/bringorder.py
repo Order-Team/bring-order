@@ -6,7 +6,6 @@ from ipywidgets import widgets
 from IPython.display import display
 from jupyter_ui_poll import ui_events
 
-wd = os.getcwd()
 class_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, class_dir)
 from bogui import BOGui
@@ -65,9 +64,11 @@ class BringOrder:
         return button_list
 
     def _deductive(self, _=None):
+        """Deductive button function"""
         self.next_step[0] = 'deductive_analysis'
 
     def _inductive(self, _=None):
+        """Inductive button function"""
         self.next_step[0] = 'inductive_analysis'
 
     def close_buttons(self):
@@ -76,17 +77,22 @@ class BringOrder:
         self.buttons['inductive'].close()
 
     def start_deductive_analysis(self, _=None):
-        """Starts deductive analysis"""
+        """Starts deductive analysis
 
+        returns:
+            function: sets self.deductive.start_deductive_analysis() to next_step
+        """
         self.close_buttons()
-        if not hasattr(self, 'data_limitations'):
-            self.data_limitations = self.bodi.limitations.data_limitations
         self.deductive.data_limitations = self.bodi.limitations.data_limitations
         self.boutils.change_cell_count = self.deductive.change_cell_count
         return self.deductive.start_deductive_analysis()
 
     def start_inductive_analysis(self, _=None):
-        """Starts inductive analysis"""
+        """Starts inductive analysis
+
+        returns:
+            function: sets self.inductive.start_inductive_analysis() to next_step
+        """
         self.inductive.data_limitations = self.bodi.limitations.data_limitations
         self.close_buttons()
         self.boutils.change_cell_count = self.inductive.change_cell_count
@@ -105,9 +111,11 @@ class BringOrder:
             next_step = self.get_next(self.start_analysis)
             # Branching to deductive/inductive:
             if next_step == 'deductive_analysis':
-                next_step = self.get_next(self.start_deductive_analysis, subroutines=[self.ai.toggle_ai])
+                next_step = self.get_next(self.start_deductive_analysis,
+                                          subroutines=[self.ai.toggle_ai])
             elif next_step == 'inductive_analysis':
-                next_step = self.get_next(self.start_inductive_analysis, subroutines=[self.ai.toggle_ai])
+                next_step = self.get_next(self.start_inductive_analysis,
+                                          subroutines=[self.ai.toggle_ai])
             # New analysis/export to pdf-view:
             if next_step == 'analysis_done':
                 next_step = self.get_next(self.next_analysis.new_analysis_view)
@@ -122,7 +130,8 @@ class BringOrder:
         """Runs a function, pauses execution until next_step is updated and then returns it.
         Args:
             function: a function to be executed
-            subroutines[function]: list of external subroutine functions that may be called by function
+            subroutines[function]: list of external subroutine functions that
+                                   may be called by function.
         Returns:
             next_step: name of the function to be executed after this"""
         #self.boutils.print_to_console('calling: ' + function.__name__)
