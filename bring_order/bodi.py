@@ -68,7 +68,7 @@ class Bodi:
 
         return button_list
 
-    def _toggle_ai(self, _=None):
+    def _toggle_ai(self, _=None, showAI = True):
         """Button function to open/close AI assistant"""
 
         if self.buttons['assist'].description == 'AI assistant':
@@ -77,8 +77,10 @@ class Bodi:
         else:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
-        self.next_step[0] = 'toggle_ai'
-
+        
+        if showAI:
+            self.next_step[0] = 'toggle_ai'
+    
     def _add_limitation(self, _=None):
         """Button function for adding new limitation."""
 
@@ -156,7 +158,7 @@ class Bodi:
 
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
-
+        self._toggle_ai(False)
         clear_output(wait=True)
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
