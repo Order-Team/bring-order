@@ -1,3 +1,4 @@
+import os
 from ipywidgets import widgets
 from IPython.display import display, clear_output, Javascript
 
@@ -13,9 +14,11 @@ class NextAnalysis:
         button_list = [
             ('new', 'New analysis', self.start_new_analysis, 'success'),
             ('prepare', 'Prepare new data', self.prepare_new_data_pressed, 'success'),
-            ('done', 'All done', self.all_done, 'success'),
+            ('done', 'All done', self.all_done_pressed, 'success'),
             ('export', 'Export to pdf', self.export_to_pdf, 'success'),
-            ('close', 'Close BringOrder', self.no_export, 'success')
+            ('close', 'Close BringOrder', self.no_export, 'success'),
+            ('yes', 'Keep slides', self.all_done, 'success'),
+            ('no', 'Delete slides', self._delete_presentation, 'danger')
         ]
 
         return button_list
@@ -27,6 +30,15 @@ class NextAnalysis:
             self.buttons['prepare'],
             self.buttons['done']
         ])
+        display(grid)
+
+    def all_done_pressed(self, _=None):
+        '''Button function to display the presentation saving phase.'''
+        grid = widgets.HBox([
+            self.buttons['yes'],
+            self.buttons['no']
+        ])
+        clear_output(wait=True)
         display(grid)
 
     def all_done(self, _=None):
@@ -57,6 +69,14 @@ class NextAnalysis:
     def no_export(self, _=None):
         """Button function to close widgets without exporting."""
         self.next_step[0] = 'exit'
+
+    def _delete_presentation(self, _=None):
+        '''Delete presentation template and display the export/close phase.'''
+        try:
+            os.remove("bo_slides.pptx")
+        except FileNotFoundError:
+            display(self.bogui.create_error_message("bo_slides.pptx file not found!"))
+        self.all_done()
 
     def __repr__(self):
         return ''
