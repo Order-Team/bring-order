@@ -24,6 +24,7 @@ class Bodi:
         self.boutils = boutils
         self.bogui = bogui
         self.cell_count = 0
+        self.ai_disabled = ai_disabled
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.fields = [self.bogui.create_input_field(),
                        self.bogui.create_input_field(),
@@ -37,7 +38,6 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.dataset_variables = dataset_variables
-        self.ai_disabled = ai_disabled
         self.checklist = None
         self.next_step = next_step
 
@@ -70,6 +70,9 @@ class Bodi:
 
     def _toggle_ai(self, _=None, showAI = True):
         """Button function to open/close AI assistant"""
+
+        if self.ai_disabled[0]:
+            return
 
         if self.buttons['assist'].description == 'AI assistant':
             self.buttons['assist'].description = 'Close AI assistant'
@@ -134,7 +137,6 @@ class Bodi:
         """Button function to show buttons for cell operations."""
 
         clear_output(wait=True)
-        self.buttons['assist'].disabled = self.ai_disabled[0]
         display(self.buttons['choose'])
         display(self.data_preparation_grid())
 
@@ -334,8 +336,12 @@ class Bodi:
     def _close_independence_test(self, _=None):
         """Closes the independence test and activates buttons."""
 
-        for button in ['open', 'delete', 'run', 'independence', 'assist', 'limitations']:
+        for button in ['open', 'delete', 'run', 'independence', 'limitations']:
             self.buttons[button].disabled = False
+        
+        self.buttons['assist'].description = 'AI assistant'
+        self.buttons['assist'].button_style = 'success'
+        self.buttons['assist'].disabled = self.ai_disabled[0]
 
         clear_output(wait=True)
         message = self.limitations.get_limitations_for_print()
@@ -400,6 +406,7 @@ class Bodi:
         data_name_label = self.bogui.create_label('Name of the data set:')
         description_label = self.bogui.create_label('Description of the data:')
         error_message = self.bogui.create_error_message(error)
+        self.buttons['assist'].disabled = self.ai_disabled[0]
 
         grid = widgets.AppLayout(
             header = question,

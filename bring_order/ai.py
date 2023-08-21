@@ -173,6 +173,9 @@ class Ai:
             pane_heights=[4, 6, 3]
         )
 
+        self.utils.hide_current_input()
+        self.utils.hide_selected_input()
+
         display(self.grid)
 
     def add_instructions(self, _=None):

@@ -298,7 +298,7 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.buttons['open'].disabled)
         self.assertFalse(self.instance.buttons['delete'].disabled)
         self.assertFalse(self.instance.buttons['run'].disabled)
-        self.assertFalse(self.instance.buttons['assist'].disabled)
+        self.assertEquals(self.instance.buttons['assist'].disabled, self.instance.ai_disabled[0])
         self.assertFalse(self.instance.buttons['limitations'].disabled)
         self.assertFalse(self.instance.buttons['independence'].disabled)
 
