@@ -295,7 +295,7 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.buttons['open'].disabled)
         self.assertFalse(self.instance.buttons['delete'].disabled)
         self.assertFalse(self.instance.buttons['run'].disabled)
-        self.assertEquals(self.instance.buttons['assist'].disabled, self.instance.ai_disabled[0])
+        self.assertEqual(self.instance.buttons['assist'].disabled, self.instance.ai_disabled[0])
         self.assertFalse(self.instance.buttons['limitations'].disabled)
         self.assertFalse(self.instance.buttons['independence'].disabled)
 
@@ -303,5 +303,17 @@ class TestBodi(unittest.TestCase):
         result = self.instance.load_cfg_file('tests/')
         test_list = ['ttest', 'oneway', 'pearson', 'zscore', 'linregress']
         self.assertEqual(test_list, result)
-                     
-                     
+                                  
+    def test_change_cell_count(self):
+        self.assertEqual(self.instance.cell_count, 0)
+        self.instance.change_cell_count(1)
+        self.assertEqual(self.instance.cell_count, 1)
+        self.instance.change_cell_count(3)
+        self.assertEqual(self.instance.cell_count, 4)
+        self.instance.change_cell_count(-2)
+        self.assertEqual(self.instance.cell_count, 2)
+
+    def test_change_cell_count_does_not_make_cell_count_negative(self):
+        self.instance.cell_count = 2
+        self.instance.change_cell_count(-3)
+        self.assertEqual(self.instance.cell_count, 0)

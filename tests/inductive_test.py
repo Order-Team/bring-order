@@ -237,3 +237,17 @@ class TestInductive(unittest.TestCase):
         self.instance.fields[2].value = 'They lived happily ever after.'
         self.instance._submit_summary()
         self.instance._evaluation_of_analysis.assert_called()
+
+    def test_change_cell_count(self):
+        self.assertEqual(self.instance._cell_count, 0)
+        self.instance.change_cell_count(1)
+        self.assertEqual(self.instance._cell_count, 1)
+        self.instance.change_cell_count(3)
+        self.assertEqual(self.instance._cell_count, 4)
+        self.instance.change_cell_count(-2)
+        self.assertEqual(self.instance._cell_count, 2)
+
+    def test_change_cell_count_does_not_make_cell_count_negative(self):
+        self.instance._cell_count = 2
+        self.instance.change_cell_count(-3)
+        self.assertEqual(self.instance._cell_count, 0)

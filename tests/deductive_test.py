@@ -183,3 +183,17 @@ class TestDeductive(unittest.TestCase):
         self.instance.cell_count = 3
         self.instance.clear_cells()
         self.instance.boutils.clear_code_cells_above.assert_called_with(3)
+
+    def test_change_cell_count(self):
+        self.assertEqual(self.instance.cell_count, 0)
+        self.instance.change_cell_count(1)
+        self.assertEqual(self.instance.cell_count, 1)
+        self.instance.change_cell_count(3)
+        self.assertEqual(self.instance.cell_count, 4)
+        self.instance.change_cell_count(-2)
+        self.assertEqual(self.instance.cell_count, 2)
+
+    def test_change_cell_count_does_not_make_cell_count_negative(self):
+        self.instance.cell_count = 2
+        self.instance.change_cell_count(-3)
+        self.assertEqual(self.instance.cell_count, 0)
