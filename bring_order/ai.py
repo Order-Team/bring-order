@@ -100,20 +100,6 @@ class Ai:
 
         try:
             openai.api_key = self.api_key
-            """
-            content = self.natural_language_prompt.value
-            response = openai.ChatCompletion.create(
-            model = self.model_engine,
-            messages=[
-                {"role": "system", "content": context},
-                {"role": "user", "content": content},
-            ])
-
-            if not response.choices[0]['message']['content']:
-                self.ai_error_msg = "Please enter correct OpenAI API key.\
-                    You recieved no response from the AI assistant."
-                return False
-            """
             response = openai.Model.list()
             if not response.data[0]['object'] == 'model':
                 self.utils.print_to_console('bad response from OpenAI')
@@ -209,7 +195,7 @@ class Ai:
             pane_widths=[1, 8, 1],
             pane_heights=[2, 6, 2]
         )
-        self.utils.print_to_console(self.dataset_variables)
+        self.utils.print_to_console('dataset variables: ' + str(self.dataset_variables))
         display(self.grid)
 
     def display_ai_output(self, message='', ai_output=''):

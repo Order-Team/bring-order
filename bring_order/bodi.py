@@ -173,6 +173,9 @@ class Bodi:
     def _display_limitations_view(self, _=None):
         """Displays limitation view."""
 
+        if self.buttons['assist'].description == 'Close AI assistant':
+            self._toggle_ai()
+
         limitation_grid = self.limitations.create_limitation_grid()
         limitation_grid.footer=widgets.VBox([
             self.limitations.empty_limitations_error,
@@ -326,6 +329,9 @@ class Bodi:
 
             for button in ['open', 'delete', 'run', 'assist', 'limitations']:
                 self.buttons[button].disabled = True
+            
+            if self.buttons['assist'].description == 'Close AI assistant':
+                self._toggle_ai()
 
             clear_output(wait=True)
             display(self.data_preparation_grid())
@@ -338,9 +344,7 @@ class Bodi:
 
         for button in ['open', 'delete', 'run', 'independence', 'limitations']:
             self.buttons[button].disabled = False
-        
-        self.buttons['assist'].description = 'AI assistant'
-        self.buttons['assist'].button_style = 'success'
+
         self.buttons['assist'].disabled = self.ai_disabled[0]
 
         clear_output(wait=True)
@@ -398,8 +402,6 @@ class Bodi:
 
         args: Error message: str
         """
-        self.boutils.hide_current_input()
-        self.boutils.hide_selected_input()
 
         question = self.bogui.create_message('What kind of data are you using?')
         title_label = self.bogui.create_label('Main title of your research:')

@@ -31,10 +31,6 @@ class TestBodi(unittest.TestCase):
     def test_correct_amount_of_buttons_is_created(self):
         self.assertEqual(len(self.instance.buttons), 15)
 
-    def test_bodi_hides_current_input(self):
-        self.instance.bodi()
-        self.instance.boutils.hide_current_input.assert_called()
-
     def test_open_cells_increases_cell_count_with_default_one(self):
         correct_cell_count = self.instance.cell_count + 1
         self.instance._open_cells()
