@@ -256,6 +256,7 @@ class BOUtils:
         except IndexError:
             return 'No Python code in the response'
 
+        code = code.replace('\\', '\\\\')
         code = code.replace('\n', '\\n')
         code = code.replace('"', '\\"')
         code = code.replace("'", "\\'")

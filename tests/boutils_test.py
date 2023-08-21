@@ -20,8 +20,8 @@ class TestBOUtils(unittest.TestCase):
                     "sample_variance = np.var(sample)\n"
                     "\n"
                     "# Print mean and variance\n"
-                    "print('Sample Mean: ', sample_mean)\n"
-                    "print('Sample Variance: ', sample_variance)\n"
+                    "print('Sample Mean (\"mu\"): ', sample_mean)\n"
+                    "print('Sample Variance (\'var\'): ', sample_variance)\n"
                     "```\n"
                     "\n"
                     "Finally, the calculated mean and variance are printed to the console.")
@@ -34,7 +34,7 @@ class TestBOUtils(unittest.TestCase):
                    "sample_variance = np.var(sample)\\n"
                    "\\n"
                    "# Print mean and variance\\n"
-                   "print(\\'Sample Mean: \\', sample_mean)\\n"
-                   "print(\\'Sample Variance: \\', sample_variance)")
+                   "print(\\'Sample Mean (\\\"mu\\\"): \\', sample_mean)\\n"
+                   "print(\\'Sample Variance (\\\'var\\\'): \\', sample_variance)")
 
         self.assertEqual(self.instance.get_python_code_from_response(response), correct)
