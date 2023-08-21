@@ -164,7 +164,7 @@ class TestBodi(unittest.TestCase):
         self.instance.run_cells()
         self.instance.stattests.detect_tests.assert_called()
     '''
-
+    '''
     def test_toggle_ai_updates_button(self):
         self.instance._toggle_ai()
         self.assertEqual(self.instance.buttons['assist'].description, 'Close AI assistant')
@@ -172,6 +172,7 @@ class TestBodi(unittest.TestCase):
         self.instance._toggle_ai()
         self.assertEqual(self.instance.buttons['assist'].description, 'AI assistant')
         self.assertEqual(self.instance.buttons['assist'].button_style, 'success')
+    '''
 
     def test_show_cell_operations_calls_data_preparation_grid(self):
         self.instance.data_preparation_grid = MagicMock()

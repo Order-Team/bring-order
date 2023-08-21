@@ -88,7 +88,7 @@ class Ai:
         """Button function for closing AI view"""
 
         self.grid.close()
-        self.natural_language_prompt.value = ''
+        self.clear_ai()
 
     def validate_api_key(self):
         """Button function for validating API key"""

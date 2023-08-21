@@ -40,6 +40,7 @@ class Bodi:
         self.dataset_variables = dataset_variables
         self.checklist = None
         self.next_step = next_step
+        self.limitations_visible = False
 
     @property
     def button_list(self):
@@ -75,6 +76,9 @@ class Bodi:
             return
 
         if self.buttons['assist'].description == 'AI assistant':
+            clear_output(wait=True)
+            message = self.limitations.get_limitations_for_print()
+            display(self.data_preparation_grid(message))
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
         else:
@@ -160,7 +164,8 @@ class Bodi:
 
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
-        self._toggle_ai(False)
+        if self.buttons['assist'].description == 'Close AI assistant':
+            self._toggle_ai(False)
         clear_output(wait=True)
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
