@@ -16,6 +16,7 @@ class Ai:
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.natural_language_prompt = self.bogui.create_text_area()
         self.api_key_input_field = self.bogui.create_password_field()
+        self.api_key = None
         self.ai_response = ''
         self.ai_output_grid = widgets.AppLayout()
         self.ai_error_message_grid = self.bogui.create_message('')
@@ -45,6 +46,8 @@ class Ai:
         return button_list
 
     def initiate_ai(self, _=None):
+        """Button function for proceeding with AI active"""
+
         self.api_key = self.api_key_input_field.value
         if not self.validate_api_key():
             clear_output(wait=True)
@@ -55,6 +58,8 @@ class Ai:
         self.next_step[0] = 'bodi'
 
     def disable_ai(self, _=None):
+        """Button function for proceeding with AI inactive"""
+
         self.ai_disabled[0] = True
         self.utils.print_to_console('ai disabled: ' + str(self.ai_disabled[0]))
         clear_output(wait=True)
@@ -139,6 +144,13 @@ class Ai:
     def display_ai_popup(self, api_key_error=''):
         """" Function for displaying communication with AI assistant"""
 
+        self.utils.hide_current_input()
+        self.utils.hide_selected_input()
+
+        if not self.api_key == None:
+            self.next_step[0] = 'bodi'
+            return
+
         api_key_label = self.bogui.create_label('Enter your Open AI key here:')
         api_key_element = widgets.HBox([
             api_key_label,
@@ -159,14 +171,12 @@ class Ai:
             pane_heights=[4, 6, 3]
         )
 
-        self.utils.hide_current_input()
-        self.utils.hide_selected_input()
-
         display(self.grid)
 
     def add_instructions(self, _=None):
         '''Constructs a string containing variables of the user's dataset and
            instructions to the AI assistant'''
+
         variable_list = ', '.join([str(v) for v in self.dataset_variables])
         self.utils.print_to_console('sending dataset variables: ' + variable_list)
         instructions = 'The user wants to process a dataset with Python code.\

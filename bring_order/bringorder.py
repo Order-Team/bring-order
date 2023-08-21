@@ -104,27 +104,37 @@ class BringOrder:
         # that returns the name of the next function to be executed.
         # First, the data import function:
         self.boutils.change_cell_count = self.bodi.change_cell_count
-        next_step = self.get_next(self.ai.display_ai_popup)
-        next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.toggle_ai])
-        # Main analysis loop:
-        while next_step == 'start_analysis':
-            next_step = self.get_next(self.start_analysis)
-            # Branching to deductive/inductive:
-            if next_step == 'deductive_analysis':
-                next_step = self.get_next(self.start_deductive_analysis,
-                                          subroutines=[self.ai.toggle_ai])
-            elif next_step == 'inductive_analysis':
-                next_step = self.get_next(self.start_inductive_analysis,
-                                          subroutines=[self.ai.toggle_ai])
-            # New analysis/export to pdf-view:
-            if next_step == 'analysis_done':
-                next_step = self.get_next(self.next_analysis.new_analysis_view)
-        # Close:
-        if next_step == 'exit':
-            self.boutils.delete_cell_from_current(0)
-        # Import new data set:
-        elif next_step == 'new_data':
-            self.boutils.execute_cell_from_current(0, 'BringOrder()')
+        next_step = 'new_data'
+        # Import loop:
+        while next_step == 'new_data':
+            self.bodi = Bodi(
+                self.boutils,
+                self.bogui,
+                self.dataset_variables,
+                self.ai_disabled,
+                self.next_step
+            )
+            next_step = self.get_next(self.ai.display_ai_popup)
+            next_step = self.get_next(self.bodi.bodi, subroutines=[self.ai.toggle_ai])
+            # Main analysis loop:
+            while next_step == 'start_analysis':
+                next_step = self.get_next(self.start_analysis)
+                # Branching to deductive/inductive:
+                if next_step == 'deductive_analysis':
+                    next_step = self.get_next(self.start_deductive_analysis,
+                                            subroutines=[self.ai.toggle_ai])
+                elif next_step == 'inductive_analysis':
+                    next_step = self.get_next(self.start_inductive_analysis,
+                                            subroutines=[self.ai.toggle_ai])
+                # New analysis/export to pdf-view:
+                if next_step == 'analysis_done':
+                    next_step = self.get_next(self.next_analysis.new_analysis_view)
+            # Close:
+            if next_step == 'exit':
+                self.boutils.delete_cell_from_current(0)
+            # Import new data set:
+            #elif next_step == 'new_data':
+            #    self.boutils.execute_cell_from_current(0, 'BringOrder()')
 
     def get_next(self, function, subroutines=[]):
         """Runs a function, pauses execution until next_step is updated and then returns it.

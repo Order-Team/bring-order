@@ -70,7 +70,11 @@ class Bodi:
         return button_list
 
     def _toggle_ai(self, _=None, showAI = True):
-        """Button function to open/close AI assistant"""
+        """Button function to open/close AI assistant.
+        
+        Args:
+            showAI (boolean, optional): set to False to only toggle the button text/description
+        """
 
         if self.ai_disabled[0]:
             return
@@ -84,10 +88,10 @@ class Bodi:
         else:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
-        
+
         if showAI:
             self.next_step[0] = 'toggle_ai'
-    
+
     def _add_limitation(self, _=None):
         """Button function for adding new limitation."""
 
@@ -164,6 +168,7 @@ class Bodi:
 
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
+
         if self.buttons['assist'].description == 'Close AI assistant':
             self._toggle_ai(False)
         clear_output(wait=True)
@@ -199,6 +204,7 @@ class Bodi:
         Returns:
             formatted_text (str)
         """
+
         title = f'# {self.fields[0].value}'
         dataset = f'{self.fields[1].value}'
         description = '<br />'.join(self.fields[2].value.split('\n'))
@@ -207,6 +213,7 @@ class Bodi:
 
     def _start_analysis_clicked(self, _=None):
         """Button function to start analysis after data preparation"""
+
         if self.limitations.call_check_limitation():
             text = self.limitations.format_limitations()
             self.boutils.create_markdown_cells_above(1, text=text)
