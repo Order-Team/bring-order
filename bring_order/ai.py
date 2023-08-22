@@ -180,12 +180,11 @@ class Ai:
         '''Constructs a string containing variables of the user's dataset and
            instructions to the AI assistant'''
 
-        variable_list = ', '.join([str(v) for v in self.dataset_variables[-1]])
-        self.utils.print_to_console('sending dataset variables: ' + variable_list)
-        instructions = 'The user wants to process a dataset with Python code.\
-        The dataset has certain variables. Refer to these given variables where appropriate.\
-        Variables of the dataset are ' + variable_list
-        return instructions
+        variables = " The user wants to process a dataset with Python code. \
+            The dataset has certain variables. Refer to these given variables where appropriate. \
+            Variables of the dataset are " + ', '.join(str(v) for v in self.dataset_variables)                
+        self.utils.print_to_console(variables)
+        return variables
 
     def display_ai(self, nlp_error= ''):
         '''Displays a text field for entering a question and options for includng context'''
