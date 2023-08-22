@@ -179,7 +179,7 @@ class Ai:
         '''Constructs a string containing variables of the user's dataset and
            instructions to the AI assistant'''
 
-        variable_list = ', '.join([str(v) for v in self.dataset_variables])
+        variable_list = ', '.join([str(v) for v in self.dataset_variables[-1]])
         self.utils.print_to_console('sending dataset variables: ' + variable_list)
         instructions = 'The user wants to process a dataset with Python code.\
         The dataset has certain variables. Refer to these given variables where appropriate.\

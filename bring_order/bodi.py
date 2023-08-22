@@ -167,16 +167,19 @@ class Bodi:
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
 
-        if self.buttons['assist'].description == 'Close AI assistant':
-            self._toggle_ai(False)
         clear_output(wait=True)
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
+
         if self.not_normal is not None:
             if len(self.not_normal) > 0:
                 for stat_test in self.checklist:
                     self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
+
         self.boutils.run_cells_above(self.cell_count)
+
+        if self.buttons['assist'].description == 'Close AI assistant':
+            self._toggle_ai(False)
 
     def _display_limitations_view(self, _=None):
         """Displays limitation view."""
@@ -340,7 +343,7 @@ class Bodi:
 
             for button in ['open', 'delete', 'run', 'assist', 'limitations']:
                 self.buttons[button].disabled = True
-            
+
             if self.buttons['assist'].description == 'Close AI assistant':
                 self._toggle_ai()
 
@@ -370,7 +373,7 @@ class Bodi:
         self.dataset_variables.append(data_frame.columns.values.tolist())
         self.stattests.dataset = data_frame
 
-        self.not_normal = self.check_normal_distribution(data_frame)        
+        self.not_normal = self.check_normal_distribution(data_frame)
         for index, variable in enumerate(self.not_normal):
             if index != 0:
                 self.limitations.add_limitation()

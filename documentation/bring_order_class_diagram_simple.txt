@@ -8,10 +8,7 @@
 [BringOrder{bg:red}]->[BOGui{bg:purple}]
 [BringOrder{bg:red}]->[BOUtils{bg:purple}]
 [BringOrder{bg:red}]->[NextAnalysis{bg:purple}]
+[BringOrder{bg:red}]->[BOVal{bg:purple}]
 
 [Bodi{bg:green}] -> [Stattest{bg:purple}]
 [Bodi{bg:green}] -> [Limitations{bg:purple}]
-
-[Inductive{bg:green}] -> [BOVal{bg:purple}]
-
-[Deductive{bg:green}] -> [BOVal{bg:purple}]
