@@ -47,7 +47,8 @@ class Ai:
 
     def initiate_ai(self, _=None):
         """Button function for proceeding with AI active"""
-        display('Your key is being processed')
+        display_message = self.bogui.create_message('Your key is being processed...')
+        display(display_message)
         api_key = self.api_key_input_field.value
         if self.validate_api_key(api_key):
             clear_output(wait=True)
@@ -114,15 +115,12 @@ class Ai:
                 return True
             
             return False
-            
-    
+        
         except openai.error.AuthenticationError as err:
             self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
             return True 
             
-        
     
-            
     
     def toggle_ai(self, _=None):
         """Toggles the AI view"""
