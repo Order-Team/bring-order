@@ -56,6 +56,7 @@ class Ai:
         else:
             clear_output(wait=True)
             self.next_step[0] = 'bodi'
+            self.api_key=api_key
 
     def disable_ai(self, _=None):
         """Button function for proceeding with AI inactive"""
