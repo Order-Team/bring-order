@@ -15,7 +15,7 @@ class TestAi(unittest.TestCase):
         self.instance = Ai(
                             BOGui(),
                             BOUtils(),
-                            dataset_variables=['sepallength', 'sepalwidth', 'petallength', 'petalwidth', 'class'],
+                            dataset_variables=[['sepallength', 'sepalwidth', 'petallength', 'petalwidth', 'class']],
                             ai_disabled = [False],
                             next_step=next_step
                             )
@@ -30,10 +30,9 @@ class TestAi(unittest.TestCase):
 
     def test_add_instructions_contains_dataset_variables(self):
         test_instructions = self.instance.add_instructions()
-        variable_list = ', '.join([str(v) for v in self.instance.dataset_variables])
         self.assertEqual(test_instructions, 'The user wants to process a dataset with Python code.\
         The dataset has certain variables. Refer to these given variables where appropriate.\
-        Variables of the dataset are ' + variable_list)
+        Variables of the dataset are sepallength, sepalwidth, petallength, petalwidth, class')
 
     def test_send_ai_disables_show_button(self):
         self.instance.buttons['show'].disabled = False
