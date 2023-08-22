@@ -47,15 +47,14 @@ class Ai:
 
     def initiate_ai(self, _=None):
         """Button function for proceeding with AI active"""
-
-        self.api_key = self.api_key_input_field.value
-        if not self.validate_api_key():
+        display('Your key is being processed')
+        api_key = self.api_key_input_field.value
+        if self.validate_api_key(api_key):
             clear_output(wait=True)
             self.display_ai_popup(self.ai_error_msg)
-            return
-
-        clear_output(wait=True)
-        self.next_step[0] = 'bodi'
+        else:
+            clear_output(wait=True)
+            self.next_step[0] = 'bodi'
 
     def disable_ai(self, _=None):
         """Button function for proceeding with AI inactive"""
@@ -95,31 +94,36 @@ class Ai:
         self.grid.close()
         self.clear_ai()
 
-    def validate_api_key(self):
+    def validate_api_key(self, api_key):
         """Button function for validating API key"""
-
-        self.utils.print_to_console('validating api key...')
-        if not self.api_key_input_field.value:
+        if not api_key:
             self.ai_error_msg = 'Please enter your Open AI api key'
-            return False
-
+            return True
+        
         try:
-            openai.api_key = self.api_key
-            response = openai.Model.list()
-            if not response.data[0]['object'] == 'model':
-                self.utils.print_to_console('bad response from OpenAI')
-                self.ai_error_msg = "Please enter correct OpenAI API key.\
-                    You received no response from the AI assistant."
-                return False
-            #model_id_list = [model['id'] for model in response.data]
-            self.utils.print_to_console('api key validated: received model list from OpenAI')
+            openai.api_key = api_key
+            response = openai.ChatCompletion.create(
+            model = self.model_engine,
+            messages=[
+                {"role": "system", "content": 'You are a helpful assistant'},
+                {"role": "user", "content": "This is a test."},
+            ])
 
-        except openai.error.AuthenticationError as err:
-            self.ai_error_msg = f"{err}"
+            if not response.choices[0]['message']['content']:
+                self.ai_error_msg = f"Please enter correct Open AI API key. You recieved no respoonse from the AI assistant."
+                return True
+            
             return False
-
-        return True
-
+            
+    
+        except openai.error.AuthenticationError as err:
+            self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
+            return True 
+            
+        
+    
+            
+    
     def toggle_ai(self, _=None):
         """Toggles the AI view"""
 
