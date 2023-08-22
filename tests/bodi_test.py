@@ -8,6 +8,7 @@ from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
 from bring_order.ai import Ai
+from bring_order.boval import BOVal
 
 class TestBodi(unittest.TestCase):
 
@@ -16,7 +17,7 @@ class TestBodi(unittest.TestCase):
         next_step = [None]
         dataset_variables = Mock()
         ai_disabled = [False]
-        self.instance = Bodi(BOUtils(), BOGui(), dataset_variables, ai_disabled, next_step=next_step)
+        self.instance = Bodi(BOUtils(), BOGui(), BOVal(), dataset_variables, ai_disabled, next_step=next_step)
         self.instance.boutils = Mock()
         self.instance.bogui = Mock()
         self.instance.limitations = Mock()
@@ -108,20 +109,21 @@ class TestBodi(unittest.TestCase):
         self.instance.limitations.call_check_limitation = MagicMock()
         self.instance.limitations.call_check_limitation.return_value = False
         self.instance._start_analysis_clicked()
-        self.instance.limitations.set_error_value.assert_called_with('Data limitations cannot be empty')
+        self.instance.limitations.set_error_value.assert_called_with('Data limitations cannot be empty or\
+                 contain special symbols')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_title_empty(self):
         self.instance.bodi = Mock()
         self.instance._start_data_import()
-        self.instance.bodi.assert_called_with(error='Please give your study a title')
+        self.instance.bodi.assert_called_with(error='The title cannot be empty or contain special symbols')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_data_name_empty(self):
         self.instance.bodi = Mock()
         self.instance.fields[0].value = "My title"
         self.instance._start_data_import()
-        self.instance.bodi.assert_called_with(error='You must name the data set')
+        self.instance.bodi.assert_called_with(error='The data set name cannot be empty or contain special symbols')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_sets_error_message_if_description_empty(self):
@@ -129,7 +131,7 @@ class TestBodi(unittest.TestCase):
         self.instance.fields[0].value = "My title"
         self.instance.fields[1].value = 'My data'
         self.instance._start_data_import()
-        self.instance.bodi.assert_called_with(error='You must give some description of the data')
+        self.instance.bodi.assert_called_with(error='The data description cannot be empty or contain special characters')
         self.instance.boutils.create_markdown_cells_above.assert_not_called()
 
     def test_start_data_import_creates_markdown_cell(self):

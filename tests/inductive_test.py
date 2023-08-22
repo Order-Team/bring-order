@@ -10,7 +10,7 @@ class TestInductive(unittest.TestCase):
     def setUp(self):
         next_step = [None]
         ai_disabled = [False]
-        self.instance = Inductive(BOGui(), BOUtils(), ai_disabled, next_step)
+        self.instance = Inductive(BOGui(), BOUtils(), BOVal(), ai_disabled, next_step)
         self.instance.boval = BOVal()
         self.instance.utils = Mock()
         self.instance.bogui = Mock()
@@ -47,7 +47,7 @@ class TestInductive(unittest.TestCase):
         self.instance.boval.check_value_not_empty = MagicMock()
         self.instance.boval.check_value_not_empty.return_value = False
         self.instance._new_observation()
-        self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
+        self.assertEqual(self.instance.fields[3].value, 'The observation cannot be empty or contain special symbols')
 
     def test_cell_count_cannot_be_less_than_zero(self):
         self.instance._delete_last_cell()
@@ -74,7 +74,7 @@ class TestInductive(unittest.TestCase):
     def test_new_observation_cannot_be_empty(self):
         self.instance.fields[1].value = ''
         self.instance._new_observation()
-        self.assertEqual(self.instance.fields[3].value, 'Observation field can not be empty')
+        self.assertEqual(self.instance.fields[3].value, 'The observation cannot be empty or contain special symbols')
   
     def test_new_observation_is_saved(self):
         self.instance.lists[1].append("There is a lot of noise.")
@@ -159,7 +159,7 @@ class TestInductive(unittest.TestCase):
     def test_save_preconceptions_shows_error_if_no_preconceptions_are_written(self):
         self.instance._create_preconception_grid = Mock()
         self.instance._save_preconceptions()
-        self.instance._create_preconception_grid.assert_called_with(error='You must name at least one preconception')
+        self.instance._create_preconception_grid.assert_called_with(error='The preconception cannot be empty or contain special symbols')
         self.instance.utils.create_markdown_cells_above.assert_not_called()
 
     def test_save_preconceptions_filters_empty_input_fields(self):
@@ -223,7 +223,7 @@ class TestInductive(unittest.TestCase):
     def test_submit_summary_shows_error_with_empty_summary(self):
         self.instance._display_summary = MagicMock()
         self.instance._submit_summary()
-        self.instance._display_summary.assert_called_with(error='You must write some kind of summary')
+        self.instance._display_summary.assert_called_with(error='The summary cannot be empty or contain special symbols')
 
     def test_submit_summary_creates_markdown_cell(self):
         self.instance.utils.create_markdown_cells_above = MagicMock()

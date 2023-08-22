@@ -8,7 +8,7 @@ from stattests import Stattests
 
 class Bodi:
     """Creates code cells for importing data and markdown cell(s) to describe data limitations"""
-    def __init__(self, boutils, bogui, dataset_variables, ai_disabled, next_step):
+    def __init__(self, boutils, bogui, boval, dataset_variables, ai_disabled, next_step):
         """Class constructor
             Args:
                 bogui: Bring Order GUI components class
@@ -23,6 +23,7 @@ class Bodi:
         """
         self.boutils = boutils
         self.bogui = bogui
+        self.boval = boval
         self.cell_count = 0
         self.ai_disabled = ai_disabled
         self.buttons = self.bogui.init_buttons(self.button_list)
@@ -30,11 +31,7 @@ class Bodi:
                        self.bogui.create_input_field(),
                        self.bogui.create_text_area(),
                        self.bogui.create_int_text()]
-        #self.title = self.bogui.create_input_field()
-        #self.data_name = self.bogui.create_input_field()
-        #self.data_description = self.bogui.create_text_area()
-        #self.add_cells_int = self.bogui.create_int_text()
-        self.limitations = Limitations(self.bogui)
+        self.limitations = Limitations(self.bogui, self.boval)
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.dataset_variables = dataset_variables
@@ -220,7 +217,8 @@ class Bodi:
             clear_output(wait=True)
             self.next_step[0] = 'start_analysis'
         else:
-            self.limitations.set_error_value('Data limitations cannot be empty')
+            self.limitations.set_error_value('Data limitations cannot be empty or\
+                 contain special symbols')
 
     def fc_callback(self):
         """Shows buttons to continue with selected data file or import manually."""
@@ -397,12 +395,12 @@ class Bodi:
     def _start_data_import(self, _=None):
         """Creates markdown for data description and shows buttons for data import"""
 
-        if self.fields[0].value == '':
-            self.bodi(error = 'Please give your study a title')
-        elif self.fields[1].value == '':
-            self.bodi(error = 'You must name the data set')
-        elif self.fields[2].value == '':
-            self.bodi(error = 'You must give some description of the data')
+        if not self.boval.value_not_empty_or_contains_symbols(self.fields[0].value):
+            self.bodi(error = 'The title cannot be empty or contain special symbols')
+        elif not self.boval.value_not_empty_or_contains_symbols(self.fields[1].value):
+            self.bodi(error = 'The data set name cannot be empty or contain special symbols')
+        elif not self.boval.value_not_empty_or_contains_symbols(self.fields[2].value):
+            self.bodi(error = 'The data description cannot be empty or contain special characters')
         else:
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.file_chooser.register_callback(self.fc_callback)

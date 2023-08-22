@@ -1,13 +1,10 @@
 """Deductive class"""
-import os
-import spacy
 from ipywidgets import widgets
 from IPython.display import display, clear_output
-from boval import BOVal
 
 class Deductive:
     """Class that guides deductive analysis"""
-    def __init__(self, bogui, boutils, ai_disabled, next_step):
+    def __init__(self, bogui, boutils, boval, ai_disabled, next_step):
         """Class constructor
         
         Args:
@@ -20,7 +17,7 @@ class Deductive:
         self.bogui = bogui
         self.boutils = boutils
         self.ai_disabled = ai_disabled
-        self.boval = BOVal()
+        self.boval = boval
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.theory_desc = self.bogui.create_text_area('', 'Theory')
         #List of hypotheses: 0 = hypothesis, 1 = null hypothesis

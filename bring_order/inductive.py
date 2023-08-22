@@ -1,12 +1,11 @@
 """Class for Inductive analysis"""
 from ipywidgets import widgets
 from IPython.display import display, clear_output
-from boval import BOVal
 
 class Inductive:
     """Class that guides inductive analysis"""
 
-    def __init__(self, bogui, boutils, ai_disabled, next_step):
+    def __init__(self, bogui, boutils, boval, ai_disabled, next_step):
         """Class constructor.
             Args:
                 bogui:
@@ -29,7 +28,7 @@ class Inductive:
         self.bogui = bogui
         self.utils = boutils
         self.ai_disabled = ai_disabled
-        self.boval = BOVal()
+        self.boval = boval
         self.next_step = next_step
         self._cell_count = 0
         self.conclusion = None
@@ -108,7 +107,7 @@ class Inductive:
         """Checks that at least one of the preconceptions has a non-empty value."""
 
         for item in self.lists[0]:
-            if self.boval.check_value_not_empty(item.value):
+            if self.boval.value_not_empty_or_contains_symbols(item.value):
                 return True
 
         return False
@@ -149,7 +148,7 @@ class Inductive:
 
         else:
             display(self._create_preconception_grid(
-                error='You must name at least one preconception')
+                error='The preconception cannot be empty or contain special symbols')
             )
 
     def _create_preconception_grid(self, error=''):
@@ -253,7 +252,7 @@ class Inductive:
     def _new_observation(self, _=None):
         """Checks new observation, saves it, and resets cell count."""
 
-        if self.boval.check_value_not_empty(self.fields[1].value):
+        if self.boval.value_not_empty_or_contains_symbols(self.fields[1].value):
             self.lists[1].append(self.fields[1].value)
             text = self._format_observation()
             self.utils.create_markdown_cells_above(1, text=text)
@@ -265,7 +264,7 @@ class Inductive:
             self._cell_count = 0
 
         else:
-            self.fields[3].value = 'Observation field can not be empty'
+            self.fields[3].value = 'The observation cannot be empty or contain special symbols'
 
     def _execute_ready(self, _=None):
         """Button function for Ready to summarize button."""
@@ -317,8 +316,8 @@ class Inductive:
     def _submit_summary(self, _=None):
         """Button function to submit summary."""
 
-        if not self.boval.check_value_not_empty(self.fields[2].value):
-            self._display_summary(error='You must write some kind of summary')
+        if not self.boval.value_not_empty_or_contains_symbols(self.fields[2].value):
+            self._display_summary(error='The summary cannot be empty or contain special symbols')
             return
 
         text = self._format_summary()

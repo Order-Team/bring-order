@@ -15,6 +15,7 @@ from deductive import Deductive
 from inductive import Inductive
 from next_analysis import NextAnalysis
 from ai import Ai
+from boval import BOVal
 
 
 class BringOrder:
@@ -25,6 +26,7 @@ class BringOrder:
         self.bogui = BOGui()
         self.deductive = None
         self.inductive = None
+        self.boval = BOVal()
         self.buttons = {}
         self.dataset_variables = []
         self.ai_disabled = [False]
@@ -45,9 +47,11 @@ class BringOrder:
         self.bodi = Bodi(
             self.boutils,
             self.bogui,
+            self.boval,
             self.dataset_variables,
             self.ai_disabled,
-            self.next_step)
+            self.next_step
+            )
         self.bring_order()
 
 
@@ -110,6 +114,7 @@ class BringOrder:
             self.bodi = Bodi(
                 self.boutils,
                 self.bogui,
+                self.boval,
                 self.dataset_variables,
                 self.ai_disabled,
                 self.next_step
@@ -165,12 +170,14 @@ class BringOrder:
         self.deductive = Deductive(
             self.bogui,
             self.boutils,
+            self.boval,
             self.ai_disabled,
             self.next_step
         )
         self.inductive = Inductive(
             self.bogui,
             self.boutils,
+            self.boval,
             self.ai_disabled,
             self.next_step
         )

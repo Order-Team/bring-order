@@ -4,6 +4,7 @@ from bring_order.deductive import Deductive
 from unittest.mock import Mock, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
+from bring_order.boval import BOVal
 
 class TestDeductive(unittest.TestCase):
     """ Test class for testing the Deductive class
@@ -13,7 +14,7 @@ class TestDeductive(unittest.TestCase):
         """
         next_step = [None]
         ai_disabled = [False]
-        self.instance = Deductive(BOGui(), BOUtils(), ai_disabled, next_step)
+        self.instance = Deductive(BOGui(), BOUtils(), BOVal(), ai_disabled, next_step)
         self.instance.boutils = Mock()
 
     def test_check_theory_and_hypotheses_submit_returns_false_with_empty_hypothesis(self):

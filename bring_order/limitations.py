@@ -3,9 +3,10 @@ from ipywidgets import widgets
 
 class Limitations:
     """Manages data limitations through different phases of analysis."""
-    def __init__(self, bogui):
+    def __init__(self, bogui, boval):
         """Class constructor."""
         self.bogui = bogui
+        self.boval = boval
         self.data_limitations = [self.bogui.create_input_field('', 'Limitation 1')]
         self.empty_limitations_error = self.bogui.create_error_message()
         self.remove_checkboxes = [self.bogui.create_checkbox('Remove')]
@@ -58,7 +59,7 @@ class Limitations:
 
     def check_limitations(self, item=''):
         """Checks that limitations have been given or commented"""
-        if item == '':
+        if not self.boval.value_not_empty_or_contains_symbols(item):
             return False
         return True
 

@@ -81,7 +81,20 @@ class BOVal:
         """Checks that text field was filled without special symbols.
             Args: string
             Returns:
-                True: if string not empty and not contains special symbols
+                True: if string not contains special symbols
+                False: if string contains special symbols
+        """
+        special_characters = "[{]}@#^\\*()+_=<>/"
+        if any(char in special_characters for char in value):
+            return False
+
+        return True
+
+    def value_not_empty_or_contains_symbols(self, value):
+        """Checks that text field was filled without special symbols.
+            Args: string
+            Returns:
+                True: if string not contains special symbols or empty
                 False: if string is empty or contains special symbols
         """
         if not self.check_value_not_empty(value):

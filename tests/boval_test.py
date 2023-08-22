@@ -101,7 +101,6 @@ class TestBoval(unittest.TestCase):
     
     def test_empty_value_returns_false_in_all_methods(self):
         self.assertFalse(self.boval.sentence_is_min_length(''))
-        self.assertFalse(self.boval.value_not_contains_symbols(''))
         self.assertFalse(self.boval.value_is_min_length(''))
         self.assertFalse(self.boval.value_contain_predicate(''))
         self.assertFalse(self.boval.value_contain_nlp_object(''))
