@@ -140,8 +140,9 @@ class Bodi:
         return grid
 
     def _show_cell_operations(self, _=None):
-        """Button function to show buttons for cell operations."""
+        """Button function for manual import, shows buttons for cell operations."""
 
+        self.dataset_variables[0] = []
         clear_output(wait=True)
         display(self.buttons['choose'])
         display(self.data_preparation_grid())
@@ -370,7 +371,7 @@ class Bodi:
         Displays buttons for independence test and cell operations.
         """
         data_frame = pd.read_csv(self.file_chooser.selected)
-        self.dataset_variables.append(data_frame.columns.values.tolist())
+        self.dataset_variables[0] = data_frame.columns.values.tolist()
         self.stattests.dataset = data_frame
 
         self.not_normal = self.check_normal_distribution(data_frame)

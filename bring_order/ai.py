@@ -101,7 +101,7 @@ class Ai:
         if not api_key:
             self.ai_error_msg = 'Please enter your Open AI api key'
             return True
-        
+
         try:
             openai.api_key = api_key
             response = openai.ChatCompletion.create(
@@ -112,17 +112,15 @@ class Ai:
             ])
 
             if not response.choices[0]['message']['content']:
-                self.ai_error_msg = f"Please enter correct Open AI API key. You recieved no respoonse from the AI assistant."
+                self.ai_error_msg = "Please enter correct Open AI API key. You recieved no respoonse from the AI assistant."
                 return True
-            
+
             return False
-        
+
         except openai.error.AuthenticationError as err:
             self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
-            return True 
-            
-    
-    
+            return True
+
     def toggle_ai(self, _=None):
         """Toggles the AI view"""
 
@@ -150,7 +148,7 @@ class Ai:
         self.utils.hide_current_input()
         self.utils.hide_selected_input()
 
-        if not self.api_key == None:
+        if self.api_key is not None:
             self.next_step[0] = 'bodi'
             return
 
@@ -180,10 +178,14 @@ class Ai:
         '''Constructs a string containing variables of the user's dataset and
            instructions to the AI assistant'''
 
-        variables = " The user wants to process a dataset with Python code. \
-            The dataset has certain variables. Refer to these given variables where appropriate. \
-            Variables of the dataset are: " + ', '.join(str(v) for v in self.dataset_variables[0])                
+        if self.dataset_variables[0] == []:
+            return ''
+
+        variables = "The user wants to process a dataset with Python code.\
+        The dataset has certain variables. Refer to these given variables where appropriate.\
+        Variables of the dataset are: " + ', '.join(str(v) for v in self.dataset_variables[0])
         self.utils.print_to_console(variables)
+
         return variables
 
     def display_ai(self, nlp_error= ''):

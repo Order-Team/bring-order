@@ -28,7 +28,7 @@ class BringOrder:
         self.inductive = None
         self.boval = BOVal()
         self.buttons = {}
-        self.dataset_variables = []
+        self.dataset_variables = [[]]
         self.ai_disabled = [False]
         # next_step is passed on to classes and used to track
         # which ui module to run next.
