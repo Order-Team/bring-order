@@ -32,7 +32,7 @@ class TestAi(unittest.TestCase):
         test_instructions = self.instance.add_instructions()
         self.assertEqual(test_instructions, 'The user wants to process a dataset with Python code.\
         The dataset has certain variables. Refer to these given variables where appropriate.\
-        Variables of the dataset are sepallength, sepalwidth, petallength, petalwidth, class')
+        Variables of the dataset are: sepallength, sepalwidth, petallength, petalwidth, class')
 
     def test_send_ai_disables_show_button(self):
         self.instance.buttons['show'].disabled = False
