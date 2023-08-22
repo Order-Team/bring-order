@@ -26,6 +26,8 @@ class Deductive:
             self.bogui.create_input_field()
         ]
         self.add_cells_int = self.bogui.create_int_text()
+        self.not_normal = None
+        self.checklist = None
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.result_description = self.bogui.create_text_area('', 'Results')
@@ -387,12 +389,19 @@ class Deductive:
 
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
+        self.boutils.print_to_console(self.checklist)
+        self.boutils.print_to_console(self.not_normal)
+        self.boutils.print_to_console(self.cell_count)
+        if self.not_normal is not None:
+            if len(self.not_normal) > 0:
+                for stat_test in self.checklist:
+                    self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
         self.boutils.run_cells_above(self.cell_count)
         if self.buttons['assist'].description == 'Close AI assistant':
             self.toggle_ai()
 
         self.deactivate_cell_operations()
-        clear_output(wait=True)
+        #clear_output(wait=True)
         cell_operations = self.__create_cell_operations_grid()
         conclusion = self.__create_conclusion_grid()
         display(cell_operations)

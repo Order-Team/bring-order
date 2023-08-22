@@ -35,6 +35,7 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.dataset_variables = dataset_variables
+        self.not_normal = None
         self.checklist = None
         self.next_step = next_step
         self.limitations_visible = False
@@ -171,10 +172,10 @@ class Bodi:
         clear_output(wait=True)
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
-        not_normal = self.check_normal_distribution(self.stattests.dataset)
-        if len(not_normal) > 0:
-            for stat_test in self.checklist:
-                self.boutils.check_cells_above(self.cell_count, stat_test, not_normal)
+        if self.not_normal is not None:
+            if len(self.not_normal) > 0:
+                for stat_test in self.checklist:
+                    self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
         self.boutils.run_cells_above(self.cell_count)
 
     def _display_limitations_view(self, _=None):
@@ -252,7 +253,7 @@ class Bodi:
             code=f"data_frame = pd.read_csv('{self.__check_file_path()}')",
             hide_input=False
         )
-        # Load config files for the tests to be checkked
+        # Load config files for the tests to be checked
         self.checklist = self.load_cfg_file(self.file_chooser.selected_path)
         self.check_variables()
 
@@ -369,15 +370,15 @@ class Bodi:
         self.dataset_variables.append(data_frame.columns.values.tolist())
         self.stattests.dataset = data_frame
 
-        not_normal = self.check_normal_distribution(data_frame)
-        for index, variable in enumerate(not_normal):
+        self.not_normal = self.check_normal_distribution(data_frame)        
+        for index, variable in enumerate(self.not_normal):
             if index != 0:
                 self.limitations.add_limitation()
             limitation = f'{variable} is not normally distributed'
             self.limitations.data_limitations[index].value = limitation
 
         clear_output(wait=True)
-        if len(not_normal) > 0:
+        if len(self.not_normal) > 0:
             message = self.limitations.get_limitations_for_print()
             display(self.data_preparation_grid(message=message))
         else:

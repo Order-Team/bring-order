@@ -88,6 +88,8 @@ class BringOrder:
         """
         self.close_buttons()
         self.deductive.data_limitations = self.bodi.limitations.data_limitations
+        self.deductive.not_normal = self.bodi.not_normal
+        self.deductive.checklist = self.bodi.checklist
         self.boutils.change_cell_count = self.deductive.change_cell_count
         return self.deductive.start_deductive_analysis()
 
