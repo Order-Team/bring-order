@@ -389,9 +389,9 @@ class Deductive:
 
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
-        self.boutils.print_to_console(self.checklist)
-        self.boutils.print_to_console(self.not_normal)
-        self.boutils.print_to_console(self.cell_count)
+        self.boutils.print_to_console('checklist: ' + str(self.checklist))
+        self.boutils.print_to_console('not_normal: ' + str(self.not_normal))
+        self.boutils.print_to_console('cell_count: ' + str(self.cell_count))
 
         self.deactivate_cell_operations()
         clear_output(wait=True)
@@ -409,7 +409,9 @@ class Deductive:
         self.boutils.run_cells_above(self.cell_count)
 
         if self.buttons['assist'].description == 'Close AI assistant':
-            self.toggle_ai()
+            self.buttons['assist'].description = 'AI assistant'
+            self.buttons['assist'].button_style = 'success'
+        #    self.toggle_ai()
 
     def clear_cells(self, _=None):
         """Clear button function to clear cells above"""

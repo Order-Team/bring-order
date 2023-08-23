@@ -168,9 +168,9 @@ class Bodi:
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
 
-        clear_output(wait=True)
-        display(self.data_preparation_grid(
-            message=self.limitations.get_limitations_for_print()))
+        #clear_output(wait=True)
+        #display(self.data_preparation_grid(
+        #    message=self.limitations.get_limitations_for_print()))
 
         if self.not_normal is not None:
             if len(self.not_normal) > 0:
@@ -179,8 +179,8 @@ class Bodi:
 
         self.boutils.run_cells_above(self.cell_count)
 
-        if self.buttons['assist'].description == 'Close AI assistant':
-            self._toggle_ai(False)
+        #if self.buttons['assist'].description == 'Close AI assistant':
+        #    self._toggle_ai(False)
 
     def _display_limitations_view(self, _=None):
         """Displays limitation view."""
