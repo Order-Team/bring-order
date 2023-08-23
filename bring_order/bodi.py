@@ -282,7 +282,7 @@ class Bodi:
             tests_to_check: list of test names
         """
         if sys.platform.startswith('win'):
-            cfg_file = cfg_path + "\bringorder.cfg"
+            cfg_file = cfg_path + "\\bringorder.cfg"
         else:
             cfg_file = cfg_path + "/bringorder.cfg"
         tests_to_check = []
