@@ -281,10 +281,13 @@ class Bodi:
         returns:
             tests_to_check: list of test names
         """
-        cfg_file = cfg_path + "/bringorder.cfg"
+        if sys.platform.startswith('win'):
+            cfg_file = cfg_path + "\bringorder.cfg"
+        else:
+            cfg_file = cfg_path + "/bringorder.cfg"
         tests_to_check = []
         try:
-            with open(cfg_file, encoding="utf-8") as get_cfg:
+            with open(cfg_file, 'r', encoding="utf-8") as get_cfg:
                 for line in get_cfg:
                     line = line.replace("\n", "")
                     tests_to_check.append(line)
