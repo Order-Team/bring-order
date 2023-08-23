@@ -50,7 +50,7 @@ class Ai:
         display_message = self.bogui.create_message('Your key is being processed...')
         display(display_message)
         api_key = self.api_key_input_field.value
-        if self.validate_api_key(api_key):
+        if not self.validate_api_key(api_key):
             clear_output(wait=True)
             self.display_ai_popup(self.ai_error_msg)
         else:
@@ -100,8 +100,9 @@ class Ai:
         """Button function for validating API key"""
         if not api_key:
             self.ai_error_msg = 'Please enter your Open AI api key'
-            return True
+            return False
 
+        """
         try:
             openai.api_key = api_key
             response = openai.ChatCompletion.create(
@@ -112,14 +113,26 @@ class Ai:
             ])
 
             if not response.choices[0]['message']['content']:
-                self.ai_error_msg = "Please enter correct Open AI API key. You recieved no respoonse from the AI assistant."
-                return True
+                self.ai_error_msg = "Please enter correct Open AI API key. You received no response from the AI assistant."
+                return False
 
-            return False
+            return True
+        """
+
+        try:
+            openai.api_key = api_key
+            response = openai.Model.list()
+
+            if not response.data[0]['object'] == 'model':
+                self.ai_error_msg = "Please enter correct Open AI API key. You received no response from the AI assistant."
+                return False
+            
+            return True
+
 
         except openai.error.AuthenticationError as err:
             self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
-            return True
+            return False
 
     def toggle_ai(self, _=None):
         """Toggles the AI view"""
