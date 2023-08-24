@@ -389,9 +389,6 @@ class Deductive:
 
     def run_cells(self, _=None):
         """Runs code cells, deactivates cell operations, and shows radiobuttons"""
-        self.boutils.print_to_console('checklist: ' + str(self.checklist))
-        self.boutils.print_to_console('not_normal: ' + str(self.not_normal))
-        self.boutils.print_to_console('cell_count: ' + str(self.cell_count))
 
         self.deactivate_cell_operations()
         clear_output(wait=True)

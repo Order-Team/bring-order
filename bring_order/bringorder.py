@@ -100,6 +100,8 @@ class BringOrder:
             function: sets self.inductive.start_inductive_analysis() to next_step
         """
         self.inductive.data_limitations = self.bodi.limitations.data_limitations
+        self.inductive.not_normal = self.bodi.not_normal
+        self.inductive.checklist = self.bodi.checklist
         self.close_buttons()
         self.boutils.change_cell_count = self.inductive.change_cell_count
         return self.inductive.start_inductive_analysis()

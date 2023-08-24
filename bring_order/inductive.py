@@ -31,6 +31,8 @@ class Inductive:
         self.boval = boval
         self.next_step = next_step
         self._cell_count = 0
+        self.not_normal = None
+        self.checklist = None
         self.conclusion = None
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
@@ -211,6 +213,11 @@ class Inductive:
 
         if self._cell_count <= 0:
             return
+        
+        if self.not_normal is not None:
+            if len(self.not_normal) > 0:
+                for stat_test in self.checklist:
+                    self.utils.check_cells_above(self._cell_count, stat_test, self.not_normal)
 
         self.utils.run_cells_above(self._cell_count)
         if self.conclusion:
