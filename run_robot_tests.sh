@@ -42,13 +42,8 @@ if [ -f './Untitled.ipynb' ];
 fi
 
 #remove slides
-if [ -f './bo_slides.pptx' ];
-  then
-    echo "Test files removed: bo_slides.pptx"
-    rm bo_slides.pptx
-  else
-    echo "No bo_slides.pptx files found."
-fi
+rm ./*.pptx
+
 
 #remove noteout
 rm noteout

@@ -17,9 +17,7 @@ class BOUtils:
 
         self.change_cell_count = lambda n: None
         self.prs = Presentation()
-        self.__slides = []
-        for counter in range(20):
-            self.__slides.append('slide'+str(counter))
+        self.pptx_file = ''
 
     def create_code_cells_above(self, how_many):
         """Creates code cells above the current cell
@@ -63,7 +61,7 @@ class BOUtils:
             Args:
                 context: str
         '''
-        #context = context.replace('\\n','\n')
+
         rows = context.split('\\n')
         slide_layout = self.prs.slide_layouts[6]
         slide = self.prs.slides.add_slide(slide_layout)
@@ -88,7 +86,7 @@ class BOUtils:
                 parag.text = row
                 parag.font.size = Pt(16)
         del slide
-        self.prs.save('bo_slides.pptx')
+        self.prs.save(self.pptx_file)
 
     def clear_code_cells_above(self, how_many):
         """Clears code cells above the active cell

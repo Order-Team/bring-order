@@ -410,6 +410,7 @@ class Bodi:
         elif not self.boval.value_not_empty_or_contains_symbols(self.fields[2].value):
             self.bodi(error = 'The data description cannot be empty or contain special characters')
         else:
+            self.boutils.pptx_file = self.fields[0].value + '.pptx'
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.file_chooser.register_callback(self.fc_callback)
             self.file_chooser.title = 'Choose a data file:'

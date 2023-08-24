@@ -84,8 +84,8 @@ class BOVal:
                 True: if string not contains special symbols
                 False: if string contains special symbols
         """
-        special_characters = "[{]}@\\*'+\"=<>"
-        if any(char in special_characters for char in value):
+        special_characters = ['[','{','@','</','\\','\'','\"','(\'','(\"','()','t(']
+        if any(symbol in value for symbol in special_characters):
             return False
 
         return True
@@ -99,8 +99,8 @@ class BOVal:
         """
         if not self.check_value_not_empty(value):
             return False
-        special_characters = "[{]}@\\*'+\"=<>"
-        if any(char in special_characters for char in value):
+        special_characters = ['[','{','@','</','\\','\'','\"','(\'','(\"','()','t(']
+        if any(symbol in value for symbol in special_characters):
             return False
 
         return True

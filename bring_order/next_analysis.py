@@ -73,9 +73,9 @@ class NextAnalysis:
     def _delete_presentation(self, _=None):
         '''Delete presentation template and display the export/close phase.'''
         try:
-            os.remove("bo_slides.pptx")
+            os.remove(self.boutils.pptx_file)
         except FileNotFoundError:
-            display(self.bogui.create_error_message("bo_slides.pptx file not found!"))
+            display(self.bogui.create_error_message("Any pptx file not found!"))
         self.all_done()
 
     def __repr__(self):
