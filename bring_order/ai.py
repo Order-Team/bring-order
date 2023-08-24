@@ -55,6 +55,7 @@ class Ai:
             self.display_ai_popup(self.ai_error_msg)
         else:
             clear_output(wait=True)
+            self.ai_disabled[0] = False
             self.next_step[0] = 'bodi'
             self.api_key=api_key
 
@@ -124,14 +125,15 @@ class Ai:
             response = openai.Model.list()
 
             if not response.data[0]['object'] == 'model':
-                self.ai_error_msg = "Please enter correct Open AI API key. You received no response from the AI assistant."
+                self.ai_error_msg = "Please enter correct Open AI API key.\
+                You received no response from the AI assistant."
                 return False
-            
             return True
 
 
-        except openai.error.AuthenticationError as err:
-            self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
+        except openai.error.AuthenticationError:
+            self.ai_error_msg = "Incorrect Open AI api key. You can generate API keys in the\
+            OpenAI web interface. See https://platform.openai.com/account/api-keys for details."
             return False
 
     def toggle_ai(self, _=None):

@@ -17,7 +17,6 @@ from next_analysis import NextAnalysis
 from ai import Ai
 from boval import BOVal
 
-
 class BringOrder:
     """Main class"""
     def __init__(self):
@@ -44,16 +43,8 @@ class BringOrder:
             self.ai_disabled,
             self.next_step
         )
-        self.bodi = Bodi(
-            self.boutils,
-            self.bogui,
-            self.boval,
-            self.dataset_variables,
-            self.ai_disabled,
-            self.next_step
-            )
+        self.bodi = None
         self.bring_order()
-
 
     @property
     def button_list(self):
