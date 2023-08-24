@@ -251,3 +251,10 @@ class TestInductive(unittest.TestCase):
         self.instance._cell_count = 2
         self.instance.change_cell_count(-3)
         self.assertEqual(self.instance._cell_count, 0)
+
+    def test_run_cells_checks_for_unsuitable_tests_in_code(self):
+        self.instance._cell_count = 2
+        self.instance.not_normal = ['sepallength', 'petalcount', 'petalwidth']
+        self.instance.checklist = ['zscore', 'pearson', 'oneway']
+        self.instance._run_cells()
+        self.instance.utils.check_cells_above.assert_called()
