@@ -182,3 +182,37 @@ class TestAi(unittest.TestCase):
             self.instance.ai_output_grid.footer,
             self.instance.buttons['show']
         )
+    
+    def test_incorrect_key_returns_false(self):
+        key = 'test_key'
+        self.assertFalse(self.instance.validate_api_key(key))
+
+    def test_empty_key_returns_false(self):
+        self.assertFalse(self.instance.validate_api_key(''))
+
+    def test_clear_ai_clears_nlp_value(self):
+        self.instance.natural_language_prompt.value = 'Test value'
+        self.instance.clear_ai()
+        self.assertEqual(self.instance.natural_language_prompt.value, '')
+    
+    def test_close_ai_clears_npl_value(self):
+        self.instance.natural_language_prompt.value = 'Test value'
+        self.instance.grid = MagicMock()
+        self.instance.close_ai()
+        self.assertEqual(self.instance.natural_language_prompt.value, '')
+    
+    def test_toggle_ai_call_close_ai_if_visible_is_true(self):
+        self.instance.visible = True
+        self.instance.close_ai = MagicMock()
+        self.instance.toggle_ai()
+        self.instance.close_ai.assert_called()
+
+    def test_toggle_ai_changes_visibility_if_visible_is_true(self):
+        self.instance.visible = True
+        self.instance.close_ai = MagicMock()
+        self.instance.toggle_ai()
+        self.assertEqual(self.instance.visible, False)
+
+    def test_empty_dataset_returns_correct_value(self):
+        self.instance.dataset_variables[0] = []
+        self.assertEqual(self.instance.add_instructions(),'')

@@ -31,6 +31,7 @@ class Deductive:
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.result_description = self.bogui.create_text_area('', 'Results')
+        self.buttons['save'].disabled = True
 
     @property
     def button_list(self):
@@ -255,6 +256,7 @@ class Deductive:
         """Calls check theory and hypothesis -
             function with paramenter False indicating Validate input -button is clicked
         """
+        self.buttons['save'].disabled = False
         self.check_theory_and_hypotheses(True)
 
     def check_theory_and_hypotheses(self, is_validate):
