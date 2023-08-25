@@ -258,3 +258,22 @@ class TestInductive(unittest.TestCase):
         self.instance.checklist = ['zscore', 'pearson', 'oneway']
         self.instance._run_cells()
         self.instance.utils.check_cells_above.assert_called()
+    
+    def test_execute_calls_summary_view(self):
+        self.instance._display_summary = MagicMock()
+        self.instance._execute_ready()
+        self.instance._display_summary.assert_called()
+    
+    def test_save_results_saves_correct_text(self):
+        self.instance.utils.create_markdown_cells_above = MagicMock()
+        self.instance._close_evaluation = MagicMock()
+        self.instance.data_limitations = [widgets.Text('Limitation1')]
+        self.instance.lists[2].append(widgets.Checkbox(value=False,description='Prec1'))
+        self.instance.lists[2].append(widgets.Checkbox(value=True,description='Prec2'))
+        self.instance.fields[4].value = 35
+        self.instance.fields[5].value = 50
+        self.instance._save_results()
+        self.instance.utils.create_markdown_cells_above.assert_called_once_with(how_many=1, text='### Evaluation of the analysis \\n#### Limitations that were noticed in the data:\\n- Limitation1\\n#### Evaluations:\\n- According to the pre-evaluation, the analysis confirmed\
+                approximately 35 % of the preconceptions.\\n- According to the final evaluation, the analysis confirmed approximately\
+                50 % of the preconceptions.\\n#### The analysis did not support these preconceptions:\\n- Prec1\\n')
+        self.instance._close_evaluation.assert_called()

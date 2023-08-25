@@ -17,8 +17,8 @@ class NextAnalysis:
             ('done', 'All done', self.all_done_pressed, 'success'),
             ('export', 'Export to pdf', self.export_to_pdf, 'success'),
             ('close', 'Close BringOrder', self.no_export, 'success'),
-            ('yes', 'Keep slides', self.all_done, 'success'),
-            ('no', 'Delete slides', self._delete_presentation, 'danger')
+            ('save', 'Save', self.all_done, 'success'),
+            ('cancel', 'Cancel', self._delete_presentation, 'warning')
         ]
 
         return button_list
@@ -34,9 +34,13 @@ class NextAnalysis:
 
     def all_done_pressed(self, _=None):
         '''Button function to display the presentation saving phase.'''
-        grid = widgets.HBox([
-            self.buttons['yes'],
-            self.buttons['no']
+        label = self.bogui.create_message('Do you want to save a presentation template?')
+        grid = widgets.VBox([
+            label,
+            widgets.HBox([
+                self.buttons['cancel'],
+                self.buttons['save']
+            ])
         ])
         clear_output(wait=True)
         display(grid)
@@ -75,7 +79,7 @@ class NextAnalysis:
         try:
             os.remove(self.boutils.pptx_file)
         except FileNotFoundError:
-            display(self.bogui.create_error_message("Any pptx file not found!"))
+            display(self.bogui.create_error_message("Something went wrong!"))
         self.all_done()
 
     def __repr__(self):

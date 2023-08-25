@@ -96,6 +96,17 @@ class TestBodi(unittest.TestCase):
         self.instance.checklist = None
         self.instance._run_cells()
         self.instance.boutils.run_cells_above.assert_called_with(3)
+    
+    def test_run_cells_checks_stats_if_not_normal_is_not_empty(self):
+        self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(f'{dv}{ph}')
+        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
+        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
+        self.instance.cell_count = 2
+        self.instance.checklist = [['ttest']]
+        self.instance.not_normal = ['test_value1', 'test_value2']
+        self.instance.boutils.check_cells_above = MagicMock()
+        self.instance._run_cells()
+        self.instance.boutils.check_cells_above.assert_called_with(2,['ttest'],['test_value1', 'test_value2'])
 
     def test_start_analysis_clicked_creates_markdown_cell(self):
         self.instance.limitations.format_limitations = MagicMock()

@@ -205,3 +205,17 @@ class TestDeductive(unittest.TestCase):
         self.instance.checklist = ['zscore', 'pearson', 'oneway']
         self.instance.run_cells()
         self.instance.boutils.check_cells_above.assert_called()
+
+    def test_submit_theory_calls_check_theory(self):
+        self.instance.check_theory_and_hypotheses = MagicMock()
+        self.instance.submit_theory_and_hypotheses()
+        self.instance.check_theory_and_hypotheses.assert_called_with(False)
+
+    def test_save_theory_saves_correct_text(self):
+        self.instance.boutils.create_markdown_cells_above = MagicMock()
+        self.instance.hypotheses[0].value = 'Test value'
+        self.instance.hypotheses[1].value = 'Null test value'
+        self.instance.theory_desc.value = 'The first claim\nThe second claim'
+        self.maxDiff = None
+        self.instance.save_theory_and_hypotheses()
+        self.instance.boutils.create_markdown_cells_above.assert_called_with(1,text='## Testing hypothesis: Test value\\n### Theory and insights\\nThe first claim<br />The second claim\\n### Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n### Data analysis')
