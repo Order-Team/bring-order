@@ -219,18 +219,9 @@ class Inductive:
 
         if self._cell_count <= 0:
             return
-        
-        if self.not_normal is not None:
-            if len(self.not_normal) > 0:
-                for stat_test in self.checklist:
-                    self.utils.check_cells_above(self._cell_count, stat_test, self.not_normal)
 
-        self.utils.run_cells_above(self._cell_count)
-        if self.conclusion:
-            self.conclusion.close()
-
+        cell_buttons = self._create_cell_operations()
         self._buttons_disabled(True)
-
         notes_label = self.bogui.create_label(value='Explain what you observed:')
         self.conclusion = widgets.VBox([
             widgets.HBox([notes_label, self.fields[1]]),
@@ -238,7 +229,16 @@ class Inductive:
             self.buttons['submit_obs']
         ])
 
+        clear_output(wait=True)
+        display(cell_buttons)
         display(self.conclusion)
+
+        if self.not_normal is not None:
+            if len(self.not_normal) > 0:
+                for stat_test in self.checklist:
+                    self.utils.check_cells_above(self._cell_count, stat_test, self.not_normal)
+
+        self.utils.run_cells_above(self._cell_count)
 
     def _format_observation(self):
         """Formats observation for markdown.
@@ -269,9 +269,12 @@ class Inductive:
             self._buttons_disabled(False)
             self.buttons['assist'].disabled = self.ai_disabled[0]
             self.fields[3].value = ''
-            self.conclusion.close()
             self.fields[1].value = ''
             self._cell_count = 0
+
+            clear_output(wait=True)
+            display(self._create_cell_operations())
+            self.buttons['ready'].disabled = False
 
         else:
             self.fields[3].value = 'The observation cannot be empty or contain special symbols'

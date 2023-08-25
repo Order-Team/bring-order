@@ -175,6 +175,9 @@ class Bodi:
         clear_output(wait=True)
         display(self.data_preparation_grid(
             message=self.limitations.get_limitations_for_print()))
+        display(self.bogui.create_message(
+            '<h4>Check limitations if you are ready to start analysis.</h4>'
+        ))
 
         if self.not_normal is not None:
             if len(self.not_normal) > 0:
@@ -252,7 +255,7 @@ class Bodi:
         )
         self.boutils.execute_cell_from_current(
             distance=1,
-            code=f"data_frame = pd.read_csv('{self.__check_file_path()}')",
+            code=f"df = pd.read_csv('{self.__check_file_path()}')",
             hide_input=False
         )
         # Load config files for the tests to be checked
