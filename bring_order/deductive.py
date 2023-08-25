@@ -64,9 +64,15 @@ class Deductive:
         if self.buttons['assist'].description == 'AI assistant':
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = True
         else:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = False
         self.next_step[0] = 'toggle_ai'
 
     def __create_hypotheses_grid(self, hypo_error='',
@@ -406,11 +412,6 @@ class Deductive:
                     self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
 
         self.boutils.run_cells_above(self.cell_count)
-
-        if self.buttons['assist'].description == 'Close AI assistant':
-            self.buttons['assist'].description = 'AI assistant'
-            self.buttons['assist'].button_style = 'success'
-        #    self.toggle_ai()
 
     def clear_cells(self, _=None):
         """Clear button function to clear cells above"""

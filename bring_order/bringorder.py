@@ -105,7 +105,6 @@ class BringOrder:
         next_step = 'new_data'
         # Import loop:
         while next_step == 'new_data':
-            self.ai.visible = False
             self.bodi = Bodi(
                 self.boutils,
                 self.bogui,
@@ -121,7 +120,6 @@ class BringOrder:
             while next_step == 'start_analysis':
                 next_step = self.get_next(self.start_analysis)
                 # Branching to deductive/inductive:
-                self.ai.visible = False
                 if next_step == 'deductive_analysis':
                     next_step = self.get_next(self.start_deductive_analysis,
                                             subroutines=[self.ai.toggle_ai])

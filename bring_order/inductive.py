@@ -83,9 +83,15 @@ class Inductive:
         if self.buttons['assist'].description == 'AI assistant':
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = True
         else:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = False
         self.next_step[0] = 'toggle_ai'
 
     def start_inductive_analysis(self):
@@ -222,9 +228,6 @@ class Inductive:
         self.utils.run_cells_above(self._cell_count)
         if self.conclusion:
             self.conclusion.close()
-
-        if self.buttons['assist'].description == 'Close AI assistant':
-            self.toggle_ai()
 
         self._buttons_disabled(True)
 

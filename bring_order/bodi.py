@@ -67,7 +67,7 @@ class Bodi:
 
         return button_list
 
-    def _toggle_ai(self, _=None, showAI = True):
+    def _toggle_ai(self, _=None):
         """Button function to open/close AI assistant.
         
         Args:
@@ -83,12 +83,16 @@ class Bodi:
             display(self.data_preparation_grid(message))
             self.buttons['assist'].description = 'Close AI assistant'
             self.buttons['assist'].button_style = 'warning'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = True
         else:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
-
-        if showAI:
-            self.next_step[0] = 'toggle_ai'
+            for button in self.buttons:
+                if button != 'assist':
+                    self.buttons[button].disabled = False
+        self.next_step[0] = 'toggle_ai'
 
     def _add_limitation(self, _=None):
         """Button function for adding new limitation."""
@@ -168,9 +172,9 @@ class Bodi:
     def _run_cells(self, _=None):
         """Button function that runs cells for manual data import"""
 
-        #clear_output(wait=True)
-        #display(self.data_preparation_grid(
-        #    message=self.limitations.get_limitations_for_print()))
+        clear_output(wait=True)
+        display(self.data_preparation_grid(
+            message=self.limitations.get_limitations_for_print()))
 
         if self.not_normal is not None:
             if len(self.not_normal) > 0:
@@ -179,14 +183,8 @@ class Bodi:
 
         self.boutils.run_cells_above(self.cell_count)
 
-        #if self.buttons['assist'].description == 'Close AI assistant':
-        #    self._toggle_ai(False)
-
     def _display_limitations_view(self, _=None):
         """Displays limitation view."""
-
-        if self.buttons['assist'].description == 'Close AI assistant':
-            self._toggle_ai()
 
         limitation_grid = self.limitations.create_limitation_grid()
         limitation_grid.footer=widgets.VBox([
@@ -347,9 +345,6 @@ class Bodi:
 
             for button in ['open', 'delete', 'run', 'assist', 'limitations']:
                 self.buttons[button].disabled = True
-
-            if self.buttons['assist'].description == 'Close AI assistant':
-                self._toggle_ai()
 
             clear_output(wait=True)
             display(self.data_preparation_grid())
