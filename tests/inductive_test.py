@@ -277,3 +277,29 @@ class TestInductive(unittest.TestCase):
                 approximately 35 % of the preconceptions.\\n- According to the final evaluation, the analysis confirmed approximately\
                 50 % of the preconceptions.\\n#### The analysis did not support these preconceptions:\\n- Prec1\\n')
         self.instance._close_evaluation.assert_called()
+
+    def test_save_results_saves_correct_text_if_all_preconceptions_are_true(self):
+        self.instance.utils.create_markdown_cells_above = MagicMock()
+        self.instance.data_limitations = [widgets.Text('Limitation1')]
+        self.instance.lists[2].append(widgets.Checkbox(value=True,description='Prec1'))
+        self.instance.lists[2].append(widgets.Checkbox(value=True,description='Prec2'))
+        self.instance.fields[4].value = 25
+        self.instance.fields[5].value = 15
+        self.instance._save_results()
+        self.instance.utils.create_markdown_cells_above.assert_called_once_with(how_many=1, text='### Evaluation of the analysis \\n#### Limitations that were noticed in the data:\\n- Limitation1\\n#### Evaluations:\\n- According to the pre-evaluation, the analysis confirmed\
+                approximately 25 % of the preconceptions.\\n- According to the final evaluation, the analysis confirmed approximately\
+                15 % of the preconceptions.\\n#### Note that the analysis appears to confirm\
+            all stated preconceptions!\\n')
+
+    def test_complete_evaluation_saves_correct_text(self):
+        self.instance.fields[6] = widgets.Text('The difference between evaluations evaluation caused by testing')
+        self.instance.utils.create_markdown_cells_above = MagicMock()
+        self.instance._complete_evaluation()
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='### The difference between the pre- and final evaluation caused by: \\nThe difference between evaluations evaluation caused by testing')
+
+    def test_complete_evaluation_saves_correct_text_if_explanation_is_empty(self):
+        self.instance.fields[6] = widgets.Text('')
+        self.instance.utils.create_markdown_cells_above = MagicMock()
+        self.instance._complete_evaluation()
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='### The difference between the pre- and final evaluation caused by: \\nNo explanation was given!')
+

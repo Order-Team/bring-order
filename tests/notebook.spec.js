@@ -144,7 +144,7 @@ test('import csv data without variable independence testing', async ({ page, con
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('test_iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});  
-  await newPage.getByRole('button', { name: 'Analyze this data' }).click();
+  await newPage.getByRole('button', { name: 'Analyze this data' }).click({delay: 100});
   await newPage.getByRole('button', { name: 'Test independence' }).click();
   await expect(newPage.getByText('There are not enough categorical variables to perform a chi-square test.')).toBeVisible();
 });
@@ -163,5 +163,5 @@ test('manual import data with ai assistant', async ({ page, context }) => {
   await newPage.locator('input[type="password"]').click();
   await newPage.locator('input[type="password"]').fill('testpassword');
   await newPage.getByRole('button', { name: 'Submit key' }).click();
-  //await expect(newPage.getByText('Please enter correct OpenAI API key.')).toBeVisible();
+  await expect(newPage.getByText('Incorrect Open AI api key. You can generate API keys in the OpenAI web interface.')).toBeVisible();
 });

@@ -67,11 +67,6 @@ class BOGui:
                               layout=widgets.Layout(justify_content='flex-end'))
         return label
 
-    def create_placeholder(self):
-        """Creates empty label"""
-        placeholder = self.create_label('')
-        return placeholder
-
     def create_grid(self, rows, cols, items, width='50%'):
         """Creates grid of widgets"""
         grid = widgets.GridspecLayout(rows,

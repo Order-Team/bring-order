@@ -50,9 +50,9 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.locator('div').filter({ hasText: /^50$/ }).first().click();
   await newPage.getByRole('button', { name: 'Save' }).click();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await expect(newPage.getByRole('button', { name: 'Keep slides' })).toBeEnabled();
-  await expect(newPage.getByRole('button', { name: 'Delete slides' })).toBeEnabled();
-  await newPage.getByRole('button', { name: 'Delete slides' }).click();
+  await expect(newPage.getByRole('button', { name: 'Save' })).toBeEnabled();
+  await expect(newPage.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+  await newPage.getByRole('button', { name: 'Cancel' }).click();
   await expect(newPage.getByRole('button', { name: 'Export to pdf' })).toBeEnabled();
   await expect(newPage.getByRole('button', { name: 'Close BringOrder' })).toBeEnabled();
   await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
@@ -150,6 +150,6 @@ test('Data limitations are printed in evaluation', async ({ page, context }) => 
   await expect(newPage.getByText('Nothing about the dogs.').nth(3)).toBeVisible();
   await expect(newPage.getByRole('heading', { name: 'Limitations that were noticed in the data:' })).toBeVisible();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await newPage.getByRole('button', { name: 'Delete slides' }).click();
+  await newPage.getByRole('button', { name: 'Cancel' }).click();
   await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
 });

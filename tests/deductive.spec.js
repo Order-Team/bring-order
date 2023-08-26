@@ -34,7 +34,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(1).fill('Test hypothesis is in correct form');
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Test null hypothesis is in correct form');
-  await newPage.getByRole('button', { name: 'Save and continue' }).click();
+  await newPage.getByRole('button', { name: 'Validate input' }).click();
   await expect(newPage.getByRole('button', { name: 'Yes' })).toBeEnabled();
   await expect(newPage.getByRole('button', { name: 'No' })).toBeEnabled();
   await expect(newPage.getByRole('heading', { name: 'Do the hypotheses fit within the limitations of the data set?' })).toBeVisible();
@@ -66,13 +66,14 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 100});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
   await newPage.getByRole('button', { name: 'Test hypothesis' }).click();
-  await newPage.getByRole('button', { name: 'Save and continue' }).click();
+  await expect(newPage.getByRole('button', { name: 'Save and continue' })).toBeDisabled();
+  await newPage.getByRole('button', { name: 'Validate input'}).click();
   await expect(newPage.getByText('The theory must contain at least 3 words and must not contain special characters')).toBeVisible();
   await expect(newPage.getByText('The hypothesis must contain at least 3 words and must not contain special characters')).toBeVisible();
   await expect(newPage.getByText('The null hypothesis must contain at least 3 words and must not contain special characters')).toBeVisible();
@@ -158,7 +159,7 @@ test('deductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByPlaceholder('Results').fill('Test results');
   await newPage.getByRole('button', { name: 'Save' }).click();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await newPage.getByRole('button', { name: 'Delete slides' }).click();
+  await newPage.getByRole('button', { name: 'Cancel' }).click();
   await expect(newPage.getByRole('button', { name: 'Export to pdf' })).toBeEnabled();
   await expect(newPage.getByRole('button', { name: 'Close BringOrder' })).toBeEnabled();
 });
@@ -212,6 +213,6 @@ test('deductive analysis conclusions includes data limitations', async ({ page, 
   await expect(newPage.getByText('sepallength is not normally distributed').nth(1)).toBeVisible();
   await expect(newPage.getByText('Data has nothing to do with animals.').nth(1)).toBeVisible();
   await newPage.getByRole('button', { name: 'All done' }).click();
-  await newPage.getByRole('button', { name: 'Keep slides' }).click();
+  await newPage.getByRole('button', { name: 'Save' }).click();
   await newPage.getByRole('button', { name: 'Close BringOrder' }).click();
 });
