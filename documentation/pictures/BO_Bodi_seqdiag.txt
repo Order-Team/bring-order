@@ -1,0 +1,77 @@
+title BringOrder Bodi: Data import and preparation
+
+#Start BringOrder
+BringOrder ->+ BringOrder: Start bring_order()
+
+BringOrder -> Bodi: Init Bodi (see init phase)
+Bodi ->+ BOGui: Init UI components
+BOGui -->- Bodi:
+Bodi -> Limitations: Init limitations (bogui, boval)
+Limitations ->+ BOGui: Init UI components
+BOGui -->- Limitations:
+Bodi -> Stattest: Init stattest (bogui)
+Bodi --> BOUtils: boutils.change_cell_count = bodi.change_cell_count
+BringOrder -> BringOrder: get_next()
+
+# AI popup for api key
+BringOrder ->+ Ai: display_ai_popup
+Ai -> Ai:
+note right of Ai: Send api key to enable\nor skip to disable open ai
+Ai -->- BringOrder: next_step = bodi
+
+#Data description and title.
+BringOrder -> BringOrder: get_next(bodi.bodi)
+BringOrder ->+ Bodi: bodi.bodi()
+Bodi -> BOUtils: hide inputs
+Bodi ->+ BOGui: create labels
+note right of Bodi: User inputs for \n Title and descr.
+BOGui -->- Bodi:
+Bodi ->+ Bodi: _start_data_import()
+    Bodi -> BOUtils: create_markdown_cells
+    Bodi -> Bodi: display_file_chooser()
+    note over Bodi: manual import skips\n limitations check
+    Bodi -> Bodi: fc_callback()
+    Bodi ->- Bodi: _import_data()
+
+#Data limitations and preparation
+Bodi -> BOUtils: create and run code cells for data import
+Bodi -> Bodi: Load cfg file
+Bodi ->+ Bodi: check_variables()
+    Bodi ->+ Bodi: load data frame given by user
+        Bodi ->> Stattest: Set dataframe in stattest
+        Bodi -> Bodi: chk_normal_distr.()
+        Bodi ->+ Stattest: check_numerical_data(data)
+        Stattest -->- Bodi: checked data indexes
+        Bodi -> Limitations: add_limitation()\n non n-distributed indexes
+        Bodi ->+ Limitations: get_limitations_for_print()
+        Limitations -->- Bodi:
+        Bodi -> Bodi: data_preparation_grid()
+
+#Data preparation view
+Opt Data preparation: Buttons in this view repeatable in any order until 'Start analysis' is clicked and check limitations returns True.
+        Bodi -> BOUtils: 'open' cells
+        Bodi -> BOUtils: 'delete' last cells
+        Bodi -> BOUtils: 'run' cells
+        Bodi ->+ Bodi: 'test independence' \ndisplay_indepence_test
+            Bodi ->+ Stattest: select_variables()
+            Stattest -->- Bodi: Return message or error
+            Bodi ->+ Stattest: check_variable_independence()
+            Stattest -->- Bodi: return result
+            Bodi -> Limitations: add_limitation()
+            Bodi -->- Bodi: _close_independence_test
+        Bodi -> Bodi: 'assist' _toggle_ai\n to open/close ai view
+    Bodi -->BringOrder: next_step = 'toggle_ai'
+BringOrder -> BringOrder: get_next(toggle_ai) \n to open/close ai view
+BringOrder -> Ai: toggle_ai()
+        Bodi -> Bodi: Check Limitations to view,\n add or remove limitations 
+        Bodi -> Limitations: add / remove limits
+        Bodi ->- Bodi: 'Start analysis'
+    Bodi -> Limitations: call_check_limitation()
+    Limitations --> Bodi: True / False
+    Bodi -> BOUtils: create_markdown_cells
+end opt
+    Bodi -->- BringOrder: next_step = start_analysis
+    
+    BringOrder -> BringOrder: start_analysis()
+    note over  BringOrder: Start inductive or deductive analysis.
+    

@@ -1,0 +1,30 @@
+title BringOrder Initialization 
+
+#Initialization
+BringOrder -> BOUtils: Init boutils
+BringOrder -> BOGui: Init bogui
+BringOrder -> BOVal: Init boval
+BOVal -> BOVal: load language model
+
+BringOrder -> NextAnalysis: Init NextAnalysis (bogui, boutils, next_step)
+NextAnalysis ->+ BOGui: Init buttons
+BOGui -->- NextAnalysis:
+
+BringOrder -> Ai: init Ai (bogui, boutils, dataset_variables, ai_disabled, next_step)
+Ai ->+ BOGui: Init UI components
+BOGui -->- Ai:
+
+#Start BringOrder
+BringOrder ->+ BringOrder: Start bring_order()
+
+BringOrder -> Bodi: Init Bodi (bogui, boutils, boval, dataset_variables, ai_disabled, next_step)
+Bodi ->+ BOGui: Init UI components
+BOGui -->- Bodi:
+Bodi -> Limitations: Init limitations (bogui, boval)
+Limitations ->+ BOGui: Init UI components
+BOGui -->- Limitations:
+Bodi -> Stattest: Init stattest (bogui)
+
+Bodi --> BOUtils: boutils.change_cell_count = bodi.change_cell_count
+BringOrder -> BringOrder: get_next()
+BringOrder ->+ Ai: Display_ai_popup
