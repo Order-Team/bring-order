@@ -2,20 +2,48 @@
 //https://yuml.me/diagram/scruffy/class/draw
 
 //classes
-[BringOrder{bg:red}|bring_order();_inductive();_deductive();close_buttons();start_deductive_analysis();start_inductive_analysis();get_next(function, subroutines);start_analysis()]
+[BringOrder{bg:red}|bring_order();_inductive();_deductive();close_buttons();start_deductive_analysis();start_inductive_analysis();get_next(function
+subroutines);start_analysis()]
 
 [Bodi{bg:green}|_toggle_ai();_add_limitation();_remove_limitation();data_preparation_grid(message);_show_cell_operations();_open_cells();_delete_last_cell();_run_cells();_display_limitations_view();format_data_description()_start_analysis_clicked();fc_callback();_import_data();check_normal_distribution(data_frame);_check_variable_independence();_display_independence_test();_close_independence_test();check_variables();_display_file_chooser();_start_data_import();load_cfg_file(cfg_path);bodi(error);__check_file_path();change_cell_count(number)]
 
 [Inductive{bg:green}|_toggle_ai();start_inductive_analysis();_add_preconception();_check_preconceptions();_format_preconceptions();_save_preconceptions();_create_preconception_grid(error);_open_cells();_delete_last_cell();_clear_cells();_buttons_disabled();_run_cells();_format_observation();_new_observation();_execute_ready()_display_summary(error);_format_summary();_submit_summary();_evaluation_of_analysis();_lock_evaluation_pressed();_save_results();_checkbox_preconceptions();_create_cell_operations();_close_evaluation();__check_evaluation_difference();_complete_evaluation();change_cell_count(number)]
 
-[Deductive{bg:green}|_toggle_ai();__create_hypotheses_grid(hypo_error, null_error, hypo_error_color, null_error_color); __create_theory_grid(error, color);start_deductive_analysis();clear_theory();focus_first_empty(input_list);_get_error_messages();_get_warning_messages();__create_limitation_prompt();__implement_error_messages(error, warning);submit_theory_and_hypotheses();__validate_theory_and_hypotheses();check_theory_and_hypotheses(is_validate);bad_hypotheses(); _format_hypotheses_and_theory();save_theory_and_hypotheses();clear_hypotheses();delete_last_cell();open_cells();deactivate_cell_operations();__create_conclusion_grid();run_cells();clear_cells();__create_cell_operations_grid();save_results();change_cell_count(number)]
+[Deductive{bg:green}|_toggle_ai();__create_hypotheses_grid(hypo_error
+null_error
+hypo_error_color
+null_error_color); __create_theory_grid(error
+color);start_deductive_analysis();clear_theory();focus_first_empty(input_list);_get_error_messages();_get_warning_messages();__create_limitation_prompt();__implement_error_messages(error
+warning);submit_theory_and_hypotheses();__validate_theory_and_hypotheses();check_theory_and_hypotheses(is_validate);bad_hypotheses(); _format_hypotheses_and_theory();save_theory_and_hypotheses();clear_hypotheses();delete_last_cell();open_cells();deactivate_cell_operations();__create_conclusion_grid();run_cells();clear_cells();__create_cell_operations_grid();save_results();change_cell_count(number)]
 
-[Ai{bg:blue}|initiate_ai();disable_ai();send_ai();remove_ai_error_message();clear_ai();valitade_api_key;close_ai();display_ai_output(message, ai_output);toggle_ai();display_ai(api_key_error, lp_error, context_error);display_ai_error_message();display_ai_popup();openai_api();format_response(text);show_response();hide_response()]
+[Ai{bg:blue}|initiate_ai();disable_ai();send_ai();remove_ai_error_message();clear_ai();valitade_api_key;close_ai();display_ai_output(message
+ai_output);toggle_ai();display_ai(api_key_error
+lp_error
+context_error);display_ai_error_message();display_ai_popup();openai_api();format_response(text);show_response();hide_response()]
 
-[BOGui{bg:purple}|create_button(desc, command, style, tooltip);init_buttons(buttons);create_message(value, style);create_error_message(value, color);create_input_field(default_value, placeholder);create_text_area(default_value, place_holder);create_label(value);create_placeholder();create_grid(rows, cols, items, width);create_int_text(default_value, desc);create_radiobuttons(options, desc);create_checkbox(desc);create_file_chooser();create_int_slider();create_password_field(default_value, placeholder)]
+[BOGui{bg:purple}|create_button(desc
+command
+style
+tooltip);init_buttons(buttons);create_message(value
+style);create_error_message(value
+color);create_input_field(default_value
+placeholder);create_text_area(default_value
+place_holder);create_label(value);create_grid(rows
+cols
+items
+width);create_int_text(default_value
+desc);create_radiobuttons(options
+desc);create_checkbox(desc);create_file_chooser();create_int_slider();create_password_field(default_value
+placeholder)]
 
 
-[BOUtils{bg:purple}|create_code_cells_above();create_markdown_cells_above(how_many, text, run_cell);clear_code_cells_above(how_many);delete_cell_above();delete_cell_from_current(distance);run_cells_above(cell_count);execute_cell_from_current(distance, code, hide_input);hide_selected_input();hide_current_input();print_to_console(msg);check_cells_above(cell_count, test_name, variables);get_python_code_from_response(response);insert_ai_code_into_new_cell(code;__create_slide(context)]
+[BOUtils{bg:purple}|create_code_cells_above();create_markdown_cells_above(how_many
+text
+run_cell);clear_code_cells_above(how_many);delete_cell_above();delete_cell_from_current(distance);run_cells_above(cell_count);execute_cell_from_current(distance
+code
+hide_input);hide_selected_input();hide_current_input();print_to_console(msg);check_cells_above(cell_count
+test_name
+variables);get_python_code_from_response(response);insert_ai_code_into_new_cell(code;__create_slide(context)]
 
 [NextAnalysis{bg:purple}|new_analysis_view();all_done();all_done_pressed;start_new_analysis();prepare_new_data_pressed();export_to_pdf();no_export();_delete_presentation();]
 
@@ -29,11 +57,12 @@
 [BringOrder{bg:red}] -> [Bodi{bg:green}]
 [BringOrder{bg:red}] -> [Inductive{bg:green}]
 [BringOrder{bg:red}] -> [Deductive{bg:green}]
-[BringOrder{bg:red}] -> [Ai{bg:blue}]
-[BringOrder{bg:red}] -> [BOGui{bg:purple}]
-[BringOrder{bg:red}] -> [BOUtils{bg:purple}]
-[BringOrder{bg:red}] -> [NextAnalysis{bg:purple}]
-[BringOrder{bg:red}]->[BOVal{bg:purple}]
+//[BringOrder{bg:red}] -> [Ai{bg:blue}]
+[Ai{bg:blue}] <- [BringOrder{bg:red}]
+[BOGui{bg:purple}] <- [BringOrder{bg:red}]
+[BOUtils{bg:purple}] <- [BringOrder{bg:red}]
+[NextAnalysis{bg:purple}] <- [BringOrder{bg:red}]
+[BOVal{bg:purple}] <- [BringOrder{bg:red}]
 
 [Bodi{bg:green}] -> [Stattest{bg:purple}]
 [Bodi{bg:green}] -> [Limitations{bg:purple}]

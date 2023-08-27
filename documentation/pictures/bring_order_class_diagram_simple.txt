@@ -1,14 +1,16 @@
-// BringOrder Class Diagram
+// BringOrder Class Diagram with methods
 //https://yuml.me/diagram/scruffy/class/draw
 
-[BringOrder{bg:red}]->[Bodi{bg:green}]
-[BringOrder{bg:red}]->[Inductive{bg:green}]
-[BringOrder{bg:red}]->[Deductive{bg:green}]
-[BringOrder{bg:red}]->[Ai{bg:blue}]
-[BringOrder{bg:red}]->[BOGui{bg:purple}]
-[BringOrder{bg:red}]->[BOUtils{bg:purple}]
-[BringOrder{bg:red}]->[NextAnalysis{bg:purple}]
-[BringOrder{bg:red}]->[BOVal{bg:purple}]
+//dependencies
+[BringOrder{bg:red}] -> [Bodi{bg:green}]
+[BringOrder{bg:red}] -> [Inductive{bg:green}]
+[BringOrder{bg:red}] -> [Deductive{bg:green}]
+//[BringOrder{bg:red}] -> [Ai{bg:blue}]
+[Ai{bg:blue}] <- [BringOrder{bg:red}]
+[BOGui{bg:purple}] <- [BringOrder{bg:red}]
+[BOUtils{bg:purple}] <- [BringOrder{bg:red}]
+[NextAnalysis{bg:purple}] <- [BringOrder{bg:red}]
+[BOVal{bg:purple}] <- [BringOrder{bg:red}]
 
 [Bodi{bg:green}] -> [Stattest{bg:purple}]
 [Bodi{bg:green}] -> [Limitations{bg:purple}]
