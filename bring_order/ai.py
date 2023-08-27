@@ -196,7 +196,7 @@ class Ai:
         if self.dataset_variables[0] == []:
             return ''
 
-        variables = "The user wants to process a dataset with Python code. Assume that the dataset is stored in a pandas DataFrame called 'df'\
+        variables = "The user wants to process a dataset with Python code. Assume that the dataset is stored in a pandas DataFrame called 'df'.\
         The dataset has certain variables. Refer to these given variables where appropriate.\
         Variables of the dataset are: " + ', '.join(str(v) for v in self.dataset_variables[0])
         self.utils.print_to_console(variables)
