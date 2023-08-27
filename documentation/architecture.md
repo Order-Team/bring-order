@@ -8,7 +8,14 @@ The `Deductive` class takes care of the former and the `Inductive` class of the 
 All these classes depend on the `BOGui` class that consists of general methods for creating Jupyter widgets and the `BOUtils` class that has methods for executing Javascript inside Jupyter Notebook.
 
 ## Class Diagram
-Image coming up...
+Simple class diagram of BringOrder:
+
+![Class diagram](./pictures/classdiag_simple.png)
+
+More detailed class diagrams:
+
+- [Class diagram with functions](./pictures/classdiag_with_functions.png)
+- [Full Class diagram with class variables and functions](./pictures/classdiag_with_functions.png)
 
 ## Class Details
 ### BringOrder
@@ -46,3 +53,15 @@ Methods:
 The [BOUtils](https://github.com/Order-Team/bring-order/blob/main/bring_order/boutils.py) class consists of methods that run Javascript inside Jupyter Notebook. They are used to, for example, create, run, and delete code and Markdown cells.
 A BOUtils object is also created automatically with a BringOrder object and shared with other created objects.
 
+### BOVal
+
+### NextAnalysis
+
+### Ai
+
+### Stattest
+
+## Decription of functionality
+
+- [Sequence diagram of initialization](./pictures/BO_init_seqdiag.png)
+- [Sequence diagram of Bodi](./pictures/BO_Bodi_seqdiag.png)
