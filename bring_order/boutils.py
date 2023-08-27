@@ -249,17 +249,31 @@ class BOUtils:
             code (str): the Python code from the response
         """
 
-        try:
-            code = response.split('```python\n')[1].split('\n```')[0]
-        except IndexError:
+        #code = response.split('```python\n')[1].split('\n```')[0]
+        substrings = []
+        start = 0
+        while True:
+            start = response.find('```python\n', start)
+            if start == -1:
+                break
+            start += len('```python"')
+            end = response.find('\n```', start)
+            if end == -1:
+                break
+            code = response[start:end]
+            code = code.replace('\\', '\\\\')
+            code = code.replace('\n', '\\n')
+            code = code.replace('"', '\\"')
+            code = code.replace("'", "\\'")
+            substrings.append(code)
+            start = end
+
+        if substrings:
+            self.print_to_console("\\n".join(substrings))
+            return "\\n".join(substrings)
+        else:
             return 'No Python code in the response'
-
-        code = code.replace('\\', '\\\\')
-        code = code.replace('\n', '\\n')
-        code = code.replace('"', '\\"')
-        code = code.replace("'", "\\'")
-
-        return code
+        
 
     def insert_ai_code_into_new_cell(self, code=''):
         """Opens new empty code cell and inserts the given code into it.
