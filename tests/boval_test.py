@@ -133,3 +133,6 @@ class TestBoval(unittest.TestCase):
     def test_list_value_is_not_lemmatized(self):
         value = ['she', 'is', 'going', 'to', 'buy', 'an', 'interesting', 'book']
         self.assertFalse(self.boval.check_text_is_lemmatized(value))
+
+    def test_value_contains_only_special_character(self):
+        self.assertFalse(self.boval.value_not_empty_or_contains_symbols("@"))
