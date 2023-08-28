@@ -43,7 +43,7 @@ run_cell);clear_code_cells_above(how_many);delete_cell_above();delete_cell_from_
 code
 hide_input);hide_selected_input();hide_current_input();print_to_console(msg);check_cells_above(cell_count
 test_name
-variables);get_python_code_from_response(response);insert_ai_code_into_new_cell(code;__create_slide(context)]
+variables);get_python_code_from_response(response);insert_ai_code_into_new_cell(code;__create_slide(context);focus_on_input_above(distance);]
 
 [NextAnalysis{bg:purple}|new_analysis_view();all_done();all_done_pressed;start_new_analysis();prepare_new_data_pressed();export_to_pdf();no_export();_delete_presentation();]
 
