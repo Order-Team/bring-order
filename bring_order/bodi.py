@@ -21,6 +21,7 @@ class Bodi:
                     2 = data_description
                     3 = add_cells_int
         """
+
         self.boutils = boutils
         self.bogui = bogui
         self.boval = boval
@@ -35,8 +36,8 @@ class Bodi:
         self.file_chooser = self.bogui.create_file_chooser()
         self.stattests = Stattests(self.bogui)
         self.dataset_variables = dataset_variables
-        self.not_normal = None
-        self.checklist = None
+        self.not_normal = []
+        self.checklist = []
         self.next_step = next_step
         self.limitations_visible = False
 
@@ -47,6 +48,7 @@ class Bodi:
         Returns:
             list of tuples in format (tag: str, description: str, command: func, style: str)
         """
+
         button_list = [
             ('save', 'Save description', self._start_data_import, 'success'),
             ('analyze', 'Analyze this data', self._import_data, 'success'),
@@ -112,6 +114,7 @@ class Bodi:
         Args:
             message (widget, optional): HTML widget to be displayed
         """
+
         self.limitations.set_error_value('')
         cell_number_label = self.bogui.create_label(
             'Add code cells for data preparation:')
@@ -179,10 +182,9 @@ class Bodi:
             '<h4>Check limitations if you are ready to start analysis.</h4>'
         ))
 
-        if self.not_normal is not None:
-            if len(self.not_normal) > 0:
-                for stat_test in self.checklist:
-                    self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
+        if len(self.not_normal) > 0:
+            for stat_test in self.checklist:
+                self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
 
         self.boutils.run_cells_above(self.cell_count)
 
@@ -267,6 +269,7 @@ class Bodi:
             Returns:
                 path: str
         '''
+
         path = self.file_chooser.selected
         if sys.platform.startswith('win'):
             path = path.replace('\\', '/')
@@ -282,6 +285,7 @@ class Bodi:
         returns:
             tests_to_check: list of test names
         """
+
         if sys.platform.startswith('win'):
             cfg_file = cfg_path + "\\bringorder.cfg"
         else:
@@ -296,7 +300,6 @@ class Bodi:
         except FileNotFoundError:
             tests_to_check.append('ttest')
         return tests_to_check
-
 
     def check_normal_distribution(self, data_frame):
         """Checks which variables are not normally distributed.
@@ -319,6 +322,7 @@ class Bodi:
         """Button function for independence test. Checks independence and adds limitation
         if variables are not independent.
         """
+
         result = self.stattests.check_variable_independence()
 
         if isinstance(result[2], str):
@@ -371,6 +375,7 @@ class Bodi:
         """Checks if data variables are normally distributed.
         Displays buttons for independence test and cell operations.
         """
+
         data_frame = pd.read_csv(self.file_chooser.selected)
         self.dataset_variables[0] = data_frame.columns.values.tolist()
         self.stattests.dataset = data_frame

@@ -31,8 +31,8 @@ class Inductive:
         self.boval = boval
         self.next_step = next_step
         self._cell_count = 0
-        self.not_normal = None
-        self.checklist = None
+        self.not_normal = []
+        self.checklist = []
         self.conclusion = None
         self.buttons = self.bogui.init_buttons(self.button_list)
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
@@ -233,10 +233,9 @@ class Inductive:
         display(cell_buttons)
         display(self.conclusion)
 
-        if self.not_normal is not None:
-            if len(self.not_normal) > 0:
-                for stat_test in self.checklist:
-                    self.utils.check_cells_above(self._cell_count, stat_test, self.not_normal)
+        if len(self.not_normal) > 0:
+            for stat_test in self.checklist:
+                self.utils.check_cells_above(self._cell_count, stat_test, self.not_normal)
 
         self.utils.run_cells_above(self._cell_count)
 
@@ -440,7 +439,7 @@ class Inductive:
         value_list = self.fields[6].value.split('\n')
         value = '<br />'.join(value_list)
 
-        evaluation = '### The difference between the pre- and final evaluation caused by: \\n'
+        evaluation = '#### The difference between the pre- and final evaluation caused by: \\n'
         if value == '':
             evaluation += 'No explanation was given!'
         else:
@@ -462,14 +461,6 @@ class Inductive:
         self.buttons['ready'].disabled = True
         self.buttons['assist'].disabled = self.ai_disabled[0]
         cell_number_label = self.bogui.create_label('Add code cells for your analysis:')
-
-        """ cell_buttons = widgets.TwoByTwoLayout(
-            top_left=self.buttons['open'],
-            bottom_left=self.buttons['run'],
-            top_right=self.buttons['delete'],
-            bottom_right=self.buttons['clear']
-        )
-        """
 
         buttons = self.bogui.create_grid(
             2,

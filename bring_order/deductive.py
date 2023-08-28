@@ -26,8 +26,8 @@ class Deductive:
             self.bogui.create_input_field()
         ]
         self.add_cells_int = self.bogui.create_int_text()
-        self.not_normal = None
-        self.checklist = None
+        self.not_normal = []
+        self.checklist = []
         self.conclusion = None
         self.data_limitations = [self.bogui.create_input_field('Data limitations missing')]
         self.result_description = self.bogui.create_text_area('', 'Results')
@@ -406,10 +406,9 @@ class Deductive:
         display(conclusion)
         conclusion.focus()
 
-        if self.not_normal is not None:
-            if len(self.not_normal) > 0:
-                for stat_test in self.checklist:
-                    self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
+        if len(self.not_normal) > 0:
+            for stat_test in self.checklist:
+                self.boutils.check_cells_above(self.cell_count, stat_test, self.not_normal)
 
         self.boutils.run_cells_above(self.cell_count)
 

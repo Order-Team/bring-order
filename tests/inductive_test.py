@@ -295,11 +295,11 @@ class TestInductive(unittest.TestCase):
         self.instance.fields[6] = widgets.Text('The difference between evaluations evaluation caused by testing')
         self.instance.utils.create_markdown_cells_above = MagicMock()
         self.instance._complete_evaluation()
-        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='### The difference between the pre- and final evaluation caused by: \\nThe difference between evaluations evaluation caused by testing')
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='#### The difference between the pre- and final evaluation caused by: \\nThe difference between evaluations evaluation caused by testing')
 
     def test_complete_evaluation_saves_correct_text_if_explanation_is_empty(self):
         self.instance.fields[6] = widgets.Text('')
         self.instance.utils.create_markdown_cells_above = MagicMock()
         self.instance._complete_evaluation()
-        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='### The difference between the pre- and final evaluation caused by: \\nNo explanation was given!')
+        self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='#### The difference between the pre- and final evaluation caused by: \\nNo explanation was given!')
 
