@@ -50,7 +50,7 @@ class Bodi:
         button_list = [
             ('save', 'Save description', self._start_data_import, 'success'),
             ('analyze', 'Analyze this data', self._import_data, 'success'),
-            ('test', 'Test', self._check_variable_independence, 'success'),
+            ('test', 'Test', self._check_variable_independence, 'primary'),
             ('close', 'Close test', self._close_independence_test, 'warning'),
             ('independence', 'Test independence', self._display_independence_test, 'success'),
             ('import', 'Import manually', self._show_cell_operations, 'primary'),

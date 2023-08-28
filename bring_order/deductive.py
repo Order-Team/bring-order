@@ -43,13 +43,13 @@ class Deductive:
 
         button_list = [
             ('open', 'Open cells', self.open_cells, 'primary'),
-            ('delete', 'Delete last cell', self.delete_last_cell, 'danger'),
+            ('delete', 'Delete last cell', self.delete_last_cell, 'warning'),
             ('save', 'Save and continue', self.submit_theory_and_hypotheses, 'success'),
             ('validate', 'Validate input', self.__validate_theory_and_hypotheses, 'primary'),
             ('clear_hypo', 'Clear hypotheses', self.clear_hypotheses, 'warning'),
             ('yes', 'Yes', self.save_theory_and_hypotheses, 'success'),
             ('no', 'No', self.bad_hypotheses, 'warning'),
-            ('run', 'Run cells', self.run_cells, 'warning'),
+            ('run', 'Run cells', self.run_cells, 'primary'),
             ('clear', 'Clear cells', self.clear_cells, 'danger'),
             ('clear_theory', 'Clear theory', self.clear_theory, 'warning'),
             ('assist', 'AI assistant', self.toggle_ai, 'success'),
@@ -427,9 +427,9 @@ class Deductive:
             [
                 self.buttons['open'],
                 self.buttons['delete'],
-                self.buttons['assist'],
                 self.buttons['run'],
-                self.buttons['clear']
+                self.buttons['clear'],
+                self.buttons['assist']
             ]
         )
 

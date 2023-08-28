@@ -204,7 +204,7 @@ class Ai:
         return variables
 
     def display_ai(self, nlp_error= ''):
-        '''Displays a text field for entering a question and options for includng context'''
+        '''Displays a text field for entering a question and options for including context'''
 
         feature_description = self.bogui.create_message(
             'Enter a natural language prompt. The AI assistant will propose code\

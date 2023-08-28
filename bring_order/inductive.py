@@ -62,12 +62,12 @@ class Inductive:
         button_list = [
             ('add', 'Add preconception', self._add_preconception, 'primary'),
             ('save', 'Save preconceptions', self._save_preconceptions, 'success'),
-            ('open', 'Open cells', self._open_cells, 'warning'),
-            ('delete', 'Delete last cell', self._delete_last_cell, 'danger'),
+            ('open', 'Open cells', self._open_cells, 'primary'),
+            ('delete', 'Delete last cell', self._delete_last_cell, 'warning'),
             ('clear', 'Clear cells', self._clear_cells, 'danger'),
             ('run', 'Run cells', self._run_cells, 'primary'),
-            ('ready', 'Ready to summarize', self._execute_ready, 'primary'),
-            ('submit_obs', 'Submit observation', self._new_observation, 'warning'),
+            ('ready', 'Ready to summarize', self._execute_ready, 'success'),
+            ('submit_obs', 'Submit observation', self._new_observation, 'success'),
             ('submit_sum', 'Submit summary', self._submit_summary, 'success'),
             ('lock', 'Lock evaluation', self._lock_evaluation_pressed, 'success'),
             ('save_results', 'Save', self._save_results, 'success'),
@@ -477,9 +477,9 @@ class Inductive:
             [
                 self.buttons['open'],
                 self.buttons['delete'],
-                self.buttons['assist'],
                 self.buttons['run'],
                 self.buttons['clear'],
+                self.buttons['assist'],
                 self.buttons['ready']
             ]
         )
