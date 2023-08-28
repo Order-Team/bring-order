@@ -362,6 +362,7 @@ class Deductive:
         if self.add_cells_int.value > 0:
             self.cell_count += self.add_cells_int.value
             self.boutils.create_code_cells_above(self.add_cells_int.value)
+            self.boutils.focus_on_input_above(self.add_cells_int.value + 2)
 
     def deactivate_cell_operations(self):
         """Deactivates buttons after running code block"""

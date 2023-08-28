@@ -27,8 +27,17 @@ class BOUtils:
         """
 
         for _ in range(how_many):
-            command = 'IPython.notebook.insert_cell_above("code")'
+            command = '''
+            IPython.notebook.insert_cell_above("code")
+            '''
             display(Javascript(command))
+        
+    def focus_on_input_above(self, distance):
+        command = f'''
+            var cell = IPython.notebook.get_cell(-{distance})
+            cell.code_mirror.getInputField().focus()
+        '''
+        display(Javascript(command))
 
     def create_markdown_cells_above(self, how_many, text='', run_cell=True):
         """Creates markdown cells above the current cell

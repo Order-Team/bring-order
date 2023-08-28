@@ -162,6 +162,7 @@ class Bodi:
         if self.fields[3].value > 0:
             self.cell_count += self.fields[3].value
             self.boutils.create_code_cells_above(self.fields[3].value)
+            self.boutils.focus_on_input_above(self.fields[3].value + 2)
 
     def _delete_last_cell(self, _=None):
         """Button function to delete the last data import code cell"""

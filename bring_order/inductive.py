@@ -189,6 +189,7 @@ class Inductive:
         if self.fields[0].value > 0:
             self._cell_count += self.fields[0].value
             self.utils.create_code_cells_above(self.fields[0].value)
+            self.utils.focus_on_input_above(self.fields[0].value + 2)
 
     def _delete_last_cell(self, _=None):
         """Delete last cell button function."""
