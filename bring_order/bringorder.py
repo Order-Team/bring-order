@@ -132,9 +132,6 @@ class BringOrder:
             # Close:
             if next_step == 'exit':
                 self.boutils.delete_cell_from_current(0)
-            # Import new data set:
-            #elif next_step == 'new_data':
-            #    self.boutils.execute_cell_from_current(0, 'BringOrder()')
 
     def get_next(self, function, subroutines=[]):
         """Runs a function, pauses execution until next_step is updated and then returns it.

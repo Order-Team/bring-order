@@ -53,6 +53,7 @@ class Ai:
         if not self.validate_api_key(api_key):
             clear_output(wait=True)
             self.display_ai_popup(self.ai_error_msg)
+            self.api_key_input_field.focus()
         else:
             clear_output(wait=True)
             self.ai_disabled[0] = False
@@ -78,6 +79,7 @@ class Ai:
         else:
             self.display_ai_output(
                 message='Write a message for the AI assistant before sending.')
+            self.natural_language_prompt.focus()
 
     def remove_ai_error_message(self):
         """Removes error messages from display"""
@@ -150,6 +152,7 @@ class Ai:
                     message='Check the previous response by clicking the button below.')
             else:
                 self.display_ai_output()
+            self.natural_language_prompt.focus()
 
         else:
             self.utils.print_to_console('closing ai')
@@ -188,6 +191,7 @@ class Ai:
         )
 
         display(self.grid)
+        self.api_key_input_field.focus()
 
     def add_instructions(self, _=None):
         '''Constructs a string containing variables of the user's dataset and
