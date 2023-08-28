@@ -23,7 +23,7 @@ test('inductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -77,7 +77,7 @@ test('inductive analysis with errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');

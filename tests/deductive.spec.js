@@ -22,7 +22,7 @@ test('deductive analysis without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -66,7 +66,7 @@ test('deductive analysis theory and hypothesis errors', async ({ page, context }
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 100});
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -99,7 +99,7 @@ test('deductive analysis theory and hypothesis warnings', async ({ page, context
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -140,7 +140,7 @@ test('deductive analysis all done shows export buttons', async ({ page, context 
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByPlaceholder('Limitation 1').fill('Test limitation');
@@ -183,7 +183,7 @@ test('deductive analysis conclusions includes data limitations', async ({ page, 
   await newPage.getByLabel('', { exact: true }).nth(1).press('Tab');
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Study about dogs with iris data.');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('test_iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});

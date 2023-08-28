@@ -32,7 +32,7 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
-  await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});
+  await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
   await expect(newPage.getByRole('heading', { name: 'There are some data limitations you should consider:' })).toBeVisible();
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
@@ -76,7 +76,7 @@ test('import data without errors', async ({ page, context }) => {
   await newPage.getByLabel('', { exact: true }).nth(2).click();
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Import manually' }).click();
+  await newPage.getByRole('button', { name: 'Import manually' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Check limitations' }).click();
   await newPage.getByPlaceholder('Limitation 1').click();
   await newPage.getByRole('button', { name: 'Start analysis' }).click();
@@ -107,7 +107,7 @@ test('import csv data with variable independence testing', async ({ page, contex
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
-  await newPage.getByRole('button', { name: 'Select' }).click();
+  await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
   await expect(newPage.getByRole('heading', { name: 'There are some data limitations you should consider:' })).toBeVisible();
   await expect(newPage.getByText('Variables that are not normally distributed: Amount.Requested, Amount.Funded.By.')).toBeVisible();

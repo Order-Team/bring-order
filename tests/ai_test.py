@@ -216,3 +216,23 @@ class TestAi(unittest.TestCase):
     def test_empty_dataset_returns_correct_value(self):
         self.instance.dataset_variables[0] = []
         self.assertEqual(self.instance.add_instructions(),'')
+
+    def test_initiate_ai_without_correct_key(self):
+        self.instance.display_ai_popup = MagicMock()
+        self.instance.api_key_input_field.value = 'test key'
+        self.instance.initiate_ai()
+        self.instance.display_ai_popup.assert_called_with('Incorrect Open AI api key. You can generate API keys in the\
+            OpenAI web interface. See https://platform.openai.com/account/api-keys for details.')
+
+    def test_initiate_ai_disabled_changes_status(self):
+        self.instance.ai_disabled[0] = False
+        self.instance.disable_ai()
+        self.assertEqual(self.instance.ai_disabled, [True])
+
+    def test_display_ai_error_creates_correct_message(self):
+        self.instance.bogui.create_message = MagicMock()
+        self.instance.display_ai_output = MagicMock()
+        self.instance.ai_error_message_grid = MagicMock()
+        self.instance.ai_error_msg = 'test error'
+        self.instance.display_ai_error_message()
+        self.instance.bogui.create_message.assert_called_with('test error')

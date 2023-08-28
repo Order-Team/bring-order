@@ -303,3 +303,6 @@ class TestInductive(unittest.TestCase):
         self.instance._complete_evaluation()
         self.instance.utils.create_markdown_cells_above.assert_called_with(1,text='#### The difference between the pre- and final evaluation caused by: \\nNo explanation was given!')
 
+    def test_representation(self):
+        printed = self.instance.__repr__()
+        self.assertEqual(printed, '')

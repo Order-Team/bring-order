@@ -219,3 +219,8 @@ class TestDeductive(unittest.TestCase):
         self.maxDiff = None
         self.instance.save_theory_and_hypotheses()
         self.instance.boutils.create_markdown_cells_above.assert_called_with(1,text='## Testing hypothesis: Test value\\n### Theory and insights\\nThe first claim<br />The second claim\\n### Hypotheses\\n- Hypothesis (H1): Test value        \\n- Null hypothesis (H0): Null test value\\n### Data analysis')
+
+    def test_representation(self):
+        printed = self.instance.__repr__()
+        self.assertEqual(printed, '')
+
