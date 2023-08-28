@@ -99,6 +99,7 @@ class Inductive:
 
         self.utils.create_markdown_cells_above(1, '## Data exploration')
         display(self._create_preconception_grid())
+        self.lists[0][0].focus()
 
     def _add_preconception(self, _=None):
         """Button function to add new preconception."""
@@ -232,6 +233,7 @@ class Inductive:
         clear_output(wait=True)
         display(cell_buttons)
         display(self.conclusion)
+        self.fields[1].focus()
 
         if len(self.not_normal) > 0:
             for stat_test in self.checklist:
@@ -305,6 +307,7 @@ class Inductive:
 
         clear_output(wait=True)
         display(grid)
+        self.fields[2].focus()
 
     def _format_summary(self):
         """Formats summary for markdown.
@@ -418,6 +421,7 @@ class Inductive:
                 footer = self.buttons['complete']
             )
             display(grid)
+            self.fields[6].focus()
         else:
             self.next_step[0] = 'analysis_done'
 

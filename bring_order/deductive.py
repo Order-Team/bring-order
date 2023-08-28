@@ -404,7 +404,7 @@ class Deductive:
         conclusion = self.__create_conclusion_grid()
         display(cell_operations)
         display(conclusion)
-        conclusion.focus()
+        self.result_description.focus()
 
         if len(self.not_normal) > 0:
             for stat_test in self.checklist:
