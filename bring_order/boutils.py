@@ -1,7 +1,5 @@
 """Helpful Javascript methods"""
-#import collections.abc
 import textwrap
-from pptx import Presentation
 from pptx.util import Inches, Pt
 from IPython.display import display, Javascript
 
@@ -16,7 +14,7 @@ class BOUtils:
         """
 
         self.change_cell_count = lambda n: None
-        self.prs = Presentation()
+        self.prs = None
         self.pptx_file = ''
 
     def create_code_cells_above(self, how_many):

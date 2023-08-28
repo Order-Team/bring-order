@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 from ipywidgets import widgets
 from IPython.display import display, clear_output
+from pptx import Presentation
 from limitations import Limitations
 from stattests import Stattests
 
@@ -415,6 +416,7 @@ class Bodi:
             self.bodi(error = 'The data description cannot be empty or contain special characters')
         else:
             self.boutils.pptx_file = self.fields[0].value + '.pptx'
+            self.boutils.prs = Presentation()
             self.boutils.create_markdown_cells_above(1, text=self.format_data_description())
             self.file_chooser.register_callback(self.fc_callback)
             self.file_chooser.title = 'Choose a data file:'
