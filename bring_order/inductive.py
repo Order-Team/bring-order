@@ -90,7 +90,7 @@ class Inductive:
             self.buttons['assist'].description = 'AI assistant'
             self.buttons['assist'].button_style = 'success'
             for button in self.buttons:
-                if button != 'assist':
+                if button != 'assist' and (button != 'ready' or self.lists[1]):
                     self.buttons[button].disabled = False
         self.next_step[0] = 'toggle_ai'
 
