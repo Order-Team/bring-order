@@ -121,7 +121,8 @@ test('Data limitations are printed in evaluation', async ({ page, context }) => 
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
-  await newPage.getByRole('listbox').selectOption('test_iris.csv');
+  await newPage.getByRole('listbox').selectOption('📁 test_files');
+  await newPage.getByRole('listbox').selectOption('iris.csv');
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
   await newPage.getByRole('button', { name: 'Check limitations' }).click();

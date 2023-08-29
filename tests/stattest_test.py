@@ -14,7 +14,7 @@ class TestStattests(unittest.TestCase):
         self.instance.dependent = Mock()
 
     def test_check_numerical_data_returns_only_filtered_data(self):
-        loans_data = pd.read_csv("tests/loansData.csv")
+        loans_data = pd.read_csv("tests/test_files/loansData.csv")
         self.instance.dataset = loans_data
         filtered = self.instance.check_numerical_data(loans_data)
         self.assertEqual(6, len(filtered))
@@ -35,14 +35,14 @@ class TestStattests(unittest.TestCase):
             'There are not enough categorical variables to perform a chi-square test.')
 
     def test_cannot_test_independence_with_one_categorical_variable(self):
-        iris_data = pd.read_csv("tests/test_iris.csv")
+        iris_data = pd.read_csv("tests/test_files/iris.csv")
         self.instance.dataset = iris_data
         self.instance.select_variables()
         self.instance.bogui.create_message.assert_called_with(
             'There are not enough categorical variables to perform a chi-square test.')
 
     def test_independence_test_returns_true_for_independent_variables(self):
-        loans_data = pd.read_csv("tests/loansData.csv")
+        loans_data = pd.read_csv("tests/test_files/loansData.csv")
         self.instance.dataset = loans_data
         self.instance.select_variables = Mock()
         self.instance.explanatory.value = 'Loan.Purpose'
@@ -51,7 +51,7 @@ class TestStattests(unittest.TestCase):
         self.assertEqual(result, ('Loan.Purpose', 'State', True))
 
     def test_independence_test_returns_false_for_dependent_variables(self):
-        loans_data = pd.read_csv("tests/loansData.csv")
+        loans_data = pd.read_csv("tests/test_files/loansData.csv")
         self.instance.dataset = loans_data
         self.instance.select_variables = Mock()
         self.instance.explanatory.value = 'Home.Ownership'

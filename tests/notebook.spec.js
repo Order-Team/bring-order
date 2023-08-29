@@ -106,6 +106,7 @@ test('import csv data with variable independence testing', async ({ page, contex
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});
   await newPage.getByRole('listbox').selectOption('📁 tests');
+  await newPage.getByRole('listbox').selectOption('📁 test_files');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();

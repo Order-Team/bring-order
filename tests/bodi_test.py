@@ -204,7 +204,7 @@ class TestBodi(unittest.TestCase):
     def test_import_data_opens_and_executes_two_code_cells(self):
         self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
         self.instance.file_chooser = Mock()
-        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_files/iris.csv'
         self.instance.load_cfg_file = MagicMock()
         self.instance._import_data()
         self.instance.boutils.create_code_cells_above.assert_called_with(2)
@@ -214,7 +214,7 @@ class TestBodi(unittest.TestCase):
         self.instance.bogui.create_grid = lambda rows, cols, items: widgets.VBox(items)
         self.instance.check_variables = MagicMock()
         self.instance.file_chooser = Mock()
-        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_iris.csv'
+        self.instance.file_chooser.selected = os.getcwd() + '/tests/test_files/iris.csv'
         self.instance.load_cfg_file = MagicMock()
         self.instance._import_data()
         self.instance.check_variables.assert_called()
@@ -312,7 +312,7 @@ class TestBodi(unittest.TestCase):
         self.assertFalse(self.instance.buttons['independence'].disabled)
 
     def test_load_cfg_file_returns_list_of_tests(self):
-        result = self.instance.load_cfg_file('tests/')
+        result = self.instance.load_cfg_file('tests/test_files/')
         test_list = ['ttest', 'oneway', 'pearson', 'zscore', 'linregress']
         self.assertEqual(test_list, result)
 
