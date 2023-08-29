@@ -16,7 +16,7 @@ In this simple class diagram of BringOrder, the main class is coloured red, clas
 More detailed class diagrams:
 
 - [Class diagram with functions](./pictures/classdiag_with_functions.png)
-- [Full Class diagram with class variables and functions](./pictures/classdiag_with_functions.png)
+- [Full Class diagram with class variables and functions](./pictures/class_diagram_plain.png)
 
 ## Class Detail
 
