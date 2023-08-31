@@ -31,6 +31,7 @@ test('import data without errors', async ({ page, context }) => {
   await expect(newPage.getByRole('paragraph').filter({ hasText: 'Importing test data' })).toBeVisible();
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
+  await newPage.getByRole('listbox').selectOption('📁 test_files');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
   await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Analyze this data' }).click();
@@ -104,7 +105,7 @@ test('import csv data with variable independence testing', async ({ page, contex
   await newPage.getByLabel('', { exact: true }).nth(2).click({delay: 200});
   await newPage.getByLabel('', { exact: true }).nth(2).fill('Importing test loan data');
   await newPage.getByRole('button', { name: 'Save description' }).click();
-  await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});
+  await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});
   await newPage.getByRole('listbox').selectOption('📁 tests');
   await newPage.getByRole('listbox').selectOption('📁 test_files');
   await newPage.getByRole('listbox').selectOption('loansData.csv');
@@ -143,9 +144,10 @@ test('import csv data without variable independence testing', async ({ page, con
   await newPage.getByRole('button', { name: 'Save description' }).click();
   await newPage.getByRole('button', { name: 'Select' }).click();
   await newPage.getByRole('listbox').selectOption('📁 tests');
-  await newPage.getByRole('listbox').selectOption('test_iris.csv');
-  await newPage.getByRole('button', { name: 'Select' }).click({delay: 100});  
-  await newPage.getByRole('button', { name: 'Analyze this data' }).click({delay: 100});
+  await newPage.getByRole('listbox').selectOption('📁 test_files');
+  await newPage.getByRole('listbox').selectOption('iris.csv');
+  await newPage.getByRole('button', { name: 'Select' }).click({delay: 200});  
+  await newPage.getByRole('button', { name: 'Analyze this data' }).click({delay: 200});
   await newPage.getByRole('button', { name: 'Test independence' }).click();
   await expect(newPage.getByText('There are not enough categorical variables to perform a chi-square test.')).toBeVisible();
 });

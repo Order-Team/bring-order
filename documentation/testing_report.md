@@ -17,12 +17,13 @@ These dependencies are listed as development dependencies in the Poetry project 
 
 ## System testing
 
+The package installation was tested on Linux, Windows, and Mac systems.  The package was installed according to the installation guide ([README](https://github.com/Order-Team/bring-order/blob/main/README.md)) on Linux (Cubbli (Common Ubuntu-based Linux), Mint, and OpenSuse tumbleweed) and Windows (Win 10 and Win 11) systems.
 
 The package was also installed on OS X 10.10 but with some installation problems. These kinds of installation problems were not encountered on Windows or Linux systems. This may be due to the fact that used OS X system was really out of date.
 
-Installation guide for MacOS based on [PyPa guide](https://packaging.python.org/en/latest/tutorials/installing-packages/#installing-from-pypi). It has not been possible to correct the installation guide, because computer with MacOS was not available and testing on more modern system versions was not possible.
+Installation guide for macOS based on [PyPa guide](https://packaging.python.org/en/latest/tutorials/installing-packages/#installing-from-pypi). It has not been possible to correct the installation guide, because computer with MacOS was not available and testing on more modern system versions was not possible.
 
-The application works on all three tested operating systems.
+The application works on all tested operating systems.
 
 ## Testing Structure
 
@@ -30,14 +31,16 @@ All test files are located in the __tests__ folder. This folder also contains ne
 
 ### Unit tests
 
-Unit testing of the application is performed using the Pytest framework. Testing currently covers all parts of the applications except the user interface and the Boutils class functions which includes JavaScript. Test coverage is currently 86%.
+Unit testing of the application is performed using the Pytest framework. Testing currently covers all parts of the applications except the user interface and the Boutils class methods which includes JavaScript. Test coverage is currently 86%.
 
 ![Coverage](./pictures/coverage_report.png)
 
 
-### Playwright tests
+### Automated testing
 
-The user interface of the application has been tested with the Playwright test. The tests are divided into data import testing, test hypothesis workflow testing, and exploratory analysis workflow testing.
+The user interface of the application has been tested with the Playwright test. At the beginning of the project, the Robot Framework was used for automated testing. The Robot Framework has been changed to Playwright because Jupyter Notebook cells and widgets do not have a permanent ID or other locator identifiers. 
+
+The tests are divided into data import testing, test hypothesis workflow testing, and exploratory analysis workflow testing.
 
 Most of the automated testing tests the functionality of individual parts of the program, such as the workflow of data import or exploratory analysis. The application guides the user through events, which causes long chains of events. This makes it difficult to write short and precise robot tests that check the behavior of a specific part of the program.
 

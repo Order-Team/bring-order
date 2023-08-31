@@ -69,7 +69,9 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 ```bash
     python3 -m pip install "bring-order"
 ```
+
 ### Usage
+
 - Open Jupyter Notebook with
 ```bash
     jupyter notebook
@@ -78,16 +80,21 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 - In Jupyter Notebook execute
 
 ``` 
-    from bring_order import BringOrder  or  from bring_order import *
-```
-- Start using package by executing
-``` 
+    from bring_order import BringOrder
     BringOrder()
 ```
 
-- Make sure that your notebook is in Trusted state. Otherwise the widgets might not work correctly.
+A more detailed user manual can be found in the [User Guide](https://github.com/Order-Team/bring-order/blob/main/documentation/user_guide.md)
 
-## Development
+## Development and Testing
+
+### Links to development documentation
+
+[Architecture](https://github.com/Order-Team/bring-order/blob/main/documentation/architecture.md)
+
+[Testing report](https://github.com/Order-Team/bring-order/blob/main/documentation/testing_report.md)
+
+[Suggestions for improvements](https://github.com/Order-Team/bring-order/blob/main/documentation/suggestions_for_improvement.md)
 
 ### Dependencies
 - Clone the project and install dependencies in the main folder
@@ -95,18 +102,27 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 ```bash
     poetry install
 ```
-
-### Testing
 - Navigate to main folder and go to the virtual environment
 
 ```bash
     poetry shell
 ```
 
+### Testing
+
 #### Run unit tests
 
 ```bash
     pytest tests
+```
+or use Invoke
+
+```bash
+    invoke tests
+```
+or generate Covegare report
+```bash
+    invoke coverage
 ```
 
 #### Run style check
@@ -114,53 +130,23 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 ```bash
     pylint bringorder
 ```
+or use Invoke
+
+```bash
+    invoke lint
+```
 
 #### Run robot tests
-- Make sure you have chromedriver installed and matching your Chrome version before running
 
 ```bash
     ./run_robot_tests.sh
 ```
-
-- If the script won't run, give it execution rights first and try again
+or use Invoke
 ```bash
-chmod +x run_robot_tests.sh
+    invoke robottests
 ```
-
-- If the first run fails, try once again. Sometimes there are some connection issues.
-When you are done, you can exit the virtual environment with command
-
-```bash
-exit
-```
-
-#### Run tests with Invoke
-
-- The previous tests can also be run using Invoke in poetry shell:
-
-```bash
-invoke tests
-```
-to run unit tests
-
-```bash
-invoke robottests
-```
-to run robottests
-
-```bash
-invoke coverage
-```
-to run unit tests and create html coverage report´
-
-```bash
-invoke lint
-```
-to run pylint
+#### Run pylint, unit tests, and robot tests at once
 
 ```bash
 invoke alltests
 ```
-to run pylint, unit tests and robot tests.
-
-
