@@ -1,13 +1,11 @@
 import unittest
 import os
-import pandas as pd
 from ipywidgets import widgets
 from ipyfilechooser import FileChooser
 from unittest.mock import Mock, MagicMock
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
 from bring_order.bodi import Bodi
-from bring_order.ai import Ai
 from bring_order.boval import BOVal
 
 class TestBodi(unittest.TestCase):
@@ -167,24 +165,6 @@ class TestBodi(unittest.TestCase):
         self.instance._display_limitations_view = MagicMock()
         self.instance._remove_limitation()
         self.instance.limitations.remove_limitations.assert_called()        
-
-    '''
-    def test_run_cells_checks_if_user_runs_tests(self):
-        self.instance.bogui.create_message = lambda value : widgets.HTML(value)
-        self.instance.bogui.create_grid = lambda rows, cols, items : widgets.GridspecLayout(rows, cols)
-        self.instance.cell_count = 1
-        self.instance.run_cells()
-        self.instance.stattests.detect_tests.assert_called()
-    '''
-    '''
-    def test_toggle_ai_updates_button(self):
-        self.instance._toggle_ai()
-        self.assertEqual(self.instance.buttons['assist'].description, 'Close AI assistant')
-        self.assertEqual(self.instance.buttons['assist'].button_style, 'warning')
-        self.instance._toggle_ai()
-        self.assertEqual(self.instance.buttons['assist'].description, 'AI assistant')
-        self.assertEqual(self.instance.buttons['assist'].button_style, 'success')
-    '''
 
     def test_show_cell_operations_calls_data_preparation_grid(self):
         self.instance.data_preparation_grid = MagicMock()

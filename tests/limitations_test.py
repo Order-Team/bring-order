@@ -1,9 +1,6 @@
 import unittest
 from ipywidgets import widgets
-from unittest.mock import Mock, patch, MagicMock
-from bring_order.boutils import BOUtils
-from bring_order.bogui import BOGui
-from bring_order.bodi import Bodi
+from unittest.mock import Mock
 from bring_order.limitations import Limitations
 from bring_order.boval import BOVal
 
@@ -20,12 +17,7 @@ class TestLimitations(unittest.TestCase):
 
     def test_check_limitations_returns_true_when_not_empty(self):
         value = "Some limitations"
-        self.assertTrue(self.instance.check_limitations(value))        
-
-    # def test_call_check_limitation_returns_false_when_one_limitation_is_empty(self):
-    #     self.instance.data_limitations.append(widgets.Text('Limitation'))
-    #     self.instance.data_limitations.append(widgets.Text(''))
-    #     self.assertFalse(self.instance.call_check_limitation())
+        self.assertTrue(self.instance.check_limitations(value))
 
     def test_call_check_limitation_returns_true_with_no_empty_limitations(self):
         self.instance.data_limitations[0].value = 'Limitation0'
@@ -40,11 +32,11 @@ class TestLimitations(unittest.TestCase):
         self.instance.data_limitations.append(widgets.Text(f'Limitation1'))
         text = self.instance.format_limitations()
         correct = '### Limitations\\n- Limitation0\\n- Limitation1\\n'
-        self.assertEqual(text, correct)    
+        self.assertEqual(text, correct)
 
     def test_last_limitations_is_not_removed(self):
         self.instance.remove_limitations()
-        self.assertEqual(len(self.instance.data_limitations), 1)        
+        self.assertEqual(len(self.instance.data_limitations), 1)
     
     def test_add_limitation_adds_limitation_input_to_list(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
@@ -54,7 +46,7 @@ class TestLimitations(unittest.TestCase):
         self.instance.add_limitation()
         self.assertEqual(len(self.instance.data_limitations), 2)
         self.instance.add_limitation()
-        self.assertEqual(len(self.instance.data_limitations), 3)    
+        self.assertEqual(len(self.instance.data_limitations), 3)
 
     def test_remove_limitations_removes_limitations(self):
         self.instance.bogui.create_input_field = lambda dv, ph : widgets.Text(
@@ -69,7 +61,7 @@ class TestLimitations(unittest.TestCase):
         ]
         self.instance.remove_limitations()
         self.assertEqual(len(self.instance.data_limitations), 1)
-        self.assertEqual(len(self.instance.remove_checkboxes), 1)      
+        self.assertEqual(len(self.instance.remove_checkboxes), 1)
 
     def test_not_normally_distributed_returns_expected_list(self):
         self.instance.data_limitations[0].value = 'Monthly.Income is not normally distributed'
@@ -84,7 +76,7 @@ class TestLimitations(unittest.TestCase):
         self.instance.bogui.create_checkbox = lambda desc: widgets.Checkbox(description=desc)
         self.instance.create_limitation_grid()
         self.assertEqual(len(self.instance.remove_checkboxes), 2)
-                                                                        
+
     def test_set_error_value(self):
         self.instance.set_error_value('My error')
         self.assertEqual(self.instance.empty_limitations_error.value, 'My error')

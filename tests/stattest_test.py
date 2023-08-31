@@ -1,8 +1,7 @@
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from bring_order.stattests import Stattests
 import pandas as pd
-from scipy import stats
 
 class TestStattests(unittest.TestCase):
 

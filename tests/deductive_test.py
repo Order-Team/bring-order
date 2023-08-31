@@ -158,7 +158,7 @@ class TestDeductive(unittest.TestCase):
     def test_open_cells_not_increases_cell_count_if_value_is_zero(self):
         self.instance.cell_count = 2
         self.instance.add_cells_int.value = 0
-        self.instance.open_cells()  
+        self.instance.open_cells()
         self.assertEqual(2, self.instance.cell_count)
         self.instance.boutils.create_code_cells_above.assert_not_called()
 

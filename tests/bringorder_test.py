@@ -1,11 +1,7 @@
 import unittest
-import bring_order
-from unittest.mock import Mock, MagicMock, ANY, patch
+from unittest.mock import Mock, MagicMock, patch
 from bring_order.bringorder import BringOrder
 from bring_order.bogui import BOGui
-from bring_order.deductive import Deductive
-from bring_order.inductive import Inductive
-from bring_order.bodi import Bodi
 
 class TestBringOrder(unittest.TestCase):
     def setUp(self):

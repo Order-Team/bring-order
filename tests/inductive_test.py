@@ -41,7 +41,7 @@ class TestInductive(unittest.TestCase):
 
     def test_filled_summary_returns_true(self):
         self.instance.fields[1].value = "Childrens' usage of psychosis medication has increased."
-        self.assertTrue(self.instance.boval.check_value_not_empty(self.instance.fields[1]))   
+        self.assertTrue(self.instance.boval.check_value_not_empty(self.instance.fields[1]))
 
     def test_new_observation_requires_notes(self):
         self.instance.boval.check_value_not_empty = MagicMock()
@@ -62,8 +62,8 @@ class TestInductive(unittest.TestCase):
         self.instance.utils.create_code_cells_above = MagicMock()
         self.instance._cell_count = 3
         self.instance.fields[0].value = 3
-        self.instance._open_cells()  
-        self.assertEqual(6, self.instance._cell_count)  
+        self.instance._open_cells()
+        self.assertEqual(6, self.instance._cell_count)
         self.instance.utils.create_code_cells_above.assert_called()
 
     def test_zero_cells_are_not_run(self):
@@ -191,8 +191,8 @@ class TestInductive(unittest.TestCase):
     def test_open_cells_does_not_open_negative_amount_of_cells(self):
         self.instance._cell_count = 3
         self.instance.fields[0].value = -2
-        self.instance._open_cells()  
-        self.assertEqual(self.instance._cell_count, 3)  
+        self.instance._open_cells()
+        self.assertEqual(self.instance._cell_count, 3)
         self.instance.utils.create_code_cells_above.assert_not_called()
 
     def test_clear_cells_clears_correct_amount_of_cells(self):

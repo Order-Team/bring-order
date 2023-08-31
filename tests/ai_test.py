@@ -2,10 +2,8 @@ import unittest
 from ipywidgets import widgets
 from bring_order.boutils import BOUtils
 from bring_order.bogui import BOGui
-from bring_order.bodi import Bodi
 from bring_order.ai import Ai
 from unittest.mock import Mock, MagicMock
-import pandas as pd
 
 
 class TestAi(unittest.TestCase):
