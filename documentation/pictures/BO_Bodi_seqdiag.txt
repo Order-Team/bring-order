@@ -1,24 +1,5 @@
 title BringOrder Bodi: Data import and preparation
 
-#Start BringOrder
-BringOrder ->+ BringOrder: Start bring_order()
-
-BringOrder -> Bodi: Init Bodi (see init phase)
-Bodi ->+ BOGui: Init UI components
-BOGui -->- Bodi:
-Bodi -> Limitations: Init limitations (bogui, boval)
-Limitations ->+ BOGui: Init UI components
-BOGui -->- Limitations:
-Bodi -> Stattest: Init stattest (bogui)
-Bodi --> BOUtils: boutils.change_cell_count = bodi.change_cell_count
-BringOrder -> BringOrder: get_next()
-
-# AI popup for api key
-BringOrder ->+ Ai: display_ai_popup
-Ai -> Ai:
-note right of Ai: Send api key to enable\nor skip to disable open ai
-Ai -->- BringOrder: next_step = bodi
-
 #Data description and title.
 BringOrder -> BringOrder: get_next(bodi.bodi)
 BringOrder ->+ Bodi: bodi.bodi()

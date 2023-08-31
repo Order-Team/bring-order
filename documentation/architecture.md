@@ -3,11 +3,11 @@
 ## Overview
 The code base has been divided into several classes that have their own methods and purposes.
 The main class is `BringOrder` and it takes the execution forward by calling other classes.
-Data analysis starts with data import that is handled by the `Bodi` class and followed by either hypothesis testing or explorative analysis. The `Deductive` class takes care of the former and the `Inductive` class of the latter. The `NextAnalysis` class has methods for starting new analysis and closing BringOrder. 
+Data analysis starts with data import that is handled by the `Bodi` class and followed by either hypothesis testing or explorative analysis. The `Deductive` class takes care of the former and the `Inductive` class of the latter. The `NextAnalysis` class has methods for starting new analysis and closing BringOrder.
 
 The `Bodi` class depends on `Limitations` and `Stattests` classes. `Limitations` manages data limitations throughout the analysis, and `Stattests` is used to perform some statistical tests on the data under examination.
 
-The `BOVal` class handles the validation of text inputs, and the`Ai` class provides an interface to OpenAI.
+The `BOVal` class handles the validation of text inputs, and the `Ai` class provides an interface to OpenAI.
 
 Most of the classes depend on the `BOGui` class that consists of general methods for creating Jupyter widgets, and the `BOUtils` class that has methods for executing Javascript inside Jupyter Notebook.
 
@@ -18,8 +18,8 @@ In this simple class diagram of BringOrder, the main class is coloured red, the 
 
 More detailed class diagrams:
 
-- [Class diagram with functions](./pictures/classdiag_with_functions.png)
-- [Full Class diagram with class variables and functions](./pictures/class_diagram_plain.png)
+- [Class diagram with methods](./pictures/classdiag_with_functions.png)
+- [Full Class diagram with class variables and methods](./pictures/class_diagram_plain.png)
 
 ## Class Responsibilities
 
@@ -44,11 +44,11 @@ The implementation is based on the [ipywidgets](https://ipywidgets.readthedocs.i
 A BOGui object is created automatically with a BringOrder object and then shared with all the Bodi, Deductive, Inductive, Ai, NextAnalysis, Limitations, and Stattests objects.
 
 ### BOUtils
-The [BOUtils](https://github.com/Order-Team/bring-order/blob/main/bring_order/boutils.py) class consists mainly of methods that run Javascript inside Jupyter Notebook. They are used to, for example, create, run, and delete code and Markdown cells. There are also methods for creating a PowerPoint presentation of the analysis and for extracting Python code from the AI response and formatting it so that it can be inserted into a code cell. 
+The [BOUtils](https://github.com/Order-Team/bring-order/blob/main/bring_order/boutils.py) class consists mainly of methods that run Javascript inside Jupyter Notebook. They are used to, for example, create, run, and delete code and Markdown cells. There are also methods for creating a PowerPoint presentation of the analysis and for extracting Python code from the AI response and formatting it so that it can be inserted into a code cell.
 A BOUtils object is also created automatically with a BringOrder object and shared with other created objects.
 
 ### BOVal
-The [BOVal](https://github.com/Order-Team/bring-order/blob/main/bring_order/boval.py) (BringOrder Validation) class validates text inputs: it checks that the input fields are not left blank and that they don't contain certain special characters. Within the Deductive class, it is also used to analyze sentence structure using the language model en_core_web_sm-3.6.0.
+The [BOVal](https://github.com/Order-Team/bring-order/blob/main/bring_order/boval.py) (BringOrder Validation) class validates text inputs: it checks that the input fields are not left blank and that they don't contain certain special characters. Within the Deductive class, it is also used to analyze sentence structure using the language model __en_core_web_sm-3.6.0__.
 
 ### NextAnalysis
 The [NextAnalysis](https://github.com/Order-Team/bring-order/blob/main/bring_order/next_analysis.py) class handles the switch from one analysis to another. It also includes the methods needed in the closing phase: saving/deleting the PowerPoint presentation, and exporting the notebook to pdf.
@@ -58,7 +58,13 @@ The [Stattests](https://github.com/Order-Team/bring-order/blob/main/bring_order/
 
 
 ## Description of functionality
-When BringOrder is called, it starts with initialization (see [Sequence diagram of initialization](./pictures/BO_init_seqdiag.png)) where also the supporting class objects of BOGui, BOUtils, BOVal, and NextAnalysis, as well as the Ai class, are initialized. After this, BringOrder starts by calling the bring_order function. This starts the main loop and initializes a Bodi object with Stattests and Limitations objects.
+When BringOrder is called, it starts with initialization (see [Sequence diagram of initialization](./pictures/BO_init_seqdiag.png)) where the supporting class objects of BOGui, BOUtils, BOVal, and NextAnalysis, as well as the Ai class, are initialized. After this, BringOrder starts by calling the __bring_order__ method. This starts the main loop and initializes a Bodi object with Stattests and Limitations objects.
+
+Initially, the main loop (see [Sequence diagram of the main loop in BringOrder](./pictures/BO_mainloop_seqdiag.png)) calls the __get_next__ method with the __ai_popup__ method as an argument, which pops up a query for the API key. The __get_next__ method calls the method it received as an argument and waits for the __next_step__ variable to change state. After the __ai_popup__ completes, the Bodi and __ai_popup__ methods are passed as arguments to the __get_next__ method.
+
+Bodi starts the data import phase ([Sequence diagram of Bodi](./pictures/BO_Bodi_seqdiag.png)), where the basic information of the study is queried, and the data file selected by the user is imported. The code needed by the user to import the data file is displayed for the user in Jupyter Notebook in the code cells. Also, The BringOrder opens the data file in the background to be able to do statistical testing and allow the user to perform independence tests for categorical variables. Also, if the config file exists, it will be loaded. After the data import, the Bodi opens the data preparation view. This view remains allowing the user to work with the data until "start analysis" is selected, which sets the "start_analysis" to the __next_step__ variable. By choosing "AI assistant"  or if already chosen "Close assistant" the AI assist view is called by the __get_next__ method. This will toggle on or off the AI assist view.
+
+The "start analysis" loop, which is the inner loop of the main loop calls the __get_next__ method with the __start_analysis__ method as an argument. That initializes the deductive and inductive classes and queries the user on which analysis will used. The functions of the Deductive- and Inductive class work similarly to the Bodi class. After the Deductive/Inductive phase,  a new analysis view opened. In case where "new analysis" is chosen, it will carry on in the "start analysis" loop. While starting analysis with new data returns control back to the main loop. Selecting "all done" will exit the BringOrder, allowing the user to save the presentation template and export the study to PDF format.
 
 
 - [Sequence diagram of initialization](./pictures/BO_init_seqdiag.png)
