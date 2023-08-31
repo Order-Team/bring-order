@@ -3,11 +3,15 @@
 [![codecov](https://codecov.io/gh/Order-team/bring-order/branch/main/graph/badge.svg?token=e8bdd46f-46b0-410c-820b-84ffca9ca53c)](https://codecov.io/gh/Order-team/bring-order)
 [![GitHub](https://img.shields.io/github/license/Order-Team/bring-order)](LICENSE.md)
 
-The tool is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
-User can import and prepare data for analysis, add limitations and perform deductive or inductive analysis.
-Deductive analysis asks the user to set the hypothesis and null hypothesis, run their analysis, and confirm one of the hypotheses.
-Inductive analysis is an option to perform explorative analysis and write notes about it.
+The BringOrder tool is aimed at guiding data scientists with their analysis using custom widgets inside Jupyter Notebook.
 
+The first step is to import and prepare data for analysis, and to identify data limitations. If the data set is loaded from a CSV file, BringOrder checks automatically if the variables are normally distributed and offers an option to check if selected variables are independent.
+
+After the data preparation phase, there are two analysis paths that the user can choose from: hypothesis testing or explorative analysis. Testing a hypothesis includes summarizing theory for context, formulating the hypotheses, running some analysis code, and drawing a conclusion.
+
+The explorative analysis starts with stating preconceptions and ends with evaluating the analysis with respect to those preconceptions. In between, the user should run some analysis code and write some notes about their observations. To help the user with writing code, BringOrder provides the possibility to use OpenAI's ChatGPT inside Jupyter Notebook through an API connection.
+
+As a result, BringOrder produces a structured notebook where all the steps are documented in Markdown. The user also has the option to save a PowerPoint presentation template of the analysis and to export the notebook to a PDF file.
 
 ## Documentation
 * [Product backlog](https://docs.google.com/spreadsheets/d/1xqybqVAUIn4vhW-fBfhInQun7nY-uYH79M6l8oCiAzg/edit#gid=0)
