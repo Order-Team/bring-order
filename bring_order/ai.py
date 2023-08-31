@@ -105,23 +105,6 @@ class Ai:
             self.ai_error_msg = 'Please enter your Open AI api key'
             return False
 
-        """
-        try:
-            openai.api_key = api_key
-            response = openai.ChatCompletion.create(
-            model = self.model_engine,
-            messages=[
-                {"role": "system", "content": 'You are a helpful assistant'},
-                {"role": "user", "content": "This is a test."},
-            ])
-
-            if not response.choices[0]['message']['content']:
-                self.ai_error_msg = "Please enter correct Open AI API key. You received no response from the AI assistant."
-                return False
-
-            return True
-        """
-
         try:
             openai.api_key = api_key
             response = openai.Model.list()
@@ -232,7 +215,8 @@ class Ai:
         display(self.grid)
 
     def display_ai_output(self, message='', ai_output=''):
-        """Displays ai output grid.
+        """Displays ai output grid. Displays 'Hide' -button if AI output is visible and        
+           'Show' -button if there is a previous answer from AI
         
         Args:
             message (str, optional): Message for the user
@@ -247,10 +231,9 @@ class Ai:
             pane_heights = ['40px', 1, '40px']
         )
 
-        # Display hide button if AI output is visible
         if ai_output != '':
             self.ai_output_grid.footer = self.buttons['hide']
-        # Display show button if there is a previous answer from AI
+
         elif self.ai_response != '':
             self.ai_output_grid.footer = self.buttons['show']
 
