@@ -115,8 +115,6 @@ class BOUtils:
         '''
         display(Javascript(command))
 
-    # Refactoring note: delete_cell_above could be deleted
-    # and delete_cell_from_current could be used instead with distance=-1
     def delete_cell_from_current(self, distance):
         """Deletes a cell that has the index of the active cell index + distance
         
@@ -256,7 +254,6 @@ class BOUtils:
             code (str): the Python code from the response
         """
 
-        #code = response.split('```python\n')[1].split('\n```')[0]
         substrings = []
         start = 0
         while True:

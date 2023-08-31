@@ -20,7 +20,10 @@ from boval import BOVal
 class BringOrder:
     """Main class"""
     def __init__(self):
-        """Class constructor"""
+        """Class constructor.     
+        'next_step' is passed on to other classes and used to track
+        which UI module to run next."""
+        
         self.boutils = BOUtils()
         self.bogui = BOGui()
         self.deductive = None
@@ -29,8 +32,6 @@ class BringOrder:
         self.buttons = {}
         self.dataset_variables = [[]]
         self.ai_disabled = [False]
-        # next_step is passed on to classes and used to track
-        # which ui module to run next.
         self.next_step = [None]
         self.next_analysis = NextAnalysis(
             self.bogui,
@@ -98,10 +99,11 @@ class BringOrder:
         return self.inductive.start_inductive_analysis()
 
     def bring_order(self):
-        """Runs the ui modules"""
-        # The different ui functions are run through a helper function
-        # that returns the name of the next function to be executed.
-        # First, the data import function:
+        """Runs the UI modules
+        The different ui functions are run through a helper function
+        that returns the name of the next function to be executed.
+        First, the data import function."""
+        
         next_step = 'new_data'
         # Import loop:
         while next_step == 'new_data':
