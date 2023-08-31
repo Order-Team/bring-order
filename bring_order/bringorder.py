@@ -23,7 +23,7 @@ class BringOrder:
         """Class constructor.     
         'next_step' is passed on to other classes and used to track
         which UI module to run next."""
-        
+
         self.boutils = BOUtils()
         self.bogui = BOGui()
         self.deductive = None
@@ -49,7 +49,7 @@ class BringOrder:
 
     @property
     def button_list(self):
-        """Buttons for Bodi class.
+        """Buttons for BringOrder class.
 
         Returns:
             list of tuples in format (tag: str, description: str, command: func, style: str)
@@ -103,7 +103,7 @@ class BringOrder:
         The different ui functions are run through a helper function
         that returns the name of the next function to be executed.
         First, the data import function."""
-        
+
         next_step = 'new_data'
         # Import loop:
         while next_step == 'new_data':

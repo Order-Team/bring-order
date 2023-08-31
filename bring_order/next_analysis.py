@@ -1,8 +1,10 @@
+'''BringOrder NextAnalysis'''
 import os
 from ipywidgets import widgets
 from IPython.display import display, clear_output, Javascript
 
 class NextAnalysis:
+    ''' NextAnalysis class completes inductive or deductive phases '''
     def __init__(self, bogui, boutils, next_step):
         self.bogui = bogui
         self.boutils = boutils
@@ -11,6 +13,11 @@ class NextAnalysis:
 
     @property
     def button_list(self):
+        """Buttons for NextAnalysis.
+
+        Returns:
+            list of tuples in format (tag: str, description: str, command: func, style: str)
+        """
         button_list = [
             ('new', 'New analysis', self.start_new_analysis, 'success'),
             ('prepare', 'Prepare new data', self.prepare_new_data_pressed, 'success'),

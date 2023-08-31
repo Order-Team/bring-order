@@ -50,7 +50,7 @@ The application contains parts that are tested manually instead of automated tes
 
 ### Style checking
 
-Code quality is checked and maintained using Pylint. The latest pylint inspection gave a rating of 9.70/10.
+Code quality is checked and maintained using Pylint. The latest pylint inspection gave a rating of 9.76/10.
 
 ## Running tests
 

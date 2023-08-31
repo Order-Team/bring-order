@@ -29,8 +29,9 @@ class BOUtils:
             IPython.notebook.insert_cell_above("code")
             '''
             display(Javascript(command))
-        
+
     def focus_on_input_above(self, distance):
+        ''' Sets cursor focus on input above.'''
         command = f'''
             var cell = IPython.notebook.get_cell(-{distance})
             cell.code_mirror.getInputField().focus()
@@ -76,7 +77,6 @@ class BOUtils:
         width = height = Inches(6)
         txt_box = slide.shapes.add_textbox(left, top, width, height)
         txt_frame = txt_box.text_frame
-        txt_frame.auto_size
 
         for row in rows:
             if '#' in row:
@@ -209,7 +209,7 @@ class BOUtils:
     def check_cells_above(self, cell_count, test_name, variables):
         """Check if cells above contain the given test and at least one of the given variables.
         Prints a warning.
-        
+
         Args:
             cell_count (int): the number of cells to be checked
             test_name (str): the text you are trying to find
@@ -275,9 +275,8 @@ class BOUtils:
         if substrings:
             self.print_to_console("\\n".join(substrings))
             return "\\n".join(substrings)
-        else:
-            return 'No Python code in the response'
-        
+
+        return 'No Python code in the response'
 
     def insert_ai_code_into_new_cell(self, code=''):
         """Opens new empty code cell and inserts the given code into it.
