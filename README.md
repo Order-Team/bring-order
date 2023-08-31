@@ -45,18 +45,11 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 
 ### Windows
 
-- If you don't have Jupyter Notebook installed, install Anaconda with [Anaconda download](https://www.anaconda.com/download)
+- If you don't have PIP installed, it is recommended to use Anaconda environment
 
-- Use Anaconda Powershell Prompt 
+- Install Anaconda with [Anaconda download](https://www.anaconda.com/download)
 
-- If you don't have ipywidgets installed, install it with
-```bash
-    pip install ipywidgets
-```
-- If you have an old version of ipywidgets installed, upgrade it with
-```bash
-    pip install --upgrade ipywidgets
-```
+- Use Anaconda Powershell prompt instead of regular Powershell or Command prompt
 
 - Install bring-order extention:
 ```bash

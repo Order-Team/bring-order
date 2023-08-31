@@ -5,6 +5,6 @@
 
 - acceptance criteria for the user story have been met
 
-- the code has been reviewed by another team member / it works also on other members' devices
+- the code has been reviewed by another team member
 
-- unit tests and other necessary tests are passing
+- unit tests and Playwright tests, if applicable, are passing
