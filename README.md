@@ -38,7 +38,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
     pip install --upgrade ipywidgets
 ```
 
-- Install bring-order extention:
+- Install bring-order extension:
 ```bash
     pip install bring-order
 ```
@@ -51,7 +51,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 
 - Use Anaconda Powershell prompt instead of regular Powershell or Command prompt
 
-- Install bring-order extention:
+- Install bring-order extension:
 ```bash
     pip install bring-order
 ```
@@ -65,7 +65,7 @@ Inductive analysis is an option to perform explorative analysis and write notes 
 ```bash
     python3 -m pip install --upgrade ipywidgets
 ```
-- Install bring-order extention:
+- Install bring-order extension:
 ```bash
     python3 -m pip install "bring-order"
 ```
